@@ -9,7 +9,10 @@ DROP TABLE IF EXISTS games;
 
 DROP TABLE IF EXISTS mapsets_tags;
 
--- DROP TABLE IF EXISTS mapset_data;
+DROP TABLE IF EXISTS api_keys;
+
+DROP TABLE IF EXISTS mapset_data;
+
 DROP TABLE IF EXISTS users;
 
 SET
@@ -20,6 +23,16 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(255) NOT NULL,
     avatar_url TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS api_keys (
+    id VARCHAR(64) PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_used TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (bancho_id),
+    INDEX user_id_idx (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS user_achievements (
