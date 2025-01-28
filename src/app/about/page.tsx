@@ -53,6 +53,32 @@ export default function AboutPage() {
                 </section>
 
                 <section className="bg-card rounded-xl p-8 border border-border/50">
+                    <h2 className="text-2xl font-semibold mb-4">Documentation</h2>
+                    <div className="space-y-4">
+                        <div>
+                            <h3 className="text-xl font-medium mb-2">For Developers</h3>
+                            <p className="text-foreground/80 mb-2">Want to integrate with osu!guessr? Check out our comprehensive API documentation:</p>
+                            <p className="text-foreground/80">
+                                •{" "}
+                                <a href="https://github.com/yorunoken/osu-guessr/blob/main/docs/API.md" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                                    API Documentation
+                                </a>
+                            </p>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-medium mb-2">Game Architecture</h3>
+                            <p className="text-foreground/80 mb-2">Interested in how the game works under the hood? Take a look at our game flow documentation:</p>
+                            <p className="text-foreground/80">
+                                •{" "}
+                                <a href="https://github.com/yorunoken/osu-guessr/blob/main/docs/game-flow.md" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                                    Game Flow Documentation
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="bg-card rounded-xl p-8 border border-border/50">
                     <h2 className="text-2xl font-semibold mb-4">Credits & Attribution</h2>
                     <div className="space-y-4">
                         <div>
