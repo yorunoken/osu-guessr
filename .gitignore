@@ -12,5 +12,6 @@
 # production
 /build
 .env*
+!.env
 
 mapset_background_pictures/
