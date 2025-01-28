@@ -260,12 +260,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 
 ## Rate Limits
 
-- 60 requests per minute per API key
-- Requests count against your rate limit as soon as they hit our servers
-- Rate limit headers are included in all responses:
-  - `X-RateLimit-Limit`: Total requests allowed per window
-  - `X-RateLimit-Remaining`: Remaining requests in current window
-  - `X-RateLimit-Reset`: Time when the rate limit resets (UTC timestamp)
+No rate limits currently. Don't fuck it with it.
 
 ## Error Responses
 
