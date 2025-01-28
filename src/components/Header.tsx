@@ -38,6 +38,9 @@ export default function Header() {
                                     <DropdownMenuItem className="cursor-pointer" asChild>
                                         <Link href={`/user/${session.user.banchoId}`}>Profile</Link>
                                     </DropdownMenuItem>
+                                    <DropdownMenuItem className="cursor-pointer" asChild>
+                                        <Link href="/settings">Settings</Link>
+                                    </DropdownMenuItem>
                                     <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
                                         Sign out
                                     </DropdownMenuItem>
