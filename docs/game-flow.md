@@ -1,3 +1,5 @@
+Client-Server-Database communication flow
+
 ```mermaid
 sequenceDiagram
     actor User
