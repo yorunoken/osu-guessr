@@ -1,0 +1,4 @@
+target
+.env*
+!.env
+mapset_tags.sql

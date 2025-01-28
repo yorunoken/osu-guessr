@@ -1,27 +1,50 @@
 {
-  "name": "osu-guessr",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.1.6"
-  },
-  "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "eslint": "^9",
-    "eslint-config-next": "15.1.6",
-    "@eslint/eslintrc": "^3"
-  }
+    "name": "osu-guessr",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "frontend:dev": "dotenv -e .env.local -- next dev",
+        "frontend:build": "next build",
+        "frontend:start": "dotenv -e .env.local -- next start",
+        "frontend:lint": "next lint",
+        "server:dev": "cd server && cargo run",
+        "server:build": "cd server && cargo build -r",
+        "server:start": "cd server && cargo run -r",
+        "build": "bun run frontend:build && bun run server:build",
+        "dev": "concurrently \"bun run server:start\" \"bun run frontend:dev\"",
+        "start": "concurrently \"bun run server:start\" \"bun run frontend:start\""
+    },
+    "dependencies": {
+        "@radix-ui/react-dialog": "^1.1.5",
+        "@radix-ui/react-dropdown-menu": "^2.1.5",
+        "@radix-ui/react-slot": "^1.1.1",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "concurrently": "^9.1.2",
+        "dotenv-cli": "^8.0.0",
+        "framer-motion": "^12.0.6",
+        "fuzzyset.js": "^1.0.7",
+        "lucide-react": "^0.474.0",
+        "next": "15.1.6",
+        "next-auth": "^5.0.0-beta.25",
+        "next-themes": "^0.4.4",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "tailwind-merge": "^2.6.0",
+        "tailwindcss-animate": "^1.0.7",
+        "zod": "^3.24.1"
+    },
+    "devDependencies": {
+        "@eslint/eslintrc": "^3",
+        "@types/fuzzyset.js": "^0.0.5",
+        "@types/node": "^20",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "@types/string-similarity": "^4.0.2",
+        "eslint": "^9",
+        "eslint-config-next": "15.1.6",
+        "postcss": "^8",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5"
+    }
 }
