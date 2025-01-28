@@ -13,5 +13,6 @@
 /build
 .env*
 !.env
+changelog.json
 
 mapset_background_pictures/
