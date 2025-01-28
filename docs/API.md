@@ -31,7 +31,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 ##### Example cURL
 
 > ```javascript
-> curl -X GET -H "X-API-Key: your-api-key" https://osuguessr.com/api/stats
+> curl -X GET -H "X-API-Key: your-api-key" /api/stats
 > ```
 
 ##### Stats Object
@@ -81,7 +81,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 ##### Example cURL
 
 > ```javascript
-> curl -X GET -H "X-API-Key: your-api-key" "https://osuguessr.com/api/users/search?query=yorunoken&limit=10"
+> curl -X GET -H "X-API-Key: your-api-key" "/api/users/search?query=yorunoken&limit=10"
 > ```
 
 ##### User Search Result
@@ -127,7 +127,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 ##### Example cURL
 
 > ```javascript
-> curl -X GET -H "X-API-Key: your-api-key" "https://osuguessr.com/api/users/12345/stats?mode=background"
+> curl -X GET -H "X-API-Key: your-api-key" "/api/users/12345/stats?mode=background"
 > ```
 
 ##### User Stats Result
@@ -177,7 +177,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 ##### Example cURL
 
 > ```javascript
-> curl -X GET -H "X-API-Key: your-api-key" "https://osuguessr.com/api/users/12345/games?mode=background&limit=10"
+> curl -X GET -H "X-API-Key: your-api-key" "/api/users/12345/games?mode=background&limit=10"
 > ```
 
 ##### Game History Result
@@ -233,7 +233,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 ##### Example cURL
 
 > ```javascript
-> curl -X GET -H "X-API-Key: your-api-key" "https://osuguessr.com/api/game/leaderboard?mode=background&limit=10"
+> curl -X GET -H "X-API-Key: your-api-key" "/api/game/leaderboard?mode=background&limit=10"
 > ```
 
 ##### Leaderboard Result
