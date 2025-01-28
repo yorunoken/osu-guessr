@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { searchUsersAction } from "@/actions/user-server";
-import { z } from "zod";
 import { validateApiKey } from "@/actions/api-keys-server";
+import { getTopPlayersAction } from "@/actions/user-server";
+import { z } from "zod";
 
 const querySchema = z.object({
-    query: z.string().min(2).max(250),
-    limit: z.coerce.number().min(1).max(100).default(20),
+    mode: z.enum(["background", "audio", "skin"]).default("background"),
+    limit: z.coerce.number().min(1).max(100).default(100),
 });
 
 export async function GET(request: Request) {
@@ -20,19 +20,19 @@ export async function GET(request: Request) {
 
     try {
         const { searchParams } = new URL(request.url);
-        const validated = querySchema.parse({
-            query: searchParams.get("query") || "",
+        const query = querySchema.parse({
+            mode: searchParams.get("mode") || "background",
             limit: Number(searchParams.get("limit")),
         });
 
-        const users = await searchUsersAction(validated.query, validated.limit);
+        const leaderboard = await getTopPlayersAction(query.mode, query.limit);
 
         return NextResponse.json({
             success: true,
-            data: users,
+            data: leaderboard,
         });
     } catch (error) {
-        console.error("User search error:", error);
-        return NextResponse.json({ success: false, error: "Failed to search users" }, { status: 500 });
+        console.error("Leaderboard error:", error);
+        return NextResponse.json({ success: false, error: "Failed to fetch leaderboard" }, { status: 500 });
     }
 }
