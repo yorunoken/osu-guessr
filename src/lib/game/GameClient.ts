@@ -1,4 +1,4 @@
-import { startGameAction, submitGuessAction, getGameStateAction, endGameAction } from "@/actions/game-server";
+import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, deleteSessionAction } from "@/actions/game-server";
 import { GameState, GameSession } from "./types";
 
 export class GameClient {
@@ -123,6 +123,23 @@ export class GameClient {
         try {
             await endGameAction(this.session.id);
             console.log("[Game Client]: Ended Game");
+        } catch (error) {
+            console.error("Failed to end game:", error);
+            throw error;
+        } finally {
+            this.cleanup();
+        }
+    }
+
+    async cleanUpSession(): Promise<void> {
+        if (!this.session?.id) return;
+
+        this.stopTimer();
+        this.session.isActive = false;
+
+        try {
+            await deleteSessionAction(this.session.id);
+            console.log("[Game Client]: Ended Game (0 points, deleted session)");
         } catch (error) {
             console.error("Failed to end game:", error);
             throw error;

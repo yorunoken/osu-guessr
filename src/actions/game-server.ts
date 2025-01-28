@@ -285,14 +285,12 @@ export async function endGameAction(sessionId: string): Promise<void> {
             throw new Error("Game session not found or already ended");
         }
 
-        // Insert game record
         await query(
             `INSERT INTO games (user_id, game_mode, points, streak)
              VALUES (?, 'background', ?, ?)`,
             [authSession.user.banchoId, gameState.total_points, gameState.highest_streak],
         );
 
-        // Update achievements
         await query(
             `INSERT INTO user_achievements
              (user_id, game_mode, total_score, games_played, highest_streak)
@@ -305,19 +303,21 @@ export async function endGameAction(sessionId: string): Promise<void> {
             [authSession.user.banchoId, gameState.total_points, gameState.highest_streak],
         );
 
-        // Mark session as inactive
-        await query(
-            `UPDATE game_sessions
-             SET is_active = FALSE
-             WHERE id = ?`,
-            [sessionId],
-        );
+        await deleteSessionAction(sessionId);
 
         await query("COMMIT");
     } catch (error) {
         await query("ROLLBACK");
         throw error;
     }
+}
+
+export async function deleteSessionAction(sessionId: string) {
+    await query(
+        `DELETE FROM game_sessions
+            WHERE id = ?`,
+        [sessionId],
+    );
 }
 
 function checkGuess(guess: string, actual: string): boolean {

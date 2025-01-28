@@ -81,6 +81,9 @@ export default function GameScreen({ onExit }: GameScreenProps) {
         if (gameState?.score.total && gameState.score.total > 0) {
             const confirmed = window.confirm("Are you sure you want to exit? Your score will be saved.");
             if (!confirmed) return;
+        } else {
+            console.log("Exited game with no score.");
+            await gameClient.current.cleanUpSession();
         }
 
         try {
