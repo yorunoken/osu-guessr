@@ -10,8 +10,8 @@ sequenceDiagram
     User->>Client: Start Game
     Client->>Server: startGameAction()
     Server->>DB: Create game session
-    Server->>DB: Get random background
-    DB-->>Server: Return beatmap data
+    Server->>DB: Get game-related data
+    DB-->>Server: Return game-related data
     Server-->>Client: Initial GameState
     Client-->>User: Show game screen
 
@@ -34,7 +34,8 @@ sequenceDiagram
 
         User->>Client: Next Round
         Client->>Server: submitGuessAction(undefined)
-        Server->>DB: Get new background
+        Server->>DB: Get new game-related data
+        DB-->>Server: Return game-related data
         Server->>DB: Update session
         Server-->>Client: New GameState
         Client-->>User: Show new round
@@ -44,7 +45,7 @@ sequenceDiagram
     Client->>Server: endGameAction()
     Server->>DB: Save final score
     Server->>DB: Update achievements
-    Server->>DB: Mark session inactive
+    Server->>DB: Delete session
     Server-->>Client: Game ended
     Client-->>User: Show final results
 ```
