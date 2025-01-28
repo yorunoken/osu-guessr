@@ -63,15 +63,15 @@ export default function UserSearch() {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2">
+                <Button variant="outline" className="w-full sm:w-auto gap-2">
                     <Search className="h-4 w-4" />
-                    <span className="text-muted-foreground">Search Users</span>
-                    <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground ml-2">
+                    <span className="text-muted-foreground inline">Search Users</span>
+                    <kbd className="hidden sm:inline-flex pointer-events-none h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground ml-2">
                         <span className="text-xs">⌘</span>K
                     </kbd>
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-3xl">
+            <DialogContent className="w-full sm:max-w-3xl">
                 <VisuallyHidden>
                     <DialogTitle>Search Users</DialogTitle>
                     <DialogDescription>Search for osu! users by their username</DialogDescription>
@@ -95,7 +95,7 @@ export default function UserSearch() {
                                     className="w-full flex items-center gap-3 px-4 py-3 hover:bg-accent/50 transition-colors"
                                     onClick={() => handleSelect()}
                                 >
-                                    <Image src={user.avatar_url} alt={user.username} width={40} height={40} className="rounded-full" />
+                                    <Image src={user.avatar_url || "/placeholder.svg"} alt={user.username} width={40} height={40} className="rounded-full" />
                                     <span className="font-medium">{user.username}</span>
                                 </Link>
                             ))}
