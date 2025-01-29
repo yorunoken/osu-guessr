@@ -11,6 +11,7 @@ interface GameImageProps {
         title?: string;
         artist?: string;
         mapper?: string;
+        mapsetId?: number;
     };
 }
 
@@ -25,6 +26,14 @@ export default function GameImage({ imageUrl, isRevealed, result, songInfo }: Ga
                         <p className="text-xl font-semibold">{songInfo.title}</p>
                         <p className="text-foreground/70">by {songInfo.artist}</p>
                         <p className="text-sm text-foreground/50">Mapped by {songInfo.mapper}</p>
+                        <a
+                            href={`https://osu.ppy.sh/beatmapsets/${songInfo.mapsetId}`}
+                            className="inline-block mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Beatmap Link
+                        </a>
                     </div>
                 </div>
             )}

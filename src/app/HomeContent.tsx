@@ -59,7 +59,7 @@ export default async function HomeContent() {
                         <div className="lg:col-span-2">
                             <div className="bg-card rounded-xl p-6 border border-border/50">
                                 <h2 className="text-2xl font-bold mb-6">Latest Updates</h2>
-                                <div className="space-y-6">
+                                <div className="space-y-6 max-h-[500px] overflow-y-auto">
                                     {changelogs.map((log, i) => (
                                         <div key={i} className="border-b border-border/50 last:border-0 pb-6 last:pb-0">
                                             <div className="flex items-center gap-2 mb-3">

@@ -1,5 +1,5 @@
-import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, deleteSessionAction, getSuggestionsAction } from "@/actions/game-server";
-import { GameState, GameSession } from "./types";
+import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, deleteSessionAction, getSuggestionsAction, GameState } from "@/actions/game-server";
+import { GameSession } from "./types";
 
 export class GameClient {
     private session: GameSession | null = null;

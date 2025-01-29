@@ -5,7 +5,7 @@ import { query } from "@/lib/database";
 import { z } from "zod";
 import { BASE_POINTS, SIMILARITY_THRESHOLD, STREAK_BONUS, TIME_BONUS_MULTIPLIER } from "../app/games/config";
 import FuzzySet from "fuzzyset.js";
-import { getRandomBackgroundAction } from "./mapsets-server";
+import { getRandomBackgroundAction, MapsetDataWithTags } from "./mapsets-server";
 import path from "path";
 import fs from "fs/promises";
 
@@ -29,6 +29,7 @@ export interface GameState {
         title?: string;
         artist?: string;
         mapper?: string;
+        mapsetId?: number;
     };
     score: {
         total: number;
@@ -132,7 +133,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
             throw new Error("Time has expired for this round");
         }
 
-        const [beatmap] = await query(`SELECT * FROM mapset_data WHERE mapset_id = ?`, [gameState.current_beatmap_id]);
+        const [beatmap]: Array<MapsetDataWithTags> = await query(`SELECT * FROM mapset_data WHERE mapset_id = ?`, [gameState.current_beatmap_id]);
 
         const isSkipped = guess === null;
         const isNextRound = guess === undefined;
@@ -186,6 +187,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 title: !isNextRound ? beatmap.title : undefined,
                 artist: !isNextRound ? beatmap.artist : undefined,
                 mapper: !isNextRound ? beatmap.mapper : undefined,
+                mapsetId: !isNextRound ? beatmap.mapset_id : undefined,
             },
             score: {
                 total: gameState.total_points + points,
@@ -216,7 +218,7 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
         await query("START TRANSACTION");
 
         const [gameState] = await query(
-            `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename
+            `SELECT g.*, m.title, m.artist, m.mapper, m.mapset_id, mt.image_filename
                 FROM game_sessions g
                 JOIN mapset_data m ON g.current_beatmap_id = m.mapset_id
                 JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
@@ -250,6 +252,7 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
                 title: gameState.last_guess ? gameState.title : undefined,
                 artist: gameState.last_guess ? gameState.artist : undefined,
                 mapper: gameState.last_guess ? gameState.mapper : undefined,
+                mapsetId: gameState.last_guess ? gameState.mapset_id : undefined,
             },
             score: {
                 total: gameState.total_points,
