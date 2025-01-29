@@ -1,5 +1,5 @@
 You think you can just steal the mapsets, huh?
-You gotta put the beatmaps in an order
+If you wanna generate map data you gotta put the beatmaps in an order
 Like this:
 
 https://osu.ppy.sh/beatmapsets/18#osu/2844649
