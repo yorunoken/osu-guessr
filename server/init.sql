@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS user_achievements;
 
 DROP TABLE IF EXISTS games;
 
-DROP TABLE IF EXISTS mapsets_tags;
+DROP TABLE IF EXISTS mapset_tags;
 
 DROP TABLE IF EXISTS api_keys;
 
@@ -55,9 +55,10 @@ CREATE TABLE IF NOT EXISTS games (
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS mapsets_tags (
+CREATE TABLE IF NOT EXISTS mapset_tags (
     mapset_id INT NOT NULL,
-    image_filename VARCHAR(255)
+    image_filename VARCHAR(255),
+    audio_filename VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS mapset_data (
@@ -91,3 +92,23 @@ CREATE INDEX idx_username ON users (username);
 CREATE INDEX idx_active_sessions ON game_sessions (user_id, is_active);
 
 CREATE INDEX idx_session_last_action ON game_sessions (last_action_at);
+
+CREATE INDEX idx_games_user_mode ON games (user_id, game_mode);
+
+CREATE INDEX idx_games_played ON games (played);
+
+CREATE INDEX idx_mapset_tags_mapset_id ON mapset_tags (mapset_id);
+
+CREATE INDEX idx_mapset_data_title ON mapset_data (title);
+
+CREATE INDEX idx_mapset_data_artist ON mapset_data (artist);
+
+CREATE INDEX idx_mapset_data_mapper ON mapset_data (mapper);
+
+CREATE INDEX idx_user_achievements_score ON user_achievements (total_score);
+
+CREATE INDEX idx_game_sessions_mode ON game_sessions (game_mode);
+
+CREATE INDEX idx_game_sessions_started ON game_sessions (started_at);
+
+CREATE INDEX idx_api_keys_last_used ON api_keys (last_used);
