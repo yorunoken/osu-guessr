@@ -320,6 +320,20 @@ export async function deleteSessionAction(sessionId: string) {
     );
 }
 
+export async function getSuggestionsAction(str: string): Promise<string[]> {
+    if (!str || str.length < 2) return [];
+
+    const results: Array<{ title: string }> = await query(
+        `SELECT DISTINCT title
+            FROM mapset_data
+            WHERE title LIKE ?
+            LIMIT 5`,
+        [`%${str}%`],
+    );
+
+    return results.map((r) => r.title);
+}
+
 function checkGuess(guess: string, actual: string): boolean {
     const normalizeString = (str: string) => str.toLowerCase().replace(/[^a-z0-9\s]/g, "");
 

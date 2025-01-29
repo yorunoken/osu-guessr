@@ -1,9 +1,10 @@
-import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, deleteSessionAction } from "@/actions/game-server";
+import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, deleteSessionAction, getSuggestionsAction } from "@/actions/game-server";
 import { GameState, GameSession } from "./types";
 
 export class GameClient {
     private session: GameSession | null = null;
     private onStateUpdate: (state: GameState) => void;
+    private suggestionsDebounceTimer: NodeJS.Timeout | null = null;
 
     constructor(onStateUpdate: (state: GameState) => void) {
         this.onStateUpdate = onStateUpdate;
@@ -145,6 +146,20 @@ export class GameClient {
             throw error;
         } finally {
             this.cleanup();
+        }
+    }
+
+    async getSuggestions(query: string): Promise<string[]> {
+        if (!this.session?.isActive || this.session.state.currentBeatmap.revealed) {
+            return [];
+        }
+
+        try {
+            const suggestions = await getSuggestionsAction(query);
+            return suggestions;
+        } catch (error) {
+            console.error("Failed to get suggestions:", error);
+            return [];
         }
     }
 

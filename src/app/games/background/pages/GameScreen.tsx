@@ -149,7 +149,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
                 </div>
 
                 <div className="flex flex-col gap-6">
-                    <GuessInput ref={inputRef} guess={guess} setGuess={setGuess} isRevealed={gameState.currentBeatmap.revealed} onGuess={handleGuess} onSkip={handleSkip} />
+                    <GuessInput ref={inputRef} guess={guess} setGuess={setGuess} isRevealed={gameState.currentBeatmap.revealed} onGuess={handleGuess} onSkip={handleSkip} gameClient={gameClient.current!} />
 
                     <div className="bg-card p-6 rounded-xl border border-border/50">
                         <h3 className="font-semibold mb-2">How to play:</h3>
