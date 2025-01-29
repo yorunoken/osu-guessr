@@ -26,7 +26,7 @@ export async function getRandomBackgroundAction(previousMapsetId?: number) {
             throw new Error("No background found");
         }
 
-        const imagePath = path.join(process.cwd(), "mapset_background_pictures", background.image_filename);
+        const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", background.image_filename);
         const imageBuffer = await fs.readFile(imagePath);
         const backgroundImageData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
 

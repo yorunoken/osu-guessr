@@ -53,7 +53,7 @@ async function validateGameSession(sessionId: string, userId: number) {
         `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename
             FROM game_sessions g
             JOIN mapset_data m ON g.current_beatmap_id = m.mapset_id
-            JOIN mapsets_tags mt ON g.current_beatmap_id = mt.mapset_id
+            JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
             WHERE g.id = ? AND g.user_id = ? AND g.is_active = TRUE
             FOR UPDATE`,
         [sessionId, userId],
@@ -169,7 +169,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
 
         await query("COMMIT");
 
-        const imagePath = path.join(process.cwd(), "mapset_background_pictures", gameState.image_filename);
+        const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
         const imageBuffer = await fs.readFile(imagePath);
         const backgroundImageData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
 
@@ -214,7 +214,7 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
             `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename
                 FROM game_sessions g
                 JOIN mapset_data m ON g.current_beatmap_id = m.mapset_id
-                JOIN mapsets_tags mt ON g.current_beatmap_id = mt.mapset_id
+                JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
                 WHERE g.id = ? AND g.user_id = ?
                 FOR UPDATE`,
             [sessionId, authSession.user.banchoId],
@@ -233,7 +233,7 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
 
         await query("COMMIT");
 
-        const imagePath = path.join(process.cwd(), "mapset_background_pictures", gameState.image_filename);
+        const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
         const imageBuffer = await fs.readFile(imagePath);
         const backgroundImageData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
 
