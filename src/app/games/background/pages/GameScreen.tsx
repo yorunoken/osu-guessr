@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { GameClient } from "@/lib/game/GameClient";
 import { GameState } from "@/lib/game/types";
 
-import { ROUND_TIME, AUTO_ADVANCE_DELAY } from "../../config";
+import { ROUND_TIME, AUTO_ADVANCE_DELAY_MS } from "../../config";
 import GameHeader from "../components/Header";
 import GameImage from "../components/GameImage";
 import GuessInput from "../components/GuessInput";
@@ -20,7 +20,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [guess, setGuess] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const [countdown, setCountdown] = useState<number>(AUTO_ADVANCE_DELAY / 1000);
+    const [countdown, setCountdown] = useState<number>(AUTO_ADVANCE_DELAY_MS / 1000);
 
     const gameClient = useRef<GameClient | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -119,7 +119,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
 
     useEffect(() => {
         if (gameState?.currentBeatmap.revealed) {
-            setCountdown(AUTO_ADVANCE_DELAY / 1000);
+            setCountdown(AUTO_ADVANCE_DELAY_MS / 1000);
 
             const countdownInterval = setInterval(() => {
                 setCountdown((prev) => Math.max(0, prev - 1));
@@ -127,7 +127,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
 
             const advanceTimer = setTimeout(() => {
                 handleNextRound();
-            }, AUTO_ADVANCE_DELAY);
+            }, AUTO_ADVANCE_DELAY_MS);
 
             return () => {
                 clearInterval(countdownInterval);
