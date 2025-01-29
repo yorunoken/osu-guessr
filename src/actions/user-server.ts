@@ -194,7 +194,7 @@ export async function updateFinalScoreAction(gameMode: string, totalPoints: numb
         // Insert game record
         await query(
             `INSERT INTO games (user_id, game_mode, points, streak)
-             VALUES (?, ?, ?, ?)`,
+                VALUES (?, ?, ?, ?)`,
             [banchoId, validated.gameMode, validated.totalPoints, validated.finalStreak],
         );
 

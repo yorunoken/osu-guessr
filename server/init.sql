@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS games (
     game_mode ENUM ('background', 'audio', 'skin') NOT NULL,
     points INT DEFAULT 0,
     streak INT DEFAULT 0,
-    played TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE
 );
 
@@ -72,7 +72,6 @@ CREATE TABLE game_sessions (
     id VARCHAR(36) PRIMARY KEY,
     user_id INT NOT NULL,
     game_mode ENUM ('background', 'audio', 'skin') NOT NULL,
-    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_action_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     current_beatmap_id INT,
     time_left INT DEFAULT 30,

@@ -295,7 +295,7 @@ export async function endGameAction(sessionId: string): Promise<void> {
 
         await query(
             `INSERT INTO games (user_id, game_mode, points, streak)
-             VALUES (?, 'background', ?, ?)`,
+                VALUES (?, 'background', ?, ?)`,
             [authSession.user.banchoId, gameState.total_points, gameState.highest_streak],
         );
 
@@ -311,7 +311,7 @@ export async function endGameAction(sessionId: string): Promise<void> {
             [authSession.user.banchoId, gameState.total_points, gameState.highest_streak],
         );
 
-        await deleteSessionAction(sessionId);
+        await deactivateSessionAction(sessionId);
 
         await query("COMMIT");
     } catch (error) {
@@ -320,9 +320,9 @@ export async function endGameAction(sessionId: string): Promise<void> {
     }
 }
 
-export async function deleteSessionAction(sessionId: string) {
+export async function deactivateSessionAction(sessionId: string) {
     await query(
-        `DELETE FROM game_sessions
+        `UPDATE game_sessions SET is_active = FALSE
             WHERE id = ?`,
         [sessionId],
     );

@@ -1,4 +1,4 @@
-import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, deleteSessionAction, getSuggestionsAction, GameState } from "@/actions/game-server";
+import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, deactivateSessionAction, getSuggestionsAction, GameState } from "@/actions/game-server";
 import { GameSession } from "./types";
 
 export class GameClient {
@@ -139,7 +139,7 @@ export class GameClient {
         this.session.isActive = false;
 
         try {
-            await deleteSessionAction(this.session.id);
+            await deactivateSessionAction(this.session.id);
             console.log("[Game Client]: Ended Game (0 points, deleted session)");
         } catch (error) {
             console.error("Failed to end game:", error);
