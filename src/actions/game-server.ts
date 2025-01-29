@@ -125,7 +125,10 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
 
         const gameState = await validateGameSession(validated.sessionId, authSession.user.banchoId);
 
-        if (gameState.timeLeft <= 0) {
+        const timeElapsed = Math.floor((Date.now() - new Date(gameState.last_action_at).getTime()) / 1000);
+        const timeLeft = Math.max(0, gameState.time_left - timeElapsed);
+
+        if (timeLeft <= 0) {
             throw new Error("Time has expired for this round");
         }
 
@@ -137,9 +140,11 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         const isGuess = !isNextRound;
 
         const isCorrect = isGuess ? checkGuess(effectiveGuess || "", beatmap.title) : false;
-        const points = isNextRound ? 0 : calculateScore(isCorrect, gameState.timeLeft, gameState.current_streak);
+        const points = isNextRound ? 0 : calculateScore(isCorrect, timeLeft, gameState.current_streak);
 
         const nextBeatmap = isNextRound ? await getRandomBackgroundAction(gameState.current_beatmap_id) : null;
+
+        const newStreak = isNextRound ? gameState.current_streak : isCorrect ? gameState.current_streak + 1 : 0;
 
         // Update session atomically
         await query(
@@ -156,7 +161,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
             WHERE id = ?`,
             [
                 points,
-                isCorrect ? gameState.current_streak + 1 : 0,
+                newStreak,
                 isCorrect ? gameState.current_streak + 1 : gameState.highest_streak,
                 nextBeatmap ? nextBeatmap.data.mapset_id : gameState.current_beatmap_id,
                 nextBeatmap ? 30 : gameState.time_left,
@@ -185,7 +190,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
             score: {
                 total: gameState.total_points + points,
                 current: points,
-                streak: isCorrect ? gameState.current_streak + 1 : 0,
+                streak: newStreak,
                 highestStreak: Math.max(gameState.highest_streak, isCorrect ? gameState.current_streak + 1 : gameState.highest_streak),
             },
             timeLeft: nextBeatmap ? 30 : gameState.time_left,
