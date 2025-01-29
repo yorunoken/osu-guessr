@@ -1,4 +1,4 @@
-import { TIME_BONUS_MULTIPLIER, BASE_POINTS, SKIP_PENALTY, STREAK_BONUS } from "../games/config";
+import { TIME_BONUS_MULTIPLIER, BASE_POINTS, SKIP_PENALTY, STREAK_BONUS, MAX_ROUNDS, ROUND_TIME } from "../games/config";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -45,6 +45,8 @@ export default function AboutPage() {
                 <section className="bg-card rounded-xl p-8 border border-border/50">
                     <h2 className="text-2xl font-semibold mb-4">How Scoring Works</h2>
                     <div className="space-y-2">
+                        <p className="text-foreground/80">• Game Length: {MAX_ROUNDS} rounds</p>
+                        <p className="text-foreground/80">• Time per Round: {ROUND_TIME} seconds</p>
                         <p className="text-foreground/80">• Base points: {BASE_POINTS} points per correct guess</p>
                         <p className="text-foreground/80">• Time bonus: {TIME_BONUS_MULTIPLIER} points for each second remaining</p>
                         <p className="text-foreground/80">• Streak bonus: {STREAK_BONUS} points per correct answer in a row</p>

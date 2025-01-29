@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ROUND_TIME, BASE_POINTS, SKIP_PENALTY, STREAK_BONUS, TIME_BONUS_MULTIPLIER } from "../../config";
+import { ROUND_TIME, BASE_POINTS, SKIP_PENALTY, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS } from "../../config";
 
 interface PreGameMenuProps {
     onStart: () => void;
@@ -18,7 +18,8 @@ export default function PreGameMenu({ onStart }: PreGameMenuProps) {
                             <h2 className="text-xl font-semibold mb-3">How to Play</h2>
                             <ul className="space-y-2 text-foreground/70">
                                 <li>• You{"'"}ll be shown beatmap backgrounds from osu!</li>
-                                <li>• Try to guess the song title within {ROUND_TIME} seconds</li>
+                                <li>• Complete {MAX_ROUNDS} rounds of guessing</li>
+                                <li>• Try to guess the song title within {ROUND_TIME} seconds per round</li>
                                 <li>• Earn points based on speed and accuracy</li>
                                 <li>• Build a streak for bonus points</li>
                             </ul>
@@ -32,6 +33,11 @@ export default function PreGameMenu({ onStart }: PreGameMenuProps) {
                                 <li>• Streak Bonus: {STREAK_BONUS} points per streak level</li>
                                 <li>• Skip Penalty: {SKIP_PENALTY} points</li>
                             </ul>
+                        </div>
+
+                        <div className="bg-destructive/10 p-4 rounded-lg">
+                            <h2 className="text-xl font-semibold mb-2 text-destructive">Important Note</h2>
+                            <p className="text-foreground/70">Your score will only be counted if you complete all {MAX_ROUNDS} rounds. Leaving the game early will forfeit your progress!</p>
                         </div>
                     </div>
 

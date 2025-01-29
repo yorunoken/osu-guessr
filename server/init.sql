@@ -81,6 +81,9 @@ CREATE TABLE game_sessions (
     last_guess TEXT DEFAULT NULL,
     last_guess_correct BOOLEAN DEFAULT NULL,
     last_points INT DEFAULT 0,
+    current_round INT DEFAULT 1,
+    correct_guesses INT DEFAULT 0,
+    total_time_used INT DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE,
     FOREIGN KEY (current_beatmap_id) REFERENCES mapset_data (mapset_id)
@@ -94,7 +97,7 @@ CREATE INDEX idx_session_last_action ON game_sessions (last_action_at);
 
 CREATE INDEX idx_games_user_mode ON games (user_id, game_mode);
 
-CREATE INDEX idx_games_played ON games (played);
+CREATE INDEX idx_games_ended ON games (ended_at);
 
 CREATE INDEX idx_mapset_tags_mapset_id ON mapset_tags (mapset_id);
 
@@ -107,7 +110,5 @@ CREATE INDEX idx_mapset_data_mapper ON mapset_data (mapper);
 CREATE INDEX idx_user_achievements_score ON user_achievements (total_score);
 
 CREATE INDEX idx_game_sessions_mode ON game_sessions (game_mode);
-
-CREATE INDEX idx_game_sessions_started ON game_sessions (started_at);
 
 CREATE INDEX idx_api_keys_last_used ON api_keys (last_used);

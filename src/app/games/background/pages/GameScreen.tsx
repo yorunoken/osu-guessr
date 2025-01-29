@@ -4,13 +4,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { GameClient } from "@/lib/game/GameClient";
-import { GameState } from "@/lib/game/types";
+import { GameState } from "@/actions/game-server";
 
 import { ROUND_TIME, AUTO_ADVANCE_DELAY_MS } from "../../config";
 import GameHeader from "../components/Header";
 import GameImage from "../components/GameImage";
 import GuessInput from "../components/GuessInput";
 import LoadingScreen from "../components/LoadingScreen";
+import GameStats from "../components/GameStats";
 
 interface GameScreenProps {
     onExit(): void;
@@ -21,26 +22,36 @@ export default function GameScreen({ onExit }: GameScreenProps) {
     const [guess, setGuess] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [countdown, setCountdown] = useState<number>(AUTO_ADVANCE_DELAY_MS / 1000);
+    const [showStats, setShowStats] = useState(false);
 
     const gameClient = useRef<GameClient | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        async function fetchGame() {
+    const handleStartGame = useCallback(async () => {
+        try {
             setIsLoading(true);
-            console.log("Loading game client");
+            setShowStats(false);
+            setGuess("");
 
             gameClient.current = new GameClient(setGameState);
             await gameClient.current.startGame();
-            console.log("Loaded game client");
+
+            setCountdown(AUTO_ADVANCE_DELAY_MS / 1000);
+            inputRef.current?.focus();
+        } catch (error) {
+            console.error("Failed to restart game:", error);
+        } finally {
             setIsLoading(false);
         }
-        fetchGame();
+    }, []);
+
+    useEffect(() => {
+        handleStartGame();
 
         return () => {
             gameClient.current?.endGame().catch(console.error);
         };
-    }, []);
+    }, [handleStartGame]);
 
     const handleAction = useCallback(
         async (action: () => Promise<void>) => {
@@ -60,6 +71,13 @@ export default function GameScreen({ onExit }: GameScreenProps) {
         [isLoading],
     );
 
+    const handleGameComplete = useCallback(async () => {
+        if (!gameState) return;
+
+        setShowStats(true);
+        await gameClient.current?.endGame();
+    }, [gameState]);
+
     const handleGuess = useCallback(() => {
         if (!gameClient.current || !guess.trim() || gameState?.currentBeatmap.revealed) return;
         return handleAction(() => gameClient.current!.submitGuess(guess));
@@ -70,29 +88,41 @@ export default function GameScreen({ onExit }: GameScreenProps) {
         return handleAction(() => gameClient.current!.revealAnswer());
     }, [gameState?.currentBeatmap.revealed, handleAction]);
 
-    const handleNextRound = useCallback(() => {
-        if (!gameClient.current || !gameState?.currentBeatmap.revealed) return;
+    const handleNextRound = useCallback(async () => {
+        if (!gameState?.currentBeatmap.revealed) return;
+
+        if (gameState.rounds.current >= gameState.rounds.total) {
+            await handleGameComplete();
+            return;
+        }
+
         return handleAction(() => gameClient.current!.goNextRound());
-    }, [gameState?.currentBeatmap.revealed, handleAction]);
+    }, [gameState, handleAction, handleGameComplete]);
 
     const handleExit = useCallback(async () => {
-        if (!gameClient.current) return;
+        if (!gameClient.current || !gameState) return;
 
-        if (gameState?.score.total && gameState.score.total > 0) {
+        const isGameIncomplete = gameState.rounds.current < gameState.rounds.total;
+
+        if (isGameIncomplete) {
+            const confirmed = window.confirm("Are you sure you want to exit? Your score will not be counted if you leave before completing all rounds!");
+            if (!confirmed) return;
+        } else if (gameState.score.total > 0) {
             const confirmed = window.confirm("Are you sure you want to exit? Your score will be saved.");
             if (!confirmed) return;
-        } else {
-            console.log("Exited game with no score.");
-            await gameClient.current.cleanUpSession();
         }
 
         try {
-            await gameClient.current.endGame();
+            if (isGameIncomplete) {
+                await gameClient.current.cleanUpSession();
+            } else {
+                await gameClient.current.endGame();
+            }
             onExit();
         } catch (error) {
             console.error("Failed to end game:", error);
         }
-    }, [gameState?.score.total, onExit]);
+    }, [gameState, onExit]);
 
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
@@ -138,9 +168,22 @@ export default function GameScreen({ onExit }: GameScreenProps) {
 
     if (!gameState) return <LoadingScreen />;
 
+    if (showStats && gameState) {
+        return (
+            <GameStats
+                totalPoints={gameState.score.total}
+                correctGuesses={gameState.rounds.correctGuesses}
+                maxStreak={gameState.score.highestStreak}
+                totalRounds={gameState.rounds.total}
+                averageTime={gameState.rounds.totalTimeUsed / gameState.rounds.current}
+                onPlayAgain={handleStartGame}
+            />
+        );
+    }
+
     return (
         <div className="container mx-auto px-4 py-8">
-            <GameHeader streak={gameState.score.streak} points={gameState.score.total} timeLeft={gameState.timeLeft} />
+            <GameHeader streak={gameState.score.streak} points={gameState.score.total} timeLeft={gameState.timeLeft} currentRound={gameState.rounds.current} totalRounds={gameState.rounds.total} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="relative">
@@ -164,12 +207,12 @@ export default function GameScreen({ onExit }: GameScreenProps) {
             </div>
 
             <div className="flex justify-between mt-8">
-                <Button variant="outline" onClick={handleExit}>
-                    {gameState.score.total > 0 ? "Conclude Game" : "Exit Game"}
+                <Button variant="outline" onClick={handleExit} disabled={isLoading || gameState.rounds.current >= gameState.rounds.total}>
+                    Exit Game
                 </Button>
                 {gameState.currentBeatmap.revealed && (
                     <Button onClick={handleNextRound} className="px-8">
-                        Next Round ({countdown}s)
+                        {gameState.rounds.current >= gameState.rounds.total ? "View Results" : `Next Round (${countdown}s)`}
                     </Button>
                 )}
             </div>

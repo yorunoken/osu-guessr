@@ -2,13 +2,20 @@ interface GameHeaderProps {
     streak: number;
     points: number;
     timeLeft: number;
+    currentRound: number;
+    totalRounds: number;
 }
 
-export default function GameHeader({ streak, points, timeLeft }: GameHeaderProps) {
+export default function GameHeader({ streak, points, timeLeft, currentRound, totalRounds }: GameHeaderProps) {
     return (
         <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-4">
                 <h1 className="text-3xl font-bold">Background Guessr</h1>
+                <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
+                    <span className="font-semibold">
+                        Round: {currentRound}/{totalRounds}
+                    </span>
+                </div>
                 <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
                     <span className="font-semibold">Streak: {streak}</span>
                 </div>

@@ -3,7 +3,7 @@
 import { getAuthSession } from "./server";
 import { query } from "@/lib/database";
 import { z } from "zod";
-import { BASE_POINTS, SIMILARITY_THRESHOLD, STREAK_BONUS, TIME_BONUS_MULTIPLIER } from "../app/games/config";
+import { BASE_POINTS, SIMILARITY_THRESHOLD, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME } from "../app/games/config";
 import FuzzySet from "fuzzyset.js";
 import { getRandomBackgroundAction, MapsetDataWithTags } from "./mapsets-server";
 import path from "path";
@@ -36,6 +36,12 @@ export interface GameState {
         current: number;
         streak: number;
         highestStreak: number;
+    };
+    rounds: {
+        current: number;
+        total: number;
+        correctGuesses: number;
+        totalTimeUsed: number;
     };
     timeLeft: number;
     gameStatus: "active" | "finished";
@@ -85,10 +91,10 @@ export async function startGameAction(): Promise<GameState> {
         await query(
             `UPDATE game_sessions
             SET current_beatmap_id = ?,
-                time_left = 30,
+                time_left = ?,
                 last_action_at = CURRENT_TIMESTAMP
             WHERE id = ?`,
-            [beatmap.data.mapset_id, sessionId],
+            [beatmap.data.mapset_id, ROUND_TIME, sessionId],
         );
 
         await query("COMMIT");
@@ -105,7 +111,13 @@ export async function startGameAction(): Promise<GameState> {
                 streak: 0,
                 highestStreak: 0,
             },
-            timeLeft: 30,
+            rounds: {
+                current: 1,
+                total: MAX_ROUNDS,
+                correctGuesses: 0,
+                totalTimeUsed: 0,
+            },
+            timeLeft: ROUND_TIME,
             gameStatus: "active",
         };
     } catch (error) {
@@ -125,6 +137,10 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         await query("START TRANSACTION");
 
         const gameState = await validateGameSession(validated.sessionId, authSession.user.banchoId);
+
+        if (gameState.current_round > MAX_ROUNDS) {
+            throw new Error("Game is complete");
+        }
 
         const timeElapsed = Math.floor((Date.now() - new Date(gameState.last_action_at).getTime()) / 1000);
         const timeLeft = Math.max(0, gameState.time_left - timeElapsed);
@@ -158,21 +174,26 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 last_action_at = CURRENT_TIMESTAMP,
                 last_guess = ?,
                 last_guess_correct = ?,
-                last_points = ?
+                last_points = ?,
+                current_round = current_round + ?,
+                correct_guesses = correct_guesses + ?,
+                total_time_used = total_time_used + ?
             WHERE id = ?`,
             [
                 points,
                 newStreak,
                 isCorrect ? gameState.current_streak + 1 : gameState.highest_streak,
                 nextBeatmap ? nextBeatmap.data.mapset_id : gameState.current_beatmap_id,
-                nextBeatmap ? 30 : gameState.time_left,
+                nextBeatmap ? ROUND_TIME : gameState.time_left,
                 isSkipped ? "SKIPPED" : effectiveGuess,
                 isCorrect,
                 points,
+                isNextRound ? 1 : 0,
+                isCorrect ? 1 : 0,
+                isNextRound ? ROUND_TIME - timeLeft : 0,
                 sessionId,
             ],
         );
-
         await query("COMMIT");
 
         const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
@@ -195,7 +216,13 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 streak: newStreak,
                 highestStreak: Math.max(gameState.highest_streak, isCorrect ? gameState.current_streak + 1 : gameState.highest_streak),
             },
-            timeLeft: nextBeatmap ? 30 : gameState.time_left,
+            rounds: {
+                current: gameState.current_round + (isNextRound ? 1 : 0),
+                total: MAX_ROUNDS,
+                correctGuesses: gameState.correct_guesses + (isCorrect ? 1 : 0),
+                totalTimeUsed: gameState.total_time_used + (isNextRound ? ROUND_TIME - timeLeft : 0),
+            },
+            timeLeft: nextBeatmap ? ROUND_TIME : gameState.time_left,
             gameStatus: "active",
             lastGuess: !isNextRound
                 ? {
@@ -260,6 +287,12 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
                 streak: gameState.current_streak,
                 highestStreak: gameState.highest_streak,
             },
+            rounds: {
+                current: gameState.current_round,
+                total: MAX_ROUNDS,
+                correctGuesses: gameState.correct_guesses,
+                totalTimeUsed: gameState.total_time_used,
+            },
             timeLeft,
             gameStatus: gameState.is_active ? "active" : "finished",
             lastGuess: gameState.last_guess
@@ -291,6 +324,11 @@ export async function endGameAction(sessionId: string): Promise<void> {
 
         if (!gameState) {
             throw new Error("Game session not found or already ended");
+        }
+
+        if (gameState.current_round < MAX_ROUNDS) {
+            await deactivateSessionAction(sessionId);
+            return;
         }
 
         await query(
