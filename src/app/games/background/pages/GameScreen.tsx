@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 import { GameClient } from "@/lib/game/GameClient";
@@ -19,8 +18,6 @@ interface GameScreenProps {
 }
 
 export default function GameScreen({ onExit }: GameScreenProps) {
-    const router = useRouter();
-
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [guess, setGuess] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -110,9 +107,6 @@ export default function GameScreen({ onExit }: GameScreenProps) {
         if (isGameIncomplete) {
             const confirmed = window.confirm("Are you sure you want to exit? Your score will not be counted if you leave before completing all rounds!");
             if (!confirmed) return false;
-        } else if (gameState.score.total > 0) {
-            const confirmed = window.confirm("Are you sure you want to exit? Your score will be saved.");
-            if (!confirmed) return false;
         }
 
         try {
@@ -129,6 +123,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
         }
     }, [gameState, onExit]);
 
+    // Prevent game from closing when user tries to close the tab
     useEffect(() => {
         if (!gameClient.current || !gameState) return;
 
@@ -139,29 +134,12 @@ export default function GameScreen({ onExit }: GameScreenProps) {
             }
         };
 
-        const handleAnchorClick = async (e: MouseEvent) => {
-            if (!gameState || gameState.rounds.current >= gameState.rounds.total) return;
-
-            const target = e.target as HTMLElement;
-            const anchor = target.closest("a");
-            if (!anchor) return;
-
-            const href = anchor.getAttribute("href");
-            if (href?.startsWith("/")) {
-                e.preventDefault();
-                const exited = await handleExit();
-                if (exited) router.push(href);
-            }
-        };
-
         window.addEventListener("beforeunload", handleBeforeUnload);
-        document.addEventListener("click", handleAnchorClick);
 
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
-            document.removeEventListener("click", handleAnchorClick);
         };
-    }, [gameState, router, handleExit]);
+    }, [gameState, handleExit]);
 
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
@@ -241,7 +219,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
             </div>
 
             <div className="flex justify-between mt-8">
-                <Button variant="outline" onClick={handleExit} disabled={isLoading || gameState.rounds.current >= gameState.rounds.total}>
+                <Button variant="outline" onClick={handleExit} disabled={isLoading || gameState.rounds.current > gameState.rounds.total}>
                     Exit Game
                 </Button>
                 {gameState.currentBeatmap.revealed && (
