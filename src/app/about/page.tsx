@@ -33,7 +33,7 @@ export default function AboutPage() {
                         </div>
                         <div>
                             <h3 className="text-xl font-medium mb-2">Audio Guessr</h3>
-                            <p className="text-foreground/80">Listen to short clips from beatmaps and try to identify the song. Perfect for music enthusiasts!</p>
+                            <p className="text-foreground/80">Listen to short clips from beatmaps and try to identify the song.</p>
                         </div>
                         <div>
                             <h3 className="text-xl font-medium mb-2">Skin Guessr</h3>
