@@ -25,13 +25,16 @@ export default function GameAudio({ audioUrl, isRevealed, result, songInfo }: Ga
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
             audioRef.current.load();
-            audioRef.current.volume = 0.25;
 
-            const playPromise = audioRef.current.play();
-            if (playPromise !== undefined) {
-                playPromise.catch((error) => {
-                    console.log("Audio playback failed:", error);
-                });
+            if (!isRevealed) {
+                audioRef.current.volume = 0.25;
+                const playPromise = audioRef.current.play();
+
+                if (playPromise !== undefined) {
+                    playPromise.catch((error) => {
+                        console.log("Audio playback failed:", error);
+                    });
+                }
             }
         }
 
@@ -41,7 +44,14 @@ export default function GameAudio({ audioUrl, isRevealed, result, songInfo }: Ga
                 audioRef.current.currentTime = 0;
             }
         };
-    }, [audioRef]);
+    }, [audioUrl, isRevealed]);
+
+    useEffect(() => {
+        if (isRevealed && audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
+    }, [isRevealed]);
 
     return (
         <div className="relative bg-card border border-border rounded-lg overflow-hidden">
@@ -53,7 +63,7 @@ export default function GameAudio({ audioUrl, isRevealed, result, songInfo }: Ga
                 {!isRevealed && <p className="text-center text-muted-foreground">Listen to the audio and try to guess the song title!</p>}
             </div>
             {isRevealed && result && songInfo && (
-                <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+                <div className="bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
                     <div className={`text-2xl font-bold mb-4 ${result.correct ? "text-green-500" : "text-destructive"}`}>{result.correct ? "Correct!" : "Wrong!"}</div>
                     <div className="space-y-2">
                         <p className="text-xl font-semibold">{songInfo.title}</p>

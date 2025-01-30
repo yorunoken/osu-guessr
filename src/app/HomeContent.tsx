@@ -6,12 +6,19 @@ import { StatsCard } from "./components/StatsCard";
 import { Button } from "@/components/ui/button";
 import { Gamepad2, Trophy, Users2 } from "lucide-react";
 
+interface ChangelogEntry {
+    description: string;
+    commit?: string;
+    pr?: string;
+}
+
+interface Changelog {
+    version: string;
+    date: string;
+    changes: Array<ChangelogEntry>;
+}
+
 export default async function HomeContent() {
-    interface Changelog {
-        version: string;
-        date: string;
-        changes: Array<string>;
-    }
     const changelogs: Array<Changelog> = await readChangelogs();
     changelogs.reverse();
 
@@ -70,7 +77,29 @@ export default async function HomeContent() {
                                                 {log.changes.map((change, j) => (
                                                     <li key={j} className="text-foreground/80 flex items-start gap-2">
                                                         <span className="text-primary">•</span>
-                                                        {change}
+                                                        <span>{change.description}</span>
+                                                        <div className="space-x-2 text-sm">
+                                                            {change.commit && (
+                                                                <a
+                                                                    href={`https://github.com/yorunoken/osu-guessr/commit/${change.commit}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-primary hover:underline"
+                                                                >
+                                                                    [commit]
+                                                                </a>
+                                                            )}
+                                                            {change.pr && (
+                                                                <a
+                                                                    href={`https://github.com/yorunoken/osu-guessr/pull/${change.pr}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-primary hover:underline"
+                                                                >
+                                                                    [PR #{change.pr}]
+                                                                </a>
+                                                            )}
+                                                        </div>
                                                     </li>
                                                 ))}
                                             </ul>
