@@ -15,28 +15,40 @@ const GuessInput = forwardRef<HTMLInputElement, GuessInputProps>(({ guess, setGu
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
-
     const clickingRef = useRef(false);
+    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const isSelectingRef = useRef(false);
 
     useEffect(() => {
-        const delayDebounceFn = setTimeout(async () => {
-            if (guess.length >= 2 && !isRevealed) {
-                try {
-                    const results = await gameClient.getSuggestions(guess);
-                    setSuggestions(results);
-                    setShowSuggestions(true);
-                } catch (error) {
-                    console.error("Failed to get suggestions:", error);
-                    setSuggestions([]);
-                }
-            } else {
-                setSuggestions([]);
-                setShowSuggestions(false);
+        if (!isSelectingRef.current && guess.trim()) {
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
             }
-        }, 300);
 
-        return () => clearTimeout(delayDebounceFn);
-    }, [guess, isRevealed, gameClient]);
+            debounceTimeoutRef.current = setTimeout(async () => {
+                const newSuggestions = await gameClient.getSuggestions(guess);
+                setSuggestions(newSuggestions);
+                setShowSuggestions(true);
+                setSelectedIndex(-1);
+            }, 300);
+        }
+
+        return () => {
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
+        };
+    }, [guess, gameClient]);
+
+    const handleSuggestionSelect = (suggestion: string) => {
+        isSelectingRef.current = true;
+        setGuess(suggestion);
+        setShowSuggestions(false);
+        setSuggestions([]);
+        setTimeout(() => {
+            isSelectingRef.current = false;
+        }, 100);
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "ArrowDown") {
@@ -47,8 +59,7 @@ const GuessInput = forwardRef<HTMLInputElement, GuessInputProps>(({ guess, setGu
             setSelectedIndex((prev) => Math.max(prev - 1, -1));
         } else if (e.key === "Enter") {
             if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-                setGuess(suggestions[selectedIndex]);
-                setShowSuggestions(false);
+                handleSuggestionSelect(suggestions[selectedIndex]);
             } else if (!isRevealed) {
                 onGuess();
             }
@@ -67,39 +78,33 @@ const GuessInput = forwardRef<HTMLInputElement, GuessInputProps>(({ guess, setGu
                     value={guess}
                     onChange={(e) => setGuess(e.target.value)}
                     onKeyDown={handleKeyDown}
+                    onFocus={() => setShowSuggestions(!!guess)}
                     onBlur={() => {
-                        if (!clickingRef.current) {
-                            setShowSuggestions(false);
-                        }
-                    }}
-                    onFocus={() => {
-                        if (guess.length >= 2) {
-                            setShowSuggestions(true);
-                        }
+                        requestAnimationFrame(() => {
+                            if (!clickingRef.current) {
+                                setShowSuggestions(false);
+                            }
+                        });
                     }}
                     className="w-full p-3 rounded-lg bg-secondary text-foreground border border-border/50 focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Song title..."
                     disabled={isRevealed}
                 />
+
                 {showSuggestions && suggestions.length > 0 && (
-                    <div
-                        className="absolute z-10 w-full mt-1 bg-card border border-border/50 rounded-lg shadow-lg"
-                        onMouseDown={() => {
-                            clickingRef.current = true;
-                        }}
-                        onMouseUp={() => {
-                            clickingRef.current = false;
-                        }}
-                    >
+                    <div className="absolute w-full mt-1 py-2 bg-card/80 backdrop-blur-sm border border-border/50 rounded-lg shadow-lg max-h-[300px] overflow-y-auto z-50 transition-all duration-200 ease-in-out">
                         {suggestions.map((suggestion, index) => (
                             <div
                                 key={suggestion}
-                                className={`px-4 py-2 cursor-pointer hover:bg-primary/10 ${index === selectedIndex ? "bg-primary/20" : ""}`}
-                                onClick={() => {
-                                    setGuess(suggestion);
-                                    setShowSuggestions(false);
-                                    clickingRef.current = false;
+                                className={`px-4 py-2 cursor-pointer transition-colors duration-150 hover:bg-secondary/50 ${index === selectedIndex ? "bg-secondary text-primary font-medium" : ""}`}
+                                onMouseDown={() => {
+                                    clickingRef.current = true;
                                 }}
+                                onMouseUp={() => {
+                                    clickingRef.current = false;
+                                    handleSuggestionSelect(suggestion);
+                                }}
+                                onMouseEnter={() => setSelectedIndex(index)}
                             >
                                 {suggestion}
                             </div>
