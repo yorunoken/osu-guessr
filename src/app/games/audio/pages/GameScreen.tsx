@@ -12,15 +12,12 @@ import GameStats from "../../shared/components/GameStats";
 import GuessInput from "../../shared/components/GuessInput";
 import LoadingScreen from "../../shared/components/LoadingScreen";
 import GameHeader from "../../shared/components/Header";
-import { useRouter } from "next/navigation";
 
 interface GameScreenProps {
     onExit(): void;
 }
 
 export default function GameScreen({ onExit }: GameScreenProps) {
-    const router = useRouter();
-
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [guess, setGuess] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -139,29 +136,12 @@ export default function GameScreen({ onExit }: GameScreenProps) {
             }
         };
 
-        const handleAnchorClick = async (e: MouseEvent) => {
-            if (!gameState || gameState.rounds.current >= gameState.rounds.total) return;
-
-            const target = e.target as HTMLElement;
-            const anchor = target.closest("a");
-            if (!anchor) return;
-
-            const href = anchor.getAttribute("href");
-            if (href?.startsWith("/")) {
-                e.preventDefault();
-                const exited = await handleExit();
-                if (exited) router.push(href);
-            }
-        };
-
         window.addEventListener("beforeunload", handleBeforeUnload);
-        document.addEventListener("click", handleAnchorClick);
 
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
-            document.removeEventListener("click", handleAnchorClick);
         };
-    }, [gameState, router, handleExit]);
+    }, [gameState, handleExit]);
 
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {

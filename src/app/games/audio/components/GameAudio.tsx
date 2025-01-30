@@ -24,61 +24,54 @@ export default function GameAudio({ audioUrl, isRevealed, result, songInfo }: Ga
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
-
             audioRef.current.load();
-            audioRef.current.play();
+            audioRef.current.volume = 0.25;
+
+            const playPromise = audioRef.current.play();
+            if (playPromise !== undefined) {
+                playPromise.catch((error) => {
+                    console.log("Audio playback failed:", error);
+                });
+            }
         }
 
         return () => {
             if (audioRef.current) {
                 audioRef.current.pause();
                 audioRef.current.currentTime = 0;
-                audioRef.current.src = "";
             }
         };
-    }, [audioUrl]);
+    }, [audioRef]);
 
     return (
-        <div className="relative aspect-[3/1] rounded-xl border border-border/50 bg-card p-8">
-            <div className="flex flex-col items-center justify-center h-full">
-                <audio ref={audioRef} controls className="w-full mb-6">
+        <div className="relative bg-card border border-border rounded-lg overflow-hidden">
+            <div className="p-6">
+                <audio ref={audioRef} controls className="w-full mb-4">
                     <source src={audioUrl} type="audio/mp3" />
                     Your browser does not support the audio element.
                 </audio>
-
-                {!isRevealed && <p className="text-foreground/70">Listen to the audio and try to guess the song title!</p>}
-
-                {isRevealed && result && songInfo && (
-                    <div className="w-full max-w-md space-y-6">
-                        <div
-                            className={`text-center px-4 py-2 rounded-lg ${
-                                result.correct ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-destructive/10 text-destructive border border-destructive/20"
-                            }`}
-                        >
-                            <span className="text-2xl font-bold">{result.correct ? "Correct!" : "Wrong!"}</span>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="bg-card/50 rounded-lg p-4 space-y-2 text-center">
-                                <h3 className="text-2xl font-bold text-primary">{songInfo.title}</h3>
-                                <p className="text-lg text-foreground/70">by {songInfo.artist}</p>
-                                <div className="pt-2 border-t border-border/20">
-                                    <p className="text-sm text-foreground/50">Mapped by {songInfo.mapper}</p>
-                                </div>
-                            </div>
-
+                {!isRevealed && <p className="text-center text-muted-foreground">Listen to the audio and try to guess the song title!</p>}
+            </div>
+            {isRevealed && result && songInfo && (
+                <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+                    <div className={`text-2xl font-bold mb-4 ${result.correct ? "text-green-500" : "text-destructive"}`}>{result.correct ? "Correct!" : "Wrong!"}</div>
+                    <div className="space-y-2">
+                        <p className="text-xl font-semibold">{songInfo.title}</p>
+                        <p className="text-foreground/70">by {songInfo.artist}</p>
+                        <p className="text-sm text-foreground/50">Mapped by {songInfo.mapper}</p>
+                        {songInfo.mapsetId && (
                             <a
                                 href={`https://osu.ppy.sh/beatmapsets/${songInfo.mapsetId}`}
-                                className="block text-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                                className="inline-block mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                View Beatmap ↗
+                                View Beatmap
                             </a>
-                        </div>
+                        )}
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }
