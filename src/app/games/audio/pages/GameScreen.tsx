@@ -234,7 +234,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
             </div>
 
             <div className="flex justify-between mt-8">
-                <Button variant="outline" onClick={handleExit} disabled={isLoading || gameState.rounds.current >= gameState.rounds.total}>
+                <Button variant="outline" onClick={handleExit} disabled={isLoading || gameState.rounds.current > gameState.rounds.total}>
                     Exit Game
                 </Button>
                 {gameState.currentBeatmap.revealed && (
