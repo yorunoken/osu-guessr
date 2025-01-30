@@ -66,7 +66,7 @@ export default function LeaderboardClient() {
                                     <th className="px-6 py-4 text-left">Player</th>
                                     <th className="px-6 py-4 text-right">Total Score</th>
                                     <th className="px-6 py-4 text-right">Games Played</th>
-                                    <th className="px-6 py-4 text-right">Highest Streak</th>
+                                    <th className="px-6 py-4 text-right">Hi-Score</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/50">
@@ -86,7 +86,7 @@ export default function LeaderboardClient() {
                                         </td>
                                         <td className="px-6 py-4 text-right font-mono">{Number(player.total_score).toLocaleString()}</td>
                                         <td className="px-6 py-4 text-right font-mono">{player.games_played}</td>
-                                        <td className="px-6 py-4 text-right font-mono">{player.highest_streak}</td>
+                                        <td className="px-6 py-4 text-right font-mono">{player.highest_score}</td>
                                     </tr>
                                 ))}
                             </tbody>

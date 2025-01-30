@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS user_achievements (
     total_score INT DEFAULT 0,
     games_played INT DEFAULT 0,
     highest_streak INT DEFAULT 0,
+    highest_score INT DEFAULT 0,
     last_played TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY user_game_mode (user_id, game_mode),
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE

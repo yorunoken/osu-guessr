@@ -418,14 +418,15 @@ export async function endGameAction(sessionId: string): Promise<void> {
 
         await query(
             `INSERT INTO user_achievements
-             (user_id, game_mode, total_score, games_played, highest_streak)
-             VALUES (?, 'background', ?, 1, ?)
+             (user_id, game_mode, total_score, games_played, highest_streak, highest_score)
+             VALUES (?, 'background', ?, 1, ?, ?)
              ON DUPLICATE KEY UPDATE
                total_score = total_score + VALUES(total_score),
                games_played = games_played + 1,
                highest_streak = GREATEST(highest_streak, VALUES(highest_streak)),
+               highest_score = GREATEST(highest_score, VALUES(highest_score)),
                last_played = CURRENT_TIMESTAMP`,
-            [authSession.user.banchoId, gameState.total_points, gameState.highest_streak],
+            [authSession.user.banchoId, gameState.total_points, gameState.highest_streak, gameState.total_points],
         );
 
         await deactivateSessionAction(sessionId);
@@ -436,7 +437,6 @@ export async function endGameAction(sessionId: string): Promise<void> {
         throw error;
     }
 }
-
 export async function deactivateSessionAction(sessionId: string) {
     await query(
         `UPDATE game_sessions SET is_active = FALSE

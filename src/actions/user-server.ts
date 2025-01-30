@@ -54,6 +54,7 @@ export interface TopPlayer {
     total_score: number;
     games_played: number;
     highest_streak: number;
+    highest_score: number;
 }
 
 export interface Game {
@@ -77,11 +78,6 @@ const gameModeSchema = z.enum(["background", "audio", "skin"]);
 const searchSchema = z.object({
     term: z.string().min(2).max(250),
     limit: z.number().min(1).max(100).default(10),
-});
-const scoreSchema = z.object({
-    gameMode: gameModeSchema,
-    totalPoints: z.number().min(0),
-    finalStreak: z.number().min(0),
 });
 
 // Public server actions
@@ -170,7 +166,7 @@ export async function getTopPlayersAction(gamemode: string, limit: number = 10):
     const result = await query(
         `SELECT
                 u.username, u.avatar_url, u.bancho_id,
-                ua.total_score, ua.games_played, ua.highest_streak
+                ua.total_score, ua.games_played, ua.highest_streak, ua.highest_score
             FROM user_achievements ua
                 JOIN users u ON ua.user_id = u.bancho_id
             WHERE ua.game_mode = ?
@@ -179,48 +175,6 @@ export async function getTopPlayersAction(gamemode: string, limit: number = 10):
         [validatedMode, limit],
     );
     return result;
-}
-
-export async function updateFinalScoreAction(gameMode: string, totalPoints: number, finalStreak: number) {
-    return authenticatedAction(async (session) => {
-        const banchoId = session.user.banchoId;
-
-        const validated = scoreSchema.parse({
-            gameMode,
-            totalPoints,
-            finalStreak,
-        });
-
-        // Insert game record
-        await query(
-            `INSERT INTO games (user_id, game_mode, points, streak)
-                VALUES (?, ?, ?, ?)`,
-            [banchoId, validated.gameMode, validated.totalPoints, validated.finalStreak],
-        );
-
-        // Update achievements
-        await query(
-            `INSERT INTO user_achievements
-                (user_id, game_mode, total_score, games_played)
-            VALUES (?, ?, ?, 1)
-            ON DUPLICATE KEY UPDATE
-                total_score = total_score + VALUES(total_score),
-                games_played = games_played + 1,
-                highest_streak = GREATEST(highest_streak, ?),
-                last_played = CURRENT_TIMESTAMP`,
-            [banchoId, validated.gameMode, validated.totalPoints, validated.finalStreak],
-        );
-
-        // Update streak
-        await query(
-            `UPDATE user_achievements
-            SET highest_streak = GREATEST(highest_streak, ?)
-            WHERE user_id = ? AND game_mode = ?`,
-            [validated.finalStreak, banchoId, validated.gameMode],
-        );
-
-        return { success: true };
-    });
 }
 
 export async function searchUsersAction(searchTerm: string, limit: number = 10): Promise<Array<User>> {
