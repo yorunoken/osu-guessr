@@ -41,44 +41,45 @@ while IFS= read -r line; do
     mapset_temp_dir="$TEMP_DIR/$mapset_id"
     mkdir -p "$mapset_temp_dir"
 
-    # # Audio processing (commented out)
-    #
-    # echo "  Downloading beatmap..."
+    # Audio processing (commented out)
+
+    echo "  Downloading beatmap..."
     # wget -q "https://api.nerinyan.moe/d/$mapset_id" -O "$mapset_temp_dir/$mapset_id.osz"
+    wget -q "https://beatconnect.io/b/$mapset_id" -O "$mapset_temp_dir/$mapset_id.osz"
 
-    # # Check if download was successful
-    # if [ ! -f "$mapset_temp_dir/$mapset_id.osz" ]; then
-    #     echo "  Failed to download .osz file"
-    #     rm -rf "$mapset_temp_dir"
-    #     continue
-    # fi
+    # Check if download was successful
+    if [ ! -f "$mapset_temp_dir/$mapset_id.osz" ]; then
+        echo "  Failed to download .osz file"
+        rm -rf "$mapset_temp_dir"
+        continue
+    fi
 
-    # # Check file size
-    # filesize=$(stat -f%z "$mapset_temp_dir/$mapset_id.osz" 2>/dev/null || stat -c%s "$mapset_temp_dir/$mapset_id.osz")
-    # if [ "$filesize" -eq 0 ]; then
-    #     echo "  Downloaded file is empty"
-    #     rm -rf "$mapset_temp_dir"
-    #     continue
-    # fi
+    # Check file size
+    filesize=$(stat -f%z "$mapset_temp_dir/$mapset_id.osz" 2>/dev/null || stat -c%s "$mapset_temp_dir/$mapset_id.osz")
+    if [ "$filesize" -eq 0 ]; then
+        echo "  Downloaded file is empty"
+        rm -rf "$mapset_temp_dir"
+        continue
+    fi
 
-    # echo "  Unzipping beatmap..."
-    # unzip -q "$mapset_temp_dir/$mapset_id.osz" -d "$mapset_temp_dir" || {
-    #     echo "  Failed to unzip beatmap"
-    #     rm -rf "$mapset_temp_dir"
-    #     continue
-    # }
+    echo "  Unzipping beatmap..."
+    unzip -q "$mapset_temp_dir/$mapset_id.osz" -d "$mapset_temp_dir" || {
+        echo "  Failed to unzip beatmap"
+        rm -rf "$mapset_temp_dir"
+        continue
+    }
 
-    # largest_audio=$(find "$mapset_temp_dir" -type f \( -name "*.mp3" -o -name "*.ogg" \) -printf "%s %p\n" | sort -nr | head -1 | cut -d' ' -f2-)
+    largest_audio=$(find "$mapset_temp_dir" -type f \( -name "*.mp3" -o -name "*.ogg" \) -printf "%s %p\n" | sort -nr | head -1 | cut -d' ' -f2-)
 
-    # if [ -n "$largest_audio" ]; then
-    #     audio_ext="${largest_audio##*.}"
-    #     cp -f "$largest_audio" "$AUDIO_DIR/$mapset_id.$audio_ext"
-    #     audio_filename="$mapset_id.$audio_ext"
-    #     echo "  Audio file copied to: $AUDIO_DIR/$mapset_id.$audio_ext"
-    # else
-    #     echo "  No audio file found for mapset $mapset_id"
-    #     continue
-    # fi
+    if [ -n "$largest_audio" ]; then
+        audio_ext="${largest_audio##*.}"
+        cp -f "$largest_audio" "$AUDIO_DIR/$mapset_id.$audio_ext"
+        audio_filename="$mapset_id.$audio_ext"
+        echo "  Audio file copied to: $AUDIO_DIR/$mapset_id.$audio_ext"
+    else
+        echo "  No audio file found for mapset $mapset_id"
+        continue
+    fi
 
     # Download background from osu! assets
     echo "  Downloading background image..."
