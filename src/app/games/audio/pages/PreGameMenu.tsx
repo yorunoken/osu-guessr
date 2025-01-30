@@ -13,13 +13,13 @@ export default function PreGameMenu({ onStart }: PreGameMenuProps) {
         <div className="container mx-auto px-4 py-16">
             <div className="max-w-2xl mx-auto">
                 <div className="bg-card rounded-xl p-8 border border-border/50">
-                    <h1 className="text-3xl font-bold mb-6">Background Guessr</h1>
+                    <h1 className="text-3xl font-bold mb-6">Audio Guessr</h1>
 
                     <div className="space-y-6 mb-8">
                         <div>
                             <h2 className="text-xl font-semibold mb-3">How to Play</h2>
                             <ul className="space-y-2 text-foreground/70">
-                                <li>• You{"'"}ll be shown beatmap backgrounds from osu!</li>
+                                <li>• You{"'"}ll hear short clips from osu! songs</li>
                                 <li>• Complete {MAX_ROUNDS} rounds of guessing</li>
                                 <li>• Try to guess the song title within {ROUND_TIME} seconds per round</li>
                                 <li>• Earn points based on speed and accuracy</li>

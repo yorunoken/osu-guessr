@@ -5,7 +5,7 @@ import { query } from "@/lib/database";
 import { z } from "zod";
 import { BASE_POINTS, SIMILARITY_THRESHOLD, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME } from "../app/games/config";
 import FuzzySet from "fuzzyset.js";
-import { getRandomBackgroundAction, MapsetDataWithTags } from "./mapsets-server";
+import { getRandomAudioAction, getRandomBackgroundAction, MapsetDataWithTags } from "./mapsets-server";
 import path from "path";
 import fs from "fs/promises";
 
@@ -24,7 +24,8 @@ const gameSchema = z.object({
 export interface GameState {
     sessionId: string;
     currentBeatmap: {
-        imageUrl: string;
+        imageUrl?: string;
+        audioUrl?: string;
         revealed: boolean;
         title?: string;
         artist?: string;
@@ -57,7 +58,7 @@ async function checkRateLimit(userId: number) {
 
 async function validateGameSession(sessionId: string, userId: number) {
     const [session] = await query(
-        `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename
+        `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename, mt.audio_filename
             FROM game_sessions g
             JOIN mapset_data m ON g.current_beatmap_id = m.mapset_id
             JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
@@ -71,6 +72,58 @@ async function validateGameSession(sessionId: string, userId: number) {
     }
 
     return session;
+}
+
+export async function startAudioGameAction(): Promise<GameState> {
+    const authSession = await getAuthSession();
+    const sessionId = crypto.randomUUID();
+
+    try {
+        await query(
+            `INSERT INTO game_sessions
+                (id, user_id, game_mode, total_points, current_streak, highest_streak)
+                VALUES (?, ?, 'audio', 0, 0, 0)`,
+            [sessionId, authSession.user.banchoId],
+        );
+
+        const beatmap = await getRandomAudioAction();
+
+        await query(
+            `UPDATE game_sessions
+            SET current_beatmap_id = ?,
+                time_left = ?,
+                last_action_at = CURRENT_TIMESTAMP
+            WHERE id = ?`,
+            [beatmap.data.mapset_id, ROUND_TIME, sessionId],
+        );
+
+        await query("COMMIT");
+
+        return {
+            sessionId,
+            currentBeatmap: {
+                audioUrl: beatmap.audioData,
+                revealed: false,
+            },
+            score: {
+                total: 0,
+                current: 0,
+                streak: 0,
+                highestStreak: 0,
+            },
+            rounds: {
+                current: 1,
+                total: MAX_ROUNDS,
+                correctGuesses: 0,
+                totalTimeUsed: 0,
+            },
+            timeLeft: ROUND_TIME,
+            gameStatus: "active",
+        };
+    } catch (error) {
+        await query("ROLLBACK");
+        throw error;
+    }
 }
 
 export async function startGameAction(): Promise<GameState> {
@@ -159,8 +212,17 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         const isCorrect = isGuess ? checkGuess(effectiveGuess || "", beatmap.title) : false;
         const points = isNextRound ? 0 : calculateScore(isCorrect, timeLeft, gameState.current_streak);
 
-        const nextBeatmap = isNextRound ? await getRandomBackgroundAction(gameState.current_beatmap_id) : null;
+        let nextBeatmap: { data: MapsetDataWithTags; backgroundData?: string; audioData?: string } | null = null;
 
+        if (isNextRound) {
+            if (gameState.game_mode === "audio") {
+                const audio = await getRandomAudioAction(gameState.current_beatmap_id);
+                nextBeatmap = { data: audio.data, audioData: audio.audioData };
+            } else {
+                const background = await getRandomBackgroundAction(gameState.current_beatmap_id);
+                nextBeatmap = { data: background.data, backgroundData: background.backgroundData };
+            }
+        }
         const newStreak = isNextRound ? gameState.current_streak : isCorrect ? gameState.current_streak + 1 : 0;
 
         // Update session atomically
@@ -196,14 +258,23 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         );
         await query("COMMIT");
 
-        const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
-        const imageBuffer = await fs.readFile(imagePath);
-        const backgroundImageData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        const currentMedia: { backgroundData?: string; audioData?: string } = {};
+
+        if (gameState.game_mode === "background") {
+            const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
+            const imageBuffer = await fs.readFile(imagePath);
+            currentMedia.backgroundData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        } else {
+            const audioPath = path.join(process.cwd(), "mapsets", "audio", gameState.audio_filename);
+            const audioBuffer = await fs.readFile(audioPath);
+            currentMedia.audioData = `data:audio/mp3;base64,${audioBuffer.toString("base64")}`;
+        }
 
         return {
             sessionId,
             currentBeatmap: {
-                imageUrl: nextBeatmap ? nextBeatmap.backgroundData : backgroundImageData,
+                imageUrl: gameState.game_mode === "background" ? (nextBeatmap?.backgroundData ?? currentMedia.backgroundData) : undefined,
+                audioUrl: gameState.game_mode === "audio" ? (nextBeatmap?.audioData ?? currentMedia.audioData) : undefined,
                 revealed: !isNextRound,
                 title: !isNextRound ? beatmap.title : undefined,
                 artist: !isNextRound ? beatmap.artist : undefined,
@@ -245,7 +316,7 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
         await query("START TRANSACTION");
 
         const [gameState] = await query(
-            `SELECT g.*, m.title, m.artist, m.mapper, m.mapset_id, mt.image_filename
+            `SELECT g.*, m.title, m.artist, m.mapper, m.mapset_id, mt.image_filename, mt.audio_filename
                 FROM game_sessions g
                 JOIN mapset_data m ON g.current_beatmap_id = m.mapset_id
                 JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
@@ -267,14 +338,22 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
 
         await query("COMMIT");
 
-        const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
-        const imageBuffer = await fs.readFile(imagePath);
-        const backgroundImageData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        let mediaData: string | undefined;
 
+        if (gameState.game_mode === "background") {
+            const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
+            const imageBuffer = await fs.readFile(imagePath);
+            mediaData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        } else {
+            const audioPath = path.join(process.cwd(), "mapsets", "audio", gameState.audio_filename);
+            const audioBuffer = await fs.readFile(audioPath);
+            mediaData = `data:audio/mp3;base64,${audioBuffer.toString("base64")}`;
+        }
         return {
             sessionId,
             currentBeatmap: {
-                imageUrl: backgroundImageData,
+                imageUrl: gameState.game_mode === "background" ? mediaData : undefined,
+                audioUrl: gameState.game_mode === "audio" ? mediaData : undefined,
                 revealed: Boolean(gameState.last_guess),
                 title: gameState.last_guess ? gameState.title : undefined,
                 artist: gameState.last_guess ? gameState.artist : undefined,

@@ -4,13 +4,14 @@ interface GameHeaderProps {
     timeLeft: number;
     currentRound: number;
     totalRounds: number;
+    mode: "Background" | "Audio";
 }
 
-export default function GameHeader({ streak, points, timeLeft, currentRound, totalRounds }: GameHeaderProps) {
+export default function GameHeader({ streak, points, timeLeft, currentRound, totalRounds, mode }: GameHeaderProps) {
     return (
         <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-4">
-                <h1 className="text-3xl font-bold">Background Guessr</h1>
+                <h1 className="text-3xl font-bold">{mode} Guessr</h1>
                 <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
                     <span className="font-semibold">
                         Round: {currentRound}/{totalRounds}

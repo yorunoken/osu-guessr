@@ -7,7 +7,7 @@ import { GameClient } from "@/lib/game/GameClient";
 import { GameState } from "@/actions/game-server";
 
 import { ROUND_TIME, AUTO_ADVANCE_DELAY_MS } from "../../config";
-import GameImage from "../components/GameImage";
+import GameAudio from "../components/GameAudio";
 import GameStats from "../../shared/components/GameStats";
 import GuessInput from "../../shared/components/GuessInput";
 import LoadingScreen from "../../shared/components/LoadingScreen";
@@ -33,7 +33,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
             setShowStats(false);
             setGuess("");
 
-            gameClient.current = new GameClient(setGameState, "background");
+            gameClient.current = new GameClient(setGameState, "audio");
             await gameClient.current.startGame();
 
             setCountdown(AUTO_ADVANCE_DELAY_MS / 1000);
@@ -183,18 +183,11 @@ export default function GameScreen({ onExit }: GameScreenProps) {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <GameHeader
-                streak={gameState.score.streak}
-                points={gameState.score.total}
-                timeLeft={gameState.timeLeft}
-                currentRound={gameState.rounds.current}
-                totalRounds={gameState.rounds.total}
-                mode="Background"
-            />
+            <GameHeader streak={gameState.score.streak} points={gameState.score.total} timeLeft={gameState.timeLeft} currentRound={gameState.rounds.current} totalRounds={gameState.rounds.total} mode="Audio" />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="relative">
-                    <GameImage imageUrl={gameState.currentBeatmap.imageUrl!} isRevealed={gameState.currentBeatmap.revealed} result={gameState.lastGuess} songInfo={gameState.currentBeatmap} />
+                    <GameAudio audioUrl={gameState.currentBeatmap.audioUrl!} isRevealed={gameState.currentBeatmap.revealed} result={gameState.lastGuess} songInfo={gameState.currentBeatmap} />
                     {isLoading && <LoadingScreen />}
                 </div>
 

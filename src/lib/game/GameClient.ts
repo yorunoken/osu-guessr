@@ -1,18 +1,23 @@
-import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, deactivateSessionAction, getSuggestionsAction, GameState } from "@/actions/game-server";
+import { startGameAction, startAudioGameAction, submitGuessAction, getGameStateAction, endGameAction, deactivateSessionAction, getSuggestionsAction, GameState } from "@/actions/game-server";
 import { GameSession } from "./types";
+
+type GameMode = "background" | "audio";
 
 export class GameClient {
     private session: GameSession | null = null;
     private onStateUpdate: (state: GameState) => void;
     private suggestionsDebounceTimer: NodeJS.Timeout | null = null;
+    private gameMode: GameMode;
 
-    constructor(onStateUpdate: (state: GameState) => void) {
+    constructor(onStateUpdate: (state: GameState) => void, gameMode: GameMode = "background") {
         this.onStateUpdate = onStateUpdate;
+        this.gameMode = gameMode;
     }
 
     async startGame(): Promise<void> {
         try {
-            const initialState = await startGameAction();
+            const initialState = this.gameMode === "audio" ? await startAudioGameAction() : await startGameAction();
+
             this.session = {
                 id: initialState.sessionId,
                 state: initialState,
@@ -20,7 +25,7 @@ export class GameClient {
                 isActive: true,
             };
             this.startTimer();
-            console.log("[Game Client]: Started Game");
+            console.log(`[Game Client]: Started ${this.gameMode} Game`);
         } catch (error) {
             console.error("Failed to start game:", error);
             throw error;

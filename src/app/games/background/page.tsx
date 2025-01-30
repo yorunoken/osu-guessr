@@ -1,6 +1,10 @@
 import { auth } from "@/lib/auth";
-import Controller from "./MenuManager";
-import SignInPrompt from "../SignInPrompt";
+
+import SignInPrompt from "../shared/SignInPrompt";
+import MenuManager from "../shared/MenuManager";
+import PreGameMenu from "./pages/PreGameMenu";
+import GameScreen from "./pages/GameScreen";
+
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -15,5 +19,5 @@ export default async function BackgroundGuesser() {
         return <SignInPrompt />;
     }
 
-    return <Controller />;
+    return <MenuManager PreGameMenu={PreGameMenu} GameScreen={GameScreen} />;
 }

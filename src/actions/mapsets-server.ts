@@ -8,6 +8,7 @@ import fs from "fs/promises";
 interface MapsetTags {
     mapset_id: number;
     image_filename: string;
+    audio_filename: string;
 }
 
 interface MapsetData {
@@ -18,6 +19,62 @@ interface MapsetData {
 }
 
 export interface MapsetDataWithTags extends MapsetData, MapsetTags {}
+
+export async function getRandomAudioAction(previousMapsetId?: number) {
+    return authenticatedAction(async () => {
+        const audio = await getRandomAudio(previousMapsetId);
+        if (!audio) {
+            throw new Error("No audio found");
+        }
+
+        const audioPath = path.join(process.cwd(), "mapsets", "audio", audio.audio_filename);
+        const audioBuffer = await fs.readFile(audioPath);
+
+        const fileExtension = path.extname(audio.audio_filename).toLowerCase();
+        const mimeType = fileExtension === ".ogg" ? "audio/ogg" : "audio/mp3";
+
+        const audioData = `data:${mimeType};base64,${audioBuffer.toString("base64")}`;
+
+        return {
+            data: audio,
+            audioData,
+        };
+    });
+}
+
+async function getRandomAudio(previousMapsetId?: number): Promise<MapsetDataWithTags | null> {
+    const tagResults: Array<MapsetTags> = await query(
+        `SELECT * FROM mapset_tags
+            WHERE mapset_id NOT LIKE ?
+            AND audio_filename IS NOT NULL
+            ORDER BY RAND() LIMIT 1;`,
+        [previousMapsetId ?? 0],
+    );
+
+    const tags = tagResults[0];
+
+    const mapsetResults: Array<MapsetData> = await query(`SELECT * FROM mapset_data WHERE mapset_id = ?`, [tags.mapset_id]);
+
+    let mapset: MapsetData;
+
+    if (mapsetResults.length > 0) {
+        mapset = mapsetResults[0];
+    } else {
+        const data = await getMapsetById(tags.mapset_id);
+        if (!data) {
+            return null;
+        }
+
+        mapset = data;
+        await query(
+            `INSERT INTO mapset_data (mapset_id, title, artist, mapper)
+             VALUES (?, ?, ?, ?)`,
+            [mapset.mapset_id, mapset.title, mapset.artist, mapset.mapper],
+        );
+    }
+
+    return { ...tags, ...mapset };
+}
 
 export async function getRandomBackgroundAction(previousMapsetId?: number) {
     return authenticatedAction(async () => {

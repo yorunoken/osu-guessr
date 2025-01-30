@@ -1,4 +1,9 @@
-import ComingSoon from "../ComingSoon";
+import { auth } from "@/lib/auth";
+import SignInPrompt from "../shared/SignInPrompt";
+import PreGameMenu from "./pages/PreGameMenu";
+import GameScreen from "./pages/GameScreen";
+import MenuManager from "../shared/MenuManager";
+
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,6 +11,11 @@ export const metadata: Metadata = {
     description: "Challenge yourself by identifying songs from short audio clips.",
 };
 
-export default function AudioGuessr() {
-    return <ComingSoon mode="Audio" />;
+export default async function AudioGuessr() {
+    const session = await auth();
+
+    if (!session?.user?.banchoId) {
+        return <SignInPrompt />;
+    }
+    return <MenuManager PreGameMenu={PreGameMenu} GameScreen={GameScreen} />;
 }

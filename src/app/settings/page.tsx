@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { auth } from "@/lib/auth";
-import SignInPrompt from "../games/SignInPrompt";
+import SignInPrompt from "../games/shared/SignInPrompt";
 import SettingsClient from "./SettingsClient";
 
 export const metadata: Metadata = {

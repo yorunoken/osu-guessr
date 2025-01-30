@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import PreGameMenu from "./pages/PreGameMenu";
-import GameScreen from "./pages/GameScreen";
 
-export default function Controller() {
+interface MenuManagerProps {
+    PreGameMenu: React.ComponentType<{ onStart: () => void }>;
+    GameScreen: React.ComponentType<{ onExit: () => void }>;
+}
+
+export default function MenuManager({ PreGameMenu, GameScreen }: MenuManagerProps) {
     const [isGameStarted, setIsGameStarted] = useState(false);
 
     if (!isGameStarted) {
