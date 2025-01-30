@@ -9,9 +9,9 @@ sequenceDiagram
 
     User->>Client: Start Game
     Client->>Server: startGameAction()
-    Server->>DB: Create game session
-    Server->>DB: Get game-related data
-    DB-->>Server: Return game-related data
+    Server->>DB: Initialize game session
+    Server->>DB: Fetch game content
+    DB-->>Server: Return content data
     Server-->>Client: Initial GameState
     Client-->>User: Show game screen
 
@@ -20,22 +20,22 @@ sequenceDiagram
             User->>Client: Submit guess
             Client->>Server: submitGuessAction(guess)
             Server->>DB: Validate session
-            Server->>DB: Check answer
-            Server->>DB: Update score & streak
+            Server->>DB: Process guess
+            Server->>DB: Update game stats
             Server-->>Client: Updated GameState
             Client-->>User: Show result
         else User Skips
             User->>Client: Skip round
             Client->>Server: submitGuessAction(null)
-            Server->>DB: Apply skip penalty
+            Server->>DB: Apply penalty
             Server-->>Client: Updated GameState
             Client-->>User: Show answer
         end
 
         User->>Client: Next Round
         Client->>Server: submitGuessAction(undefined)
-        Server->>DB: Get new game-related data
-        DB-->>Server: Return game-related data
+        Server->>DB: Fetch next content
+        DB-->>Server: Return content data
         Server->>DB: Update session
         Server-->>Client: New GameState
         Client-->>User: Show new round
@@ -43,9 +43,9 @@ sequenceDiagram
 
     User->>Client: End Game
     Client->>Server: endGameAction()
-    Server->>DB: Save final score
-    Server->>DB: Update achievements
-    Server->>DB: Delete session
-    Server-->>Client: Game ended
-    Client-->>User: Show final results
+    Server->>DB: Record final score
+    Server->>DB: Update user stats
+    Server->>DB: Close session
+    Server-->>Client: Game completed
+    Client-->>User: Show results
 ```
