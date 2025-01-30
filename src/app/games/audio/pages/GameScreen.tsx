@@ -12,12 +12,15 @@ import GameStats from "../../shared/components/GameStats";
 import GuessInput from "../../shared/components/GuessInput";
 import LoadingScreen from "../../shared/components/LoadingScreen";
 import GameHeader from "../../shared/components/Header";
+import { useRouter } from "next/navigation";
 
 interface GameScreenProps {
     onExit(): void;
 }
 
 export default function GameScreen({ onExit }: GameScreenProps) {
+    const router = useRouter();
+
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [guess, setGuess] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -99,17 +102,17 @@ export default function GameScreen({ onExit }: GameScreenProps) {
         return handleAction(() => gameClient.current!.goNextRound());
     }, [gameState, handleAction, handleGameComplete]);
 
-    const handleExit = useCallback(async () => {
-        if (!gameClient.current || !gameState) return;
+    const handleExit = useCallback(async (): Promise<boolean> => {
+        if (!gameClient.current || !gameState) return false;
 
         const isGameIncomplete = gameState.rounds.current < gameState.rounds.total;
 
         if (isGameIncomplete) {
             const confirmed = window.confirm("Are you sure you want to exit? Your score will not be counted if you leave before completing all rounds!");
-            if (!confirmed) return;
+            if (!confirmed) return false;
         } else if (gameState.score.total > 0) {
             const confirmed = window.confirm("Are you sure you want to exit? Your score will be saved.");
-            if (!confirmed) return;
+            if (!confirmed) return false;
         }
 
         try {
@@ -119,10 +122,46 @@ export default function GameScreen({ onExit }: GameScreenProps) {
                 await gameClient.current.endGame();
             }
             onExit();
+            return true;
         } catch (error) {
             console.error("Failed to end game:", error);
+            return false;
         }
     }, [gameState, onExit]);
+
+    useEffect(() => {
+        if (!gameClient.current || !gameState) return;
+
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (gameState?.rounds.current < gameState.rounds.total) {
+                e.preventDefault();
+                e.returnValue = "";
+            }
+        };
+
+        const handleAnchorClick = async (e: MouseEvent) => {
+            if (!gameState || gameState.rounds.current >= gameState.rounds.total) return;
+
+            const target = e.target as HTMLElement;
+            const anchor = target.closest("a");
+            if (!anchor) return;
+
+            const href = anchor.getAttribute("href");
+            if (href?.startsWith("/")) {
+                e.preventDefault();
+                const exited = await handleExit();
+                if (exited) router.push(href);
+            }
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        document.addEventListener("click", handleAnchorClick);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            document.removeEventListener("click", handleAnchorClick);
+        };
+    }, [gameState, router, handleExit]);
 
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
@@ -134,18 +173,6 @@ export default function GameScreen({ onExit }: GameScreenProps) {
         window.addEventListener("keypress", handleKeyPress);
         return () => window.removeEventListener("keypress", handleKeyPress);
     }, [gameState?.currentBeatmap.revealed, handleNextRound]);
-
-    useEffect(() => {
-        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            if (gameState?.score.total && gameState.score.total > 0) {
-                e.preventDefault();
-                e.returnValue = "";
-            }
-        };
-
-        window.addEventListener("beforeunload", handleBeforeUnload);
-        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-    }, [gameState?.score.total]);
 
     useEffect(() => {
         if (gameState?.currentBeatmap.revealed) {
