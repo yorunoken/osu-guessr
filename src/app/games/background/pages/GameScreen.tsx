@@ -27,7 +27,6 @@ export default function GameScreen({ onExit }: GameScreenProps) {
     const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
 
     const gameClient = useRef<GameClient | null>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
 
     const handleStartGame = useCallback(async () => {
         try {
@@ -39,7 +38,6 @@ export default function GameScreen({ onExit }: GameScreenProps) {
             await gameClient.current.startGame();
 
             setCountdown(AUTO_ADVANCE_DELAY_MS / 1000);
-            inputRef.current?.focus();
         } catch (error) {
             console.error("Failed to restart game:", error);
         } finally {
@@ -63,7 +61,6 @@ export default function GameScreen({ onExit }: GameScreenProps) {
             try {
                 await action();
                 setGuess("");
-                inputRef.current?.focus();
             } catch (error) {
                 console.error("Action failed:", error);
             } finally {
@@ -207,7 +204,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
                 </div>
 
                 <div className="flex flex-col gap-6">
-                    <GuessInput ref={inputRef} guess={guess} setGuess={setGuess} isRevealed={gameState.currentBeatmap.revealed} onGuess={handleGuess} onSkip={handleSkip} gameClient={gameClient.current!} />
+                    <GuessInput guess={guess} setGuess={setGuess} isRevealed={gameState.currentBeatmap.revealed} onGuess={handleGuess} onSkip={handleSkip} gameClient={gameClient.current!} />
 
                     <div className="bg-card p-6 rounded-xl border border-border/50">
                         <h3 className="font-semibold mb-2">How to play:</h3>

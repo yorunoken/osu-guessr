@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { forwardRef, ForwardedRef, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GameClient } from "@/lib/game/GameClient";
 
 interface GuessInputProps {
@@ -11,13 +11,21 @@ interface GuessInputProps {
     gameClient: GameClient;
 }
 
-const GuessInput = forwardRef<HTMLInputElement, GuessInputProps>(({ guess, setGuess, isRevealed, onGuess, onSkip, gameClient }, ref: ForwardedRef<HTMLInputElement>) => {
+export default function GuessInput({ guess, setGuess, isRevealed, onGuess, onSkip, gameClient }: GuessInputProps) {
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
+
     const clickingRef = useRef(false);
     const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const isSelectingRef = useRef(false);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (!isRevealed && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [isRevealed]);
 
     useEffect(() => {
         if (!guess) {
@@ -92,7 +100,7 @@ const GuessInput = forwardRef<HTMLInputElement, GuessInputProps>(({ guess, setGu
             <div className="relative">
                 <input
                     type="text"
-                    ref={ref}
+                    ref={inputRef}
                     value={guess}
                     onChange={(e) => setGuess(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -140,8 +148,4 @@ const GuessInput = forwardRef<HTMLInputElement, GuessInputProps>(({ guess, setGu
             </div>
         </div>
     );
-});
-
-GuessInput.displayName = "GuessInput";
-
-export default GuessInput;
+}
