@@ -12,7 +12,6 @@ export default function NotFound() {
                         <p className="text-foreground/70">
                             Oops! Looks like you{"'"}ve hit a missing circle. The page you{"'"}re looking for doesn{"'"}t exist.
                         </p>
-                        <p className="text-foreground/70">Try clicking back to the rhythm or start fresh from the homepage.</p>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
