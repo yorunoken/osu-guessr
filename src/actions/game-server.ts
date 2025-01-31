@@ -198,13 +198,14 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         const timeElapsed = Math.floor((Date.now() - new Date(gameState.last_action_at).getTime()) / 1000);
         const timeLeft = Math.max(0, gameState.time_left - timeElapsed);
 
-        const isSkipped = guess === null;
+        let isSkipped = guess === null;
         const isNextRound = guess === undefined;
-        const effectiveGuess = isSkipped ? "" : guess;
+        let effectiveGuess = isSkipped ? "" : guess;
         const isGuess = !isNextRound;
 
         if (timeLeft <= 0 && !isSkipped) {
-            throw new Error("Time has expired for this round");
+            isSkipped = true;
+            effectiveGuess = "";
         }
 
         const [beatmap]: Array<MapsetDataWithTags> = await query(`SELECT * FROM mapset_data WHERE mapset_id = ?`, [gameState.current_beatmap_id]);
