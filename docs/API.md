@@ -56,6 +56,70 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 ## User Endpoints
 
 <details>
+ <summary><code>GET</code> <code><b>/api/users/{userId}</b></code> <code>(get detailed user information)</code></summary>
+
+##### Parameters
+
+> | name     | type     | data type | description          |
+> |----------|----------|-----------|----------------------|
+> | `userId` | required | number    | The user's Bancho ID |
+
+##### Headers
+
+> | name        |  type     | data type | description              |
+> |-------------|-----------|-----------|--------------------------|
+> | `X-API-Key` |  required | string    | Your osu!guessr API key |
+
+##### Responses
+
+> | http code | content-type       | response                                   |
+> |-----------|-------------------|---------------------------------------------|
+> | `200`     | `application/json` | [User Detail Result](#user-detail-result)  |
+> | `403`     | `application/json` | `{"success":false,"error":"Invalid API key"}` |
+> | `404`     | `application/json` | `{"success":false,"error":"User not found"}` |
+
+##### Example cURL
+
+> ```javascript
+> curl -X GET -H "X-API-Key: your-api-key" "/api/users/12345"
+> ```
+
+##### User Detail Result
+
+> ```json
+> {
+>   "success": true,
+>   "data": {
+>     "bancho_id": 12345,
+>     "username": "yorunoken",
+>     "avatar_url": "https://...",
+>     "created_at": "2024-01-28T12:00:00Z",
+>     "achievements": [
+>       {
+>         "user_id": 12345,
+>         "game_mode": "background",
+>         "total_score": 10000,
+>         "games_played": 50,
+>         "highest_streak": 15,
+>         "highest_score": 1000,
+>         "last_played": "2024-01-28T12:00:00Z"
+>       }
+>     ],
+>     "ranks": {
+>       "globalRank": 42,
+>       "modeRanks": {
+>         "background": { "globalRank": 24 },
+>         "audio": { "globalRank": 56 },
+>         "skin": { "globalRank": 89 }
+>       }
+>     }
+>   }
+> }
+> ```
+
+</details>
+
+<details>
  <summary><code>GET</code> <code><b>/api/users/search</b></code> <code>(search for users)</code></summary>
 
 ##### Parameters
@@ -137,10 +201,12 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 >   "success": true,
 >   "data": [
 >     {
+>       "user_id": 12345,
 >       "game_mode": "background",
 >       "total_score": 10000,
 >       "games_played": 50,
 >       "highest_streak": 15,
+>       "highest_score": 1000,
 >       "last_played": "2024-01-28T12:00:00Z"
 >     }
 >   ]
@@ -187,10 +253,11 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 >   "success": true,
 >   "data": [
 >     {
+>       "user_id": 12345,
 >       "game_mode": "background",
 >       "points": 1000,
 >       "streak": 5,
->       "played": "2024-01-28T12:00:00Z"
+>       "ended_at": "2024-01-28T12:00:00Z"
 >     }
 >   ],
 >   "meta": {
@@ -248,11 +315,13 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 >       "bancho_id": 12345,
 >       "total_score": 50000,
 >       "games_played": 100,
->       "highest_streak": 25
+>       "highest_streak": 25,
+>       "highest_score": 1000
 >     }
 >   ]
 > }
 > ```
+```
 
 </details>
 
