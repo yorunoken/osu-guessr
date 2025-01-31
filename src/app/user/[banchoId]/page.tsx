@@ -109,7 +109,17 @@ export default async function UserProfile({ params, searchParams }: Props) {
                         <Link href={`https://osu.ppy.sh/u/${banchoId}`} target="_blank" rel="noopener noreferrer" className="text-4xl font-bold hover:text-primary transition-colors">
                             {username}
                         </Link>
-                        {Number(banchoId) === 17279598 && <span className="px-2 py-1 bg-primary/10 text-primary rounded text-sm">Owner</span>}
+                        {user.special_badge && (
+                            <span
+                                className={`px-2 py-1 rounded text-sm`}
+                                style={{
+                                    backgroundColor: user.special_badge_color ? `${user.special_badge_color}10` : "var(--primary-10)",
+                                    color: user.special_badge_color || "var(--primary)",
+                                }}
+                            >
+                                {user.special_badge}
+                            </span>
+                        )}
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                         <StatBox label="Hi-Score" value={Math.max(...(achievements?.map((a) => a.highest_score) ?? [0])).toLocaleString()} />

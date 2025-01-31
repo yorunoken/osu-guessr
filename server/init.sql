@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS users (
     bancho_id INT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     avatar_url TEXT NOT NULL,
+    special_badge VARCHAR(255),
+    special_badge_color VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

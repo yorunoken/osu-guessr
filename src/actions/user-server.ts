@@ -3,11 +3,14 @@
 import { query } from "@/lib/database";
 import { z } from "zod";
 import { authenticatedAction } from "./server";
+import { SPECIAL_USERS } from "./update-special-users";
 
 export interface User {
     bancho_id: number;
     username: string;
     avatar_url: string;
+    special_badge?: string;
+    special_badge_color?: string;
     created_at: Date;
 }
 
@@ -43,10 +46,7 @@ export interface Game {
     ended_at: Date;
 }
 
-export interface TopPlayer {
-    username: string;
-    avatar_url: string;
-    bancho_id: number;
+export interface TopPlayer extends User {
     total_score: number;
     games_played: number;
     highest_streak: number;
@@ -70,13 +70,17 @@ const searchSchema = z.object({
 
 // Server actions
 export async function createUserAction(banchoId: number, username: string, avatar_url: string) {
+    const specialUser = SPECIAL_USERS.find((user) => user.banchoId === banchoId);
+
     return query(
-        `INSERT INTO users (bancho_id, username, avatar_url)
-         VALUES (?, ?, ?)
+        `INSERT INTO users (bancho_id, username, avatar_url, special_badge, special_badge_color)
+         VALUES (?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
             username = VALUES(username),
-            avatar_url = VALUES(avatar_url)`,
-        [banchoId, username, avatar_url],
+            avatar_url = VALUES(avatar_url),
+            special_badge = VALUES(special_badge),
+            special_badge_color = VALUES(special_badge_color)`,
+        [banchoId, username, avatar_url, specialUser?.badge || null, specialUser?.color || null],
     );
 }
 
@@ -89,9 +93,9 @@ export async function deleteUserAction(banchoId: number) {
 
 export async function getUserByIdAction(banchoId: number): Promise<UserWithStats | null> {
     const userResult = await query(
-        `SELECT bancho_id, username, avatar_url, created_at
-         FROM users
-         WHERE bancho_id = ?`,
+        `SELECT *
+            FROM users
+            WHERE bancho_id = ?`,
         [banchoId],
     );
 
@@ -202,7 +206,7 @@ export async function getUserTopGamesAction(banchoId: number, gameMode?: GameMod
 export async function getTopPlayersAction(gamemode: GameMode, limit: number = 10): Promise<Array<TopPlayer>> {
     const validatedMode = gameModeSchema.parse(gamemode);
     return query(
-        `SELECT u.username, u.avatar_url, u.bancho_id,
+        `SELECT u.*,
                 ua.total_score, ua.games_played, ua.highest_streak, ua.highest_score
          FROM user_achievements ua
          JOIN users u ON ua.user_id = u.bancho_id

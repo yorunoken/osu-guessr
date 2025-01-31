@@ -80,7 +80,17 @@ export default function LeaderboardClient() {
                                                 <Image src={player.avatar_url} alt={player.username} width={32} height={32} className="rounded-full" />
                                                 <div className="flex items-center gap-2">
                                                     <span className="font-medium">{player.username}</span>
-                                                    {player.bancho_id === 17279598 && <span className="text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded">Owner</span>}
+                                                    {player.special_badge && (
+                                                        <span
+                                                            className="text-xs px-1.5 py-0.5 rounded"
+                                                            style={{
+                                                                backgroundColor: player.special_badge_color ? `${player.special_badge_color}10` : "var(--primary-10)",
+                                                                color: player.special_badge_color || "var(--primary)",
+                                                            }}
+                                                        >
+                                                            {player.special_badge}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </Link>
                                         </td>
