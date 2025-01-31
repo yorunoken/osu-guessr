@@ -12,6 +12,7 @@ import GameStats from "../../shared/components/GameStats";
 import GuessInput from "../../shared/components/GuessInput";
 import LoadingScreen from "../../shared/components/LoadingScreen";
 import GameHeader from "../../shared/components/Header";
+import { ReportDialog } from "@/components/ReportDialog";
 
 interface GameScreenProps {
     onExit(): void;
@@ -23,6 +24,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [countdown, setCountdown] = useState<number>(AUTO_ADVANCE_DELAY_MS / 1000);
     const [showStats, setShowStats] = useState(false);
+    const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
 
     const gameClient = useRef<GameClient | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -155,7 +157,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
     }, [gameState?.currentBeatmap.revealed, handleNextRound]);
 
     useEffect(() => {
-        if (gameState?.currentBeatmap.revealed) {
+        if (gameState?.currentBeatmap.revealed && !isReportDialogOpen) {
             setCountdown(AUTO_ADVANCE_DELAY_MS / 1000);
 
             const countdownInterval = setInterval(() => {
@@ -171,7 +173,7 @@ export default function GameScreen({ onExit }: GameScreenProps) {
                 clearTimeout(advanceTimer);
             };
         }
-    }, [gameState?.currentBeatmap.revealed, handleNextRound]);
+    }, [gameState?.currentBeatmap.revealed, handleNextRound, isReportDialogOpen]);
 
     if (!gameState) return <LoadingScreen />;
 
@@ -214,12 +216,17 @@ export default function GameScreen({ onExit }: GameScreenProps) {
             </div>
 
             <div className="flex justify-between mt-8">
-                <Button variant="outline" onClick={handleExit} disabled={isLoading || gameState.rounds.current > gameState.rounds.total}>
-                    Exit Game
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" onClick={handleExit} disabled={isLoading || gameState.rounds.current > gameState.rounds.total}>
+                        Exit Game
+                    </Button>
+                    {gameState.currentBeatmap.revealed && gameState.currentBeatmap.mapsetId && (
+                        <ReportDialog mapsetId={gameState.currentBeatmap.mapsetId} mapsetTitle={gameState.currentBeatmap.title || "Unknown"} onOpenChange={setIsReportDialogOpen} />
+                    )}
+                </div>
                 {gameState.currentBeatmap.revealed && (
                     <Button onClick={handleNextRound} className="px-8">
-                        {gameState.rounds.current >= gameState.rounds.total ? "View Results" : `Next Round (${countdown}s)`}
+                        {gameState.rounds.current >= gameState.rounds.total ? "View Results" : isReportDialogOpen ? "Next Round" : `Next Round (${countdown}s)`}
                     </Button>
                 )}
             </div>

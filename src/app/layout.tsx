@@ -5,6 +5,7 @@ import { SessionWrapper } from "@/context/session-wrapper";
 import { ThemeProvider } from "@/context/theme-provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Toaster } from "@/components/ui/toaster";
 
 const publicSans = Public_Sans({
     subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({
                             <main className="flex-grow">{children}</main>
                         </div>
                         <Footer />
+                        <Toaster />
                     </ThemeProvider>
                 </SessionWrapper>
             </body>

@@ -90,6 +90,33 @@ CREATE TABLE game_sessions (
     FOREIGN KEY (current_beatmap_id) REFERENCES mapset_data (mapset_id)
 );
 
+CREATE TABLE IF NOT EXISTS reports (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    mapset_id INT NOT NULL,
+    report_type ENUM (
+        'incorrect_title',
+        'inappropriate_content',
+        'wrong_audio',
+        'wrong_background',
+        'other'
+    ) NOT NULL,
+    description TEXT,
+    status ENUM (
+        'pending',
+        'investigating',
+        'resolved',
+        'rejected'
+    ) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE,
+    FOREIGN KEY (mapset_id) REFERENCES mapset_data (mapset_id),
+    INDEX idx_reports_status (status),
+    INDEX idx_reports_user (user_id),
+    INDEX idx_reports_mapset (mapset_id)
+);
+
 CREATE INDEX idx_username ON users (username);
 
 CREATE INDEX idx_active_sessions ON game_sessions (user_id, is_active);
