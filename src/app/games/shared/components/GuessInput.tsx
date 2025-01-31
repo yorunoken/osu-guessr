@@ -20,6 +20,14 @@ const GuessInput = forwardRef<HTMLInputElement, GuessInputProps>(({ guess, setGu
     const isSelectingRef = useRef(false);
 
     useEffect(() => {
+        if (!guess) {
+            setSuggestions([]);
+            setShowSuggestions(false);
+            setSelectedIndex(-1);
+        }
+    }, [guess]);
+
+    useEffect(() => {
         if (!isSelectingRef.current && guess.trim() && !isRevealed) {
             if (debounceTimeoutRef.current) {
                 clearTimeout(debounceTimeoutRef.current);
@@ -41,11 +49,10 @@ const GuessInput = forwardRef<HTMLInputElement, GuessInputProps>(({ guess, setGu
     }, [guess, gameClient, isRevealed]);
 
     useEffect(() => {
-        if (isRevealed) {
-            setSuggestions([]);
-            setShowSuggestions(false);
-            setSelectedIndex(-1);
-        }
+        setSuggestions([]);
+        setShowSuggestions(false);
+        setSelectedIndex(-1);
+        isSelectingRef.current = false;
     }, [isRevealed]);
 
     const handleSuggestionSelect = (suggestion: string) => {
@@ -59,7 +66,6 @@ const GuessInput = forwardRef<HTMLInputElement, GuessInputProps>(({ guess, setGu
             isSelectingRef.current = false;
         }, 100);
     };
-
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (isRevealed) return;
 
