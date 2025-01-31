@@ -1,10 +1,5 @@
 "use client";
 
-// import { useState } from "react";
-// import Link from "next/link";
-// import { Button } from "@/components/ui/button";
-// import { ChevronDown, ChevronUp } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
@@ -28,7 +23,7 @@ export default function Hero() {
                     </motion.h1>
 
                     <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} className="text-xl md:text-2xl text-foreground/80 mb-12 leading-relaxed">
-                        Test your osu! knowledge, compete with friends, and discover new beatmaps in this engaging guessing game
+                        Challenge your osu! memory, discover hidden gems, and climb the global rankings in this ultimate guessing game
                     </motion.p>
 
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.4 }} className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -98,10 +98,6 @@ export default function LeaderboardClient() {
                     </div>
                 )}
             </div>
-
-            <div className="mt-8 text-center text-sm text-foreground/50">
-                <p>Leaderboard updates every minute</p>
-            </div>
         </div>
     );
 }
