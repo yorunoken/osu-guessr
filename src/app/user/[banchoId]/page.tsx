@@ -1,4 +1,4 @@
-import { getUserStatsAction, getUserLatestGamesAction, getOsuUserByIdAction, getUserTopGamesAction, Game } from "@/actions/user-server";
+import { getUserStatsAction, getUserLatestGamesAction, getUserByIdAction, getUserTopGamesAction, Game } from "@/actions/user-server";
 import Image from "next/image";
 import UserNotFound from "./NotFound";
 import { Metadata } from "next";
@@ -24,7 +24,7 @@ interface Props {
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
     const { banchoId } = await params;
     const { mode = "background" } = await searchParams;
-    const user = await getOsuUserByIdAction(Number(banchoId));
+    const user = await getUserByIdAction(Number(banchoId));
 
     return {
         title: user ? `${user.username}'s ${mode} Stats | osu!guessr` : "User Profile | osu!guessr",
@@ -38,7 +38,7 @@ export default async function UserProfile({ params, searchParams }: Props) {
     const currentMode = mode as GameModes;
 
     const userStats = await getUserStatsAction(Number(banchoId));
-    const osuUser = await getOsuUserByIdAction(Number(banchoId));
+    const user = await getUserByIdAction(Number(banchoId));
     let userGames = await getUserLatestGamesAction(Number(banchoId));
     const topPlays = await getUserTopGamesAction(Number(banchoId));
 
@@ -54,13 +54,13 @@ export default async function UserProfile({ params, searchParams }: Props) {
     );
 
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    userGames = userGames.filter((x) => new Date(x.played) > twentyFourHoursAgo);
+    userGames = userGames.filter((x) => new Date(x.ended_at) > twentyFourHoursAgo);
 
-    if (!osuUser || userStats.length == 0) {
+    if (!user || userStats.length == 0) {
         return UserNotFound();
     }
 
-    const { username, avatar_url } = userStats[0];
+    const { username, avatar_url, achievements, ranks } = user;
 
     const gameStats: Record<GameModes, GameStats> = {
         background: {
@@ -110,16 +110,11 @@ export default async function UserProfile({ params, searchParams }: Props) {
                             {username}
                         </Link>
                         {Number(banchoId) === 17279598 && <span className="px-2 py-1 bg-primary/10 text-primary rounded text-sm">Owner</span>}
-                        <span className="px-2 py-1 bg-primary/10 text-primary rounded text-sm">#{osuUser.pp_rank}</span>
-                        <span className="flex items-center gap-1">
-                            <Image src={`https://flagicons.lipis.dev/flags/4x3/${osuUser.country.toLowerCase()}.svg`} alt={osuUser.country} width={24} height={18} />#{osuUser.pp_country_rank}
-                        </span>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                        <StatBox label="PP" value={Number(osuUser.pp_raw).toFixed(0)} />
-                        <StatBox label="Accuracy" value={`${Number(osuUser.accuracy).toFixed(2)}%`} />
-                        <StatBox label="Level" value={Number(osuUser.level).toFixed(0)} />
-                        <StatBox label="Play Count" value={Number(osuUser.playcount).toLocaleString()} />
+                        <StatBox label="Hi-Score" value={Math.max(...(achievements?.map((a) => a.highest_score) ?? [0])).toLocaleString()} />
+                        <StatBox label="Total Games" value={achievements?.reduce((sum, a) => sum + a.games_played, 0).toLocaleString() ?? "0"} />
+                        <StatBox label="Global Rank" value={ranks?.globalRank?.toLocaleString() ?? "-"} />
                     </div>
                 </div>
             </div>
@@ -159,7 +154,7 @@ export default async function UserProfile({ params, searchParams }: Props) {
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-foreground/70">
                                     <span>{game.streak}x</span>
-                                    <span>{new Date(game.played).toLocaleDateString()}</span>
+                                    <span>{new Date(game.ended_at).toLocaleDateString()}</span>
                                 </div>
                             </div>
                         ))}
@@ -177,7 +172,7 @@ export default async function UserProfile({ params, searchParams }: Props) {
                                 <div key={index} className="p-4 flex justify-between items-center">
                                     <div>
                                         <span className="font-medium capitalize">{game.game_mode} Mode</span>
-                                        <span className="text-foreground/70 ml-4">{new Date(game.played).toLocaleDateString()}</span>
+                                        <span className="text-foreground/70 ml-4">{new Date(game.ended_at).toLocaleDateString()}</span>
                                     </div>
                                     <div className="space-x-2">
                                         <span className="font-semibold">{game.points.toLocaleString()} score</span>
