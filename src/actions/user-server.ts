@@ -3,7 +3,6 @@
 import { query } from "@/lib/database";
 import { z } from "zod";
 import { authenticatedAction } from "./server";
-import { SPECIAL_USERS } from "./update-special-users";
 
 export interface User {
     bancho_id: number;
@@ -60,6 +59,27 @@ export interface HighestStats {
 }
 
 type GameMode = "background" | "audio" | "skin";
+
+interface SpecialUser {
+    banchoId: number;
+    badge: string;
+    color: string;
+}
+
+const SPECIAL_USERS: Array<SpecialUser> = [
+    { banchoId: 17279598, badge: "Owner", color: "#FF6B6B" },
+    { banchoId: 13845312, badge: "Beta Tester", color: "#7C3AED" },
+    { banchoId: 20367144, badge: "Beta Tester", color: "#7C3AED" },
+    { banchoId: 25468052, badge: "Beta Tester", color: "#7C3AED" },
+    { banchoId: 18567756, badge: "Beta Tester", color: "#7C3AED" },
+    { banchoId: 18153277, badge: "Beta Tester", color: "#7C3AED" },
+    { banchoId: 14519821, badge: "Beta Tester", color: "#7C3AED" },
+    { banchoId: 12643934, badge: "Beta Tester", color: "#7C3AED" },
+];
+
+export async function getSpecialUsers(): Promise<Array<SpecialUser>> {
+    return SPECIAL_USERS;
+}
 
 // Schemas
 const gameModeSchema = z.enum(["background", "audio", "skin"]);
