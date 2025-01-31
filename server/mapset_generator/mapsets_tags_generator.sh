@@ -97,7 +97,7 @@ while IFS= read -r line; do
     artist=$(echo "$beatmap_data" | jq -r '.[0].artist')
     mapper=$(echo "$beatmap_data" | jq -r '.[0].creator')
 
-    echo "    ($mapset_id, '$image_filename', 'placeholder.mp3')," >> "$MAPSET_TAGS_SQL"
+    echo "    ($mapset_id, '$image_filename', '$audio_filename')," >> "$MAPSET_TAGS_SQL"
     echo "    ($mapset_id, '$(echo $title | sed "s/'/''/g")', '$(echo $artist | sed "s/'/''/g")', '$(echo $mapper | sed "s/'/''/g")')," >> "$MAPSET_DATA_SQL"
 
     rm -rf "$mapset_temp_dir"
