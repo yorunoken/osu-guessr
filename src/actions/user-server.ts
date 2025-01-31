@@ -75,6 +75,8 @@ const SPECIAL_USERS: Array<SpecialUser> = [
     { banchoId: 18153277, badge: "Beta Tester", color: "#7C3AED" },
     { banchoId: 14519821, badge: "Beta Tester", color: "#7C3AED" },
     { banchoId: 12643934, badge: "Beta Tester", color: "#7C3AED" },
+    { banchoId: 4539930, badge: "Fish", color: "#DE9B4A" },
+    { banchoId: 3171691, badge: "Baguette", color: "#292c3d" },
 ];
 
 export async function getSpecialUsers(): Promise<Array<SpecialUser>> {
