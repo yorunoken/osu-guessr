@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { Loader2 } from "lucide-react";
+import { useRef, useEffect, useState } from "react";
 
 interface GameAudioProps {
     audioUrl: string;
@@ -19,31 +20,38 @@ interface GameAudioProps {
 
 export default function GameAudio({ audioUrl, isRevealed, result, songInfo }: GameAudioProps) {
     const audioRef = useRef<HTMLAudioElement>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
+            setIsLoading(true);
+
+            const handleCanPlay = () => {
+                setIsLoading(false);
+                if (!isRevealed) {
+                    audioRef.current!.volume = 0.25;
+                    const playPromise = audioRef.current!.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch((error) => {
+                            console.log("Audio playback failed:", error);
+                        });
+                    }
+                }
+            };
+
+            audioRef.current.addEventListener("canplay", handleCanPlay);
             audioRef.current.load();
 
-            if (!isRevealed) {
-                audioRef.current.volume = 0.25;
-                const playPromise = audioRef.current.play();
-
-                if (playPromise !== undefined) {
-                    playPromise.catch((error) => {
-                        console.log("Audio playback failed:", error);
-                    });
+            return () => {
+                if (audioRef.current) {
+                    audioRef.current.removeEventListener("canplay", handleCanPlay);
+                    audioRef.current.pause();
+                    audioRef.current.currentTime = 0;
                 }
-            }
+            };
         }
-
-        return () => {
-            if (audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current.currentTime = 0;
-            }
-        };
     }, [audioUrl, isRevealed]);
 
     useEffect(() => {
@@ -56,7 +64,12 @@ export default function GameAudio({ audioUrl, isRevealed, result, songInfo }: Ga
     return (
         <div className="relative bg-card border border-border rounded-lg overflow-hidden">
             <div className="p-6">
-                <audio ref={audioRef} controls className="w-full mb-4">
+                {isLoading && (
+                    <div className="flex justify-center items-center h-[50px] mb-4">
+                        <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                )}
+                <audio ref={audioRef} controls className={`w-full mb-4 ${isLoading ? "hidden" : "block"}`}>
                     <source src={audioUrl} type="audio/mp3" />
                     Your browser does not support the audio element.
                 </audio>
