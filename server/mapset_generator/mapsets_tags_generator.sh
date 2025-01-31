@@ -16,13 +16,9 @@ OSU_API_KEY=""
 mkdir -p "$TEMP_DIR" "$AUDIO_DIR" "$BG_DIR"
 
 echo "SET FOREIGN_KEY_CHECKS = 0;" > "$MAPSET_TAGS_SQL"
-echo "DELETE FROM mapset_tags;" >> "$MAPSET_TAGS_SQL"
-echo "SET FOREIGN_KEY_CHECKS = 1;" >> "$MAPSET_TAGS_SQL"
 echo "REPLACE INTO mapset_tags (mapset_id, image_filename, audio_filename) VALUES" >> "$MAPSET_TAGS_SQL"
 
 echo "SET FOREIGN_KEY_CHECKS = 0;" > "$MAPSET_DATA_SQL"
-echo "DELETE FROM mapset_data;" >> "$MAPSET_DATA_SQL"
-echo "SET FOREIGN_KEY_CHECKS = 1;" >> "$MAPSET_DATA_SQL"
 echo "REPLACE INTO mapset_data (mapset_id, title, artist, mapper) VALUES" >> "$MAPSET_DATA_SQL"
 
 total_lines=$(wc -l < mapsets.txt)
@@ -108,5 +104,8 @@ done < "mapsets.txt"
 
 sed -i '$ s/,$/;/' "$MAPSET_TAGS_SQL"
 sed -i '$ s/,$/;/' "$MAPSET_DATA_SQL"
+
+echo "SET FOREIGN_KEY_CHECKS = 1;" >> "$MAPSET_TAGS_SQL"
+echo "SET FOREIGN_KEY_CHECKS = 1;" >> "$MAPSET_DATA_SQL"
 
 echo "Processing complete!"
