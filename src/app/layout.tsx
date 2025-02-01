@@ -6,7 +6,6 @@ import { ThemeProvider } from "@/context/theme-provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
-import Script from "next/script";
 import { UmamiAnalytics } from "./Umami";
 
 const publicSans = Public_Sans({
