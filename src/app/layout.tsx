@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/context/theme-provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
+import Script from "next/script";
 
 const publicSans = Public_Sans({
     subsets: ["latin"],
@@ -28,7 +29,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
-                <script defer src="https://cloud.umami.is/script.js" data-website-id="849dac77-219d-4a0e-ba65-910f76c78e6f"></script>
+                <Script src="https://cloud.umami.is/script.js" data-website-id="849dac77-219d-4a0e-ba65-910f76c78e6f" strategy="lazyOnload" />
             </head>
             <body className={`${publicSans.variable} antialiased`}>
                 <SessionWrapper>
