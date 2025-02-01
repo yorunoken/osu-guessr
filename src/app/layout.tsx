@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/context/theme-provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 
 const publicSans = Public_Sans({
     subsets: ["latin"],
@@ -32,6 +32,7 @@ export default function RootLayout({
                 <SessionWrapper>
                     <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
                         <Header />
+
                         <div className="flex flex-col min-h-screen">
                             <main className="flex-grow">{children}</main>
                         </div>
@@ -40,7 +41,7 @@ export default function RootLayout({
                     </ThemeProvider>
                 </SessionWrapper>
             </body>
-            <GoogleAnalytics gaId="G-TDL7EGLG0" />
+            <Script defer src="https://cloud.umami.is/script.js" data-website-id="849dac77-219d-4a0e-ba65-910f76c78e6f" />
         </html>
     );
 }
