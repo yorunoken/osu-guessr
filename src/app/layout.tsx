@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import Script from "next/script";
+import { UmamiAnalytics } from "./Umami";
 
 const publicSans = Public_Sans({
     subsets: ["latin"],
@@ -28,19 +29,19 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <head>
+            {/* <head>
                 <Script src="/umami.js" data-website-id="849dac77-219d-4a0e-ba65-910f76c78e6f" strategy="afterInteractive" />
-            </head>
+            </head> */}
             <body className={`${publicSans.variable} antialiased`}>
                 <SessionWrapper>
                     <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
                         <Header />
-
                         <div className="flex flex-col min-h-screen">
                             <main className="flex-grow">{children}</main>
                         </div>
                         <Footer />
                         <Toaster />
+                        <UmamiAnalytics />
                     </ThemeProvider>
                 </SessionWrapper>
             </body>
