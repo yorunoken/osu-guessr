@@ -28,6 +28,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
+            <head>
+                <script async data-id="101476983" src="//static.getclicky.com/js"></script>
+            </head>
             <body className={`${publicSans.variable} antialiased`}>
                 <SessionWrapper>
                     <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
