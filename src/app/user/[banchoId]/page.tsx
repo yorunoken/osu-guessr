@@ -56,7 +56,7 @@ export default async function UserProfile({ params, searchParams }: Props) {
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     userGames = userGames.filter((x) => new Date(x.ended_at) > twentyFourHoursAgo);
 
-    if (!user || userStats.length == 0) {
+    if (!user) {
         return UserNotFound();
     }
 
