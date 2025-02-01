@@ -27,9 +27,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            {/* <head>
-                <script src="https://unpkg.com/react-scan/dist/auto.global.js" async></script>
-            </head> */}
+            <head>
+                <script defer src="https://cloud.umami.is/script.js" data-website-id="b95e60a2-630f-4dab-814f-7299ebab3d61"></script>
+            </head>
             <body className={`${publicSans.variable} antialiased`}>
                 <SessionWrapper>
                     <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
