@@ -86,7 +86,7 @@ export async function startAudioGameAction(): Promise<GameState> {
             [sessionId, authSession.user.banchoId],
         );
 
-        const beatmap = await getRandomAudioAction();
+        const beatmap = await getRandomAudioAction(sessionId);
 
         await query(
             `UPDATE game_sessions
@@ -95,6 +95,12 @@ export async function startAudioGameAction(): Promise<GameState> {
                 last_action_at = CURRENT_TIMESTAMP
             WHERE id = ?`,
             [beatmap.data.mapset_id, ROUND_TIME, sessionId],
+        );
+
+        await query(
+            `INSERT INTO session_mapsets (session_id, mapset_id, round_number)
+                VALUES (?, ?, 1)`,
+            [sessionId, beatmap.data.mapset_id],
         );
 
         await query("COMMIT");
@@ -138,7 +144,7 @@ export async function startGameAction(): Promise<GameState> {
             [sessionId, authSession.user.banchoId],
         );
 
-        const beatmap = await getRandomBackgroundAction();
+        const beatmap = await getRandomBackgroundAction(sessionId);
 
         // Store current beatmap in session
         await query(
@@ -148,6 +154,12 @@ export async function startGameAction(): Promise<GameState> {
                 last_action_at = CURRENT_TIMESTAMP
             WHERE id = ?`,
             [beatmap.data.mapset_id, ROUND_TIME, sessionId],
+        );
+
+        await query(
+            `INSERT INTO session_mapsets (session_id, mapset_id, round_number)
+             VALUES (?, ?, 1)`,
+            [sessionId, beatmap.data.mapset_id],
         );
 
         await query("COMMIT");
@@ -217,10 +229,10 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
 
         if (isNextRound) {
             if (gameState.game_mode === "audio") {
-                const audio = await getRandomAudioAction(gameState.current_beatmap_id);
+                const audio = await getRandomAudioAction(validated.sessionId);
                 nextBeatmap = { data: audio.data, audioData: audio.audioData };
             } else {
-                const background = await getRandomBackgroundAction(gameState.current_beatmap_id);
+                const background = await getRandomBackgroundAction(validated.sessionId);
                 nextBeatmap = { data: background.data, backgroundData: background.backgroundData };
             }
         }
@@ -257,6 +269,15 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 sessionId,
             ],
         );
+
+        if (isNextRound && nextBeatmap) {
+            await query(
+                `INSERT INTO session_mapsets (session_id, mapset_id, round_number)
+                    VALUES (?, ?, ?)`,
+                [sessionId, nextBeatmap.data.mapset_id, gameState.current_round + 1],
+            );
+        }
+
         await query("COMMIT");
 
         const currentMedia: { backgroundData?: string; audioData?: string } = {};

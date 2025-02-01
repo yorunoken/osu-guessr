@@ -92,6 +92,14 @@ CREATE TABLE game_sessions (
     FOREIGN KEY (current_beatmap_id) REFERENCES mapset_data (mapset_id)
 );
 
+CREATE TABLE IF NOT EXISTS session_mapsets (
+    session_id VARCHAR(36),
+    mapset_id INT,
+    round_number INT,
+    FOREIGN KEY (session_id) REFERENCES game_sessions (id) ON DELETE CASCADE,
+    FOREIGN KEY (mapset_id) REFERENCES mapset_data (mapset_id)
+);
+
 CREATE TABLE IF NOT EXISTS reports (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,

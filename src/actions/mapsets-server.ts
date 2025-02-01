@@ -20,9 +20,9 @@ interface MapsetData {
 
 export interface MapsetDataWithTags extends MapsetData, MapsetTags {}
 
-export async function getRandomAudioAction(previousMapsetId?: number) {
+export async function getRandomAudioAction(sessionId?: string) {
     return authenticatedAction(async () => {
-        const audio = await getRandomAudio(previousMapsetId);
+        const audio = await getRandomAudio(sessionId);
         if (!audio) {
             throw new Error("No audio found");
         }
@@ -42,13 +42,17 @@ export async function getRandomAudioAction(previousMapsetId?: number) {
     });
 }
 
-async function getRandomAudio(previousMapsetId?: number): Promise<MapsetDataWithTags | null> {
+async function getRandomAudio(sessionId?: string): Promise<MapsetDataWithTags | null> {
+    const usedMapsets: Array<{ mapset_id: number }> = sessionId ? await query(`SELECT mapset_id FROM session_mapsets WHERE session_id = ?`, [sessionId]) : [];
+
+    const excludedIds = [...usedMapsets.map((m) => m.mapset_id)].filter(Boolean);
+
     const tagResults: Array<MapsetTags> = await query(
         `SELECT * FROM mapset_tags
-            WHERE mapset_id NOT LIKE ?
-            AND audio_filename IS NOT NULL
+            WHERE audio_filename IS NOT NULL
+            AND mapset_id NOT IN (${excludedIds.length ? "?".repeat(excludedIds.length).split("").join(",") : "0"})
             ORDER BY RAND() LIMIT 1;`,
-        [previousMapsetId ?? 0],
+        excludedIds,
     );
 
     const tags = tagResults[0];
@@ -76,9 +80,9 @@ async function getRandomAudio(previousMapsetId?: number): Promise<MapsetDataWith
     return { ...tags, ...mapset };
 }
 
-export async function getRandomBackgroundAction(previousMapsetId?: number) {
+export async function getRandomBackgroundAction(sessionId?: string) {
     return authenticatedAction(async () => {
-        const background = await getRandomBackground(previousMapsetId);
+        const background = await getRandomBackground(sessionId);
         if (!background) {
             throw new Error("No background found");
         }
@@ -94,8 +98,18 @@ export async function getRandomBackgroundAction(previousMapsetId?: number) {
     });
 }
 
-async function getRandomBackground(previousMapsetId?: number): Promise<MapsetDataWithTags | null> {
-    const tagResults: Array<MapsetTags> = await query(`SELECT * FROM mapset_tags WHERE mapset_id NOT LIKE ? ORDER BY RAND() LIMIT 1;`, [previousMapsetId ?? 0]);
+async function getRandomBackground(sessionId?: string): Promise<MapsetDataWithTags | null> {
+    const usedMapsets: Array<{ mapset_id: number }> = sessionId ? await query(`SELECT mapset_id FROM session_mapsets WHERE session_id = ?`, [sessionId]) : [];
+
+    const excludedIds = [...usedMapsets.map((m) => m.mapset_id)].filter(Boolean);
+
+    const tagResults: Array<MapsetTags> = await query(
+        `SELECT * FROM mapset_tags
+            WHERE mapset_id IS NOT NULL
+            AND mapset_id NOT IN (${excludedIds.length ? "?".repeat(excludedIds.length).split("").join(",") : "0"})
+            ORDER BY RAND() LIMIT 1;`,
+        excludedIds,
+    );
     const tags = tagResults[0];
 
     const mapsetResults: Array<MapsetData> = await query(`SELECT * FROM mapset_data WHERE mapset_id = ?`, [tags.mapset_id]);
