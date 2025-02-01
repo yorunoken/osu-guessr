@@ -6,6 +6,9 @@ import { StatsCard } from "./components/StatsCard";
 import { Button } from "@/components/ui/button";
 import { Gamepad2, Trophy, Users2 } from "lucide-react";
 
+import { supporters } from "@/config/supporters";
+import { SupportDialogWrapper } from "@/components/SupportDialogWrapper";
+
 interface ChangelogEntry {
     description: string;
     commit?: string;
@@ -38,6 +41,45 @@ export default async function HomeContent() {
             </section>
 
             <section className="py-16">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold mb-8 text-center">Supporters</h2>
+
+                    {supporters.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {supporters.map((supporter, index) => (
+                                <div key={index} className="bg-card rounded-xl p-6 border border-border/50 hover:border-primary/50 transition-colors">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="font-semibold">
+                                            {supporter.url ? (
+                                                <a href={supporter.url} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
+                                                    {supporter.name}
+                                                </a>
+                                            ) : (
+                                                supporter.name
+                                            )}
+                                        </div>
+                                        <div className="text-sm text-primary">${supporter.amount}</div>
+                                    </div>
+                                    {supporter.message && (
+                                        <p className="text-sm text-foreground/70 italic">
+                                            {'"'}
+                                            {supporter.message}
+                                            {'"'}
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center text-foreground/70">
+                            <p>Be the first to support osu!guessr!</p>
+                            <SupportDialogWrapper />
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            <section className="py-16 bg-secondary/20">
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-1">
