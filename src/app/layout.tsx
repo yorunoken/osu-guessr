@@ -29,7 +29,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
-                <Script src="https://cloud.umami.is/script.js" data-website-id="849dac77-219d-4a0e-ba65-910f76c78e6f" strategy="lazyOnload" />
+                <Script async defer src="https://cloud.umami.is/script.js" data-website-id="849dac77-219d-4a0e-ba65-910f76c78e6f" strategy="beforeInteractive" />
             </head>
             <body className={`${publicSans.variable} antialiased`}>
                 <SessionWrapper>
