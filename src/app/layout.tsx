@@ -6,7 +6,6 @@ import { ThemeProvider } from "@/context/theme-provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
-import Script from "next/script";
 
 const publicSans = Public_Sans({
     subsets: ["latin"],
@@ -29,7 +28,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
-                <script async data-id="101476983" src="//static.getclicky.com/js"></script>
+                <script async data-id="101476983" src="https://static.getclicky.com/js"></script>
             </head>
             <body className={`${publicSans.variable} antialiased`}>
                 <SessionWrapper>
@@ -44,7 +43,6 @@ export default function RootLayout({
                     </ThemeProvider>
                 </SessionWrapper>
             </body>
-            <Script defer src="https://cloud.umami.is/script.js" data-website-id="849dac77-219d-4a0e-ba65-910f76c78e6f" />
         </html>
     );
 }
