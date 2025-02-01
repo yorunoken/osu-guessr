@@ -29,8 +29,8 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head></head>
-            <Script async src="https://analytics.umami.is/script.js" data-website-id="b95e60a2-630f-4dab-814f-7299ebab3d61" strategy="afterInteractive" />
             <body className={`${publicSans.variable} antialiased`}>
+                <Script async src="https://analytics.umami.is/script.js" data-website-id="b95e60a2-630f-4dab-814f-7299ebab3d61" strategy="afterInteractive" />
                 <SessionWrapper>
                     <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
                         <Header />
