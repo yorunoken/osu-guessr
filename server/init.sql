@@ -127,26 +127,36 @@ CREATE TABLE IF NOT EXISTS reports (
     INDEX idx_reports_mapset (mapset_id)
 );
 
-CREATE INDEX idx_username ON users (username);
+CREATE INDEX IF NOT EXISTS idx_username ON users (username);
 
-CREATE INDEX idx_active_sessions ON game_sessions (user_id, is_active);
+CREATE INDEX IF NOT EXISTS idx_active_sessions ON game_sessions (user_id, is_active);
 
-CREATE INDEX idx_session_last_action ON game_sessions (last_action_at);
+CREATE INDEX IF NOT EXISTS idx_session_last_action ON game_sessions (last_action_at);
 
-CREATE INDEX idx_games_user_mode ON games (user_id, game_mode);
+CREATE INDEX IF NOT EXISTS idx_games_user_mode ON games (user_id, game_mode);
 
-CREATE INDEX idx_games_ended ON games (ended_at);
+CREATE INDEX IF NOT EXISTS idx_games_ended ON games (ended_at);
 
-CREATE INDEX idx_mapset_tags_mapset_id ON mapset_tags (mapset_id);
+CREATE INDEX IF NOT EXISTS idx_mapset_tags_mapset_id ON mapset_tags (mapset_id);
 
-CREATE INDEX idx_mapset_data_title ON mapset_data (title);
+CREATE INDEX IF NOT EXISTS idx_mapset_data_title ON mapset_data (title);
 
-CREATE INDEX idx_mapset_data_artist ON mapset_data (artist);
+CREATE INDEX IF NOT EXISTS idx_mapset_data_artist ON mapset_data (artist);
 
-CREATE INDEX idx_mapset_data_mapper ON mapset_data (mapper);
+CREATE INDEX IF NOT EXISTS idx_mapset_data_mapper ON mapset_data (mapper);
 
-CREATE INDEX idx_user_achievements_score ON user_achievements (total_score);
+CREATE INDEX IF NOT EXISTS idx_user_achievements_score ON user_achievements (total_score);
 
-CREATE INDEX idx_game_sessions_mode ON game_sessions (game_mode);
+CREATE INDEX IF NOT EXISTS idx_game_sessions_mode ON game_sessions (game_mode);
 
-CREATE INDEX idx_api_keys_last_used ON api_keys (last_used);
+CREATE INDEX IF NOT EXISTS idx_api_keys_last_used ON api_keys (last_used);
+
+CREATE INDEX IF NOT EXISTS idx_achievements_user_score ON user_achievements (user_id, total_score);
+
+CREATE INDEX IF NOT EXISTS idx_achievements_mode_score ON user_achievements (game_mode, total_score);
+
+CREATE INDEX IF NOT EXISTS idx_session_mapsets_round ON session_mapsets (session_id, round_number);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_user_mode_active ON game_sessions (user_id, game_mode, is_active);
+
+CREATE INDEX IF NOT EXISTS idx_games_mode_points ON games (game_mode, points);
