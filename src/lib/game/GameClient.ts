@@ -6,12 +6,20 @@ type GameMode = "background" | "audio";
 export class GameClient {
     private session: GameSession | null = null;
     private onStateUpdate: (state: GameState) => void;
-    private suggestionsDebounceTimer: NodeJS.Timeout | null = null;
     private gameMode: GameMode;
+    private userVolume: number = 0.25;
 
     constructor(onStateUpdate: (state: GameState) => void, gameMode: GameMode = "background") {
         this.onStateUpdate = onStateUpdate;
         this.gameMode = gameMode;
+    }
+
+    setVolume(volume: number): void {
+        this.userVolume = volume;
+    }
+
+    getVolume(): number {
+        return this.userVolume;
     }
 
     async startGame(): Promise<void> {

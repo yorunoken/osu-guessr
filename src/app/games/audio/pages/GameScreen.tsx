@@ -193,7 +193,14 @@ export default function GameScreen({ onExit }: GameScreenProps) {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="relative">
-                    <GameAudio audioUrl={gameState.currentBeatmap.audioUrl!} isRevealed={gameState.currentBeatmap.revealed} result={gameState.lastGuess} songInfo={gameState.currentBeatmap} />
+                    <GameAudio
+                        audioUrl={gameState.currentBeatmap.audioUrl!}
+                        isRevealed={gameState.currentBeatmap.revealed}
+                        result={gameState.lastGuess}
+                        songInfo={gameState.currentBeatmap}
+                        initialVolume={gameClient.current!.getVolume()}
+                        onVolumeChange={(volume) => gameClient!.current!.setVolume(volume)}
+                    />
                     {isLoading && <LoadingScreen />}
                 </div>
 

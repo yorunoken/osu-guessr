@@ -16,9 +16,11 @@ interface GameAudioProps {
         mapper?: string;
         mapsetId?: number;
     };
+    onVolumeChange(volume: number): void;
+    initialVolume: number;
 }
 
-export default function GameAudio({ audioUrl, isRevealed, result, songInfo }: GameAudioProps) {
+export default function GameAudio({ audioUrl, isRevealed, result, songInfo, onVolumeChange, initialVolume }: GameAudioProps) {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -31,7 +33,7 @@ export default function GameAudio({ audioUrl, isRevealed, result, songInfo }: Ga
             const handleCanPlay = () => {
                 setIsLoading(false);
                 if (!isRevealed) {
-                    audioRef.current!.volume = 0.25;
+                    audioRef.current!.volume = initialVolume;
                     const playPromise = audioRef.current!.play();
                     if (playPromise !== undefined) {
                         playPromise.catch((error) => {
@@ -41,18 +43,26 @@ export default function GameAudio({ audioUrl, isRevealed, result, songInfo }: Ga
                 }
             };
 
+            const handleVolumeChange = () => {
+                if (audioRef.current) {
+                    onVolumeChange(audioRef.current.volume);
+                }
+            };
+
             audioRef.current.addEventListener("canplay", handleCanPlay);
+            audioRef.current.addEventListener("volumechange", handleVolumeChange);
             audioRef.current.load();
 
             return () => {
                 if (audioRef.current) {
                     audioRef.current.removeEventListener("canplay", handleCanPlay);
+                    audioRef.current.removeEventListener("volumechange", handleVolumeChange);
                     audioRef.current.pause();
                     audioRef.current.currentTime = 0;
                 }
             };
         }
-    }, [audioUrl, isRevealed]);
+    }, [audioUrl, isRevealed, initialVolume, onVolumeChange]);
 
     useEffect(() => {
         if (isRevealed && audioRef.current) {
