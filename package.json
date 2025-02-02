@@ -12,7 +12,8 @@
         "server:start": "cd server && cargo run -r",
         "build": "bun run frontend:build && bun run server:build",
         "dev": "concurrently \"bun run server:start\" \"bun run frontend:dev\"",
-        "start": "concurrently \"bun run server:start\" \"bun run frontend:start\""
+        "start": "concurrently \"bun run server:start\" \"bun run frontend:start\"",
+        "restart": "git pull && bun run build && pm2 restart 12"
     },
     "dependencies": {
         "@radix-ui/react-dialog": "^1.1.5",
