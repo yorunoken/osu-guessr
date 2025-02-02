@@ -13,6 +13,7 @@ import GuessInput from "../../shared/components/GuessInput";
 import LoadingScreen from "../../shared/components/LoadingScreen";
 import GameHeader from "../../shared/components/Header";
 import { ReportDialog } from "@/components/ReportDialog";
+import { AdPlaceholder } from "@/components/AdPlaceholder";
 
 interface GameScreenProps {
     onExit(): void;
@@ -233,6 +234,8 @@ export default function GameScreen({ onExit }: GameScreenProps) {
                     </Button>
                 )}
             </div>
+
+            <AdPlaceholder />
         </div>
     );
 }
