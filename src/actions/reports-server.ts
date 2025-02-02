@@ -3,16 +3,11 @@
 import { z } from "zod";
 import { query } from "@/lib/database";
 import { authenticatedAction } from "./server";
+import { createGithubIssue } from "@/lib/github";
 
 const reportSchema = z.object({
     mapsetId: z.number(),
-    reportType: z.enum([
-        "incorrect_title",
-        "inappropriate_content",
-        "wrong_audio",
-        "wrong_background",
-        "other"
-    ]),
+    reportType: z.enum(["incorrect_title", "inappropriate_content", "wrong_audio", "wrong_background", "other"]),
     description: z.string().min(10).max(1000),
 });
 
@@ -29,11 +24,7 @@ export interface Report {
     updated_at: Date;
 }
 
-export async function createReportAction(
-    mapsetId: number,
-    reportType: ReportType,
-    description: string
-): Promise<void> {
+export async function createReportAction(mapsetId: number, reportType: ReportType, description: string): Promise<void> {
     return authenticatedAction(async (session) => {
         const validated = reportSchema.parse({
             mapsetId,
@@ -41,35 +32,36 @@ export async function createReportAction(
             description,
         });
 
-        // Check if user has already reported this mapset
-        const [existingReport] = await query(
-            `SELECT id FROM reports
-             WHERE user_id = ? AND mapset_id = ? AND status IN ('pending', 'investigating')`,
-            [session.user.banchoId, validated.mapsetId]
-        );
+        const [mapset] = await query(`SELECT title, artist FROM mapset_data WHERE mapset_id = ?`, [validated.mapsetId]);
 
-        if (existingReport) {
-            throw new Error("You have already reported this beatmap");
-        }
+        const issueTitle = `[${reportType}] ${mapset.artist} - ${mapset.title}`;
+        const issueBody = `
+**Report Type:** ${reportType}
+**Mapset ID:** ${mapsetId}
+**Reported By:** ${session.user.banchoId}
+
+**Description:**
+${description}
+
+**Links:**
+- [Mapset Page](https://osu.ppy.sh/s/${mapsetId})
+`;
+
+        const labels = ["report", reportType, "pending"];
+        const githubIssue = await createGithubIssue(issueTitle, issueBody, labels);
 
         await query(
-            `INSERT INTO reports (user_id, mapset_id, report_type, description)
-             VALUES (?, ?, ?, ?)`,
-            [
-                session.user.banchoId,
-                validated.mapsetId,
-                validated.reportType,
-                validated.description,
-            ]
+            `INSERT INTO reports (
+                user_id, mapset_id, report_type, description,
+                github_issue_number, github_issue_url
+            ) VALUES (?, ?, ?, ?, ?, ?)`,
+            [session.user.banchoId, validated.mapsetId, validated.reportType, validated.description, githubIssue.data.number, githubIssue.data.html_url],
         );
     });
 }
 
 export async function getUserReportsAction(): Promise<Report[]> {
     return authenticatedAction(async (session) => {
-        return query(
-            `SELECT * FROM reports WHERE user_id = ? ORDER BY created_at DESC`,
-            [session.user.banchoId]
-        );
+        return query(`SELECT * FROM reports WHERE user_id = ? ORDER BY created_at DESC`, [session.user.banchoId]);
     });
 }

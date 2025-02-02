@@ -120,6 +120,8 @@ CREATE TABLE IF NOT EXISTS reports (
     ) DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    github_issue_number INT,
+    github_issue_url VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE,
     FOREIGN KEY (mapset_id) REFERENCES mapset_data (mapset_id),
     INDEX idx_reports_status (status),
