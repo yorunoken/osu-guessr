@@ -3,11 +3,11 @@
 import { getAuthSession } from "./server";
 import { query } from "@/lib/database";
 import { z } from "zod";
-import { BASE_POINTS, SIMILARITY_THRESHOLD, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME } from "../app/games/config";
-import FuzzySet from "fuzzyset.js";
+import { BASE_POINTS, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME } from "../app/games/config";
 import { getRandomAudioAction, getRandomBackgroundAction, MapsetDataWithTags } from "./mapsets-server";
 import path from "path";
 import fs from "fs/promises";
+import { checkGuess, GuessDifficulty } from "@/lib/guess-checker";
 
 const gameSchema = z.object({
     sessionId: z.string().uuid(),
@@ -210,6 +210,8 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         const timeElapsed = Math.floor((Date.now() - new Date(gameState.last_action_at).getTime()) / 1000);
         const timeLeft = Math.max(0, gameState.time_left - timeElapsed);
 
+        const difficulty: GuessDifficulty = 0.5;
+
         let isSkipped = guess === null;
         const isNextRound = guess === undefined;
         let effectiveGuess = isSkipped ? "" : guess;
@@ -222,7 +224,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
 
         const [beatmap]: Array<MapsetDataWithTags> = await query(`SELECT * FROM mapset_data WHERE mapset_id = ?`, [gameState.current_beatmap_id]);
 
-        const isCorrect = isGuess ? checkGuess(effectiveGuess || "", beatmap.title) : false;
+        const isCorrect = isGuess ? checkGuess(effectiveGuess || "", beatmap.title, difficulty) : false;
         const points = isNextRound ? 0 : calculateScore(isCorrect, timeLeft, gameState.current_streak);
 
         let nextBeatmap: { data: MapsetDataWithTags; backgroundData?: string; audioData?: string } | null = null;
@@ -479,39 +481,6 @@ export async function getSuggestionsAction(str: string): Promise<string[]> {
     );
 
     return results.map((r) => r.title);
-}
-
-function checkGuess(guess: string, actual: string): boolean {
-    const normalizeString = (str: string) => str.toLowerCase().replace(/[^a-z0-9\s]/g, "");
-
-    const normalizedGuess = normalizeString(guess);
-    const normalizedActual = normalizeString(actual);
-
-    if (normalizedGuess === normalizedActual) {
-        return true;
-    }
-
-    if (normalizedGuess.length >= 4) {
-        const guessWords = normalizedGuess.split(" ");
-
-        const guessPhrase = guessWords.join(" ");
-        if (normalizedActual.includes(guessPhrase)) {
-            const mainTitle = normalizedActual.split("(")[0].trim();
-            if (guessPhrase.length >= mainTitle.length * 0.3) {
-                return true;
-            }
-        }
-    }
-
-    const fuzz = FuzzySet([normalizedActual]);
-    const match = fuzz.get(normalizedGuess);
-
-    if (match && match[0]) {
-        const [score] = match[0];
-        return score >= SIMILARITY_THRESHOLD;
-    }
-
-    return false;
 }
 
 function calculateScore(isCorrect: boolean, timeLeft: number, streak: number): number {
