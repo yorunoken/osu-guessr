@@ -89,7 +89,6 @@ CREATE TABLE game_sessions (
     correct_guesses INT DEFAULT 0,
     total_time_used INT DEFAULT 0,
     variant ENUM ('classic', 'death') DEFAULT 'classic',
-    lives_left INT,
     is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE,
     FOREIGN KEY (current_beatmap_id) REFERENCES mapset_data (mapset_id)

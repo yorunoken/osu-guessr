@@ -50,7 +50,6 @@ export default function PreGameMenu({ onStart, gameType }: PreGameMenuProps) {
                     <li>• Keep playing until you make a mistake</li>
                     <li>• Try to guess the song title within {ROUND_TIME} seconds per round</li>
                     <li>• Build the longest streak possible</li>
-                    <li>• One wrong knocks you, two wrongs end the game</li>
                 </ul>
             </div>
 
@@ -82,7 +81,7 @@ export default function PreGameMenu({ onStart, gameType }: PreGameMenuProps) {
                             className="flex-1 h-auto py-6 flex flex-col gap-2 hover:bg-red-500 hover:text-white transition-colors"
                         >
                             <span className="text-lg font-semibold">Death Mode</span>
-                            <span className="text-sm text-muted-foreground">One extra life, treasure it!</span>
+                            <span className="text-sm text-muted-foreground">Only one life, treasure it!</span>
                         </Button>
                     </div>
 

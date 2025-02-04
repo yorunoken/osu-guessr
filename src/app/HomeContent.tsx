@@ -25,7 +25,7 @@ export default async function HomeContent() {
     const changelogs: Array<Changelog> = await readChangelogs();
     changelogs.reverse();
 
-    const topPlayers = await getTopPlayersAction("background", 5);
+    const topPlayers = await getTopPlayersAction("background", "classic", 5);
     const highStats = await getHighestStatsAction();
 
     return (
