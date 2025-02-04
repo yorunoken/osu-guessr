@@ -4,7 +4,7 @@ import { Game, UserAchievement } from "@/actions/user-server";
 import Image from "next/image";
 import Link from "next/link";
 import { GameVariant } from "@/app/games/config";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 type GameModes = "background" | "audio" | "skin";
 
@@ -46,7 +46,7 @@ interface UserProfileClientProps {
 }
 
 export default function UserProfileClient({ user, userStats, userGames, topPlays, currentMode, currentVariant, banchoId }: UserProfileClientProps) {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
     const { username, avatar_url, achievements, ranks } = user;
 
     const topPlaysByMode = topPlays.reduce(

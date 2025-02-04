@@ -9,7 +9,7 @@ import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import { searchUsersAction } from "@/actions/user-server";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 interface SearchResult {
     bancho_id: number;
@@ -18,7 +18,7 @@ interface SearchResult {
 }
 
 export default function UserSearch() {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<SearchResult[]>([]);

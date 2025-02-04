@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 export default function SignInPrompt() {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     return (
         <div className="container mx-auto px-4 py-16">

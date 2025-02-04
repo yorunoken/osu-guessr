@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
 import { ROUND_TIME, BASE_POINTS, SKIP_PENALTY, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, GameVariant } from "../../config";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 interface PreGameMenuProps {
     onStart(variant: GameVariant): void;
@@ -12,7 +12,7 @@ interface PreGameMenuProps {
 }
 
 export default function PreGameMenu({ onStart, gameType }: PreGameMenuProps) {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
     const [selectedMode, setSelectedMode] = useState<GameVariant>("classic");
 
     const ClassicModeContent = () => (

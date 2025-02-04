@@ -4,7 +4,7 @@ import { StatsCard } from "./components/StatsCard";
 import { Gamepad2, Trophy, Users2 } from "lucide-react";
 import { supporters } from "@/config/supporters";
 import { SupportDialogWrapper } from "@/components/SupportDialogWrapper";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 import React from "react";
 
 interface ChangelogEntry {
@@ -31,7 +31,7 @@ interface HomeContentProps {
 const StyledGameName = () => <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">osu!guessr</span>;
 
 export default function HomeContent({ changelogs, highStats }: HomeContentProps) {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
     const sortedChangelogs = [...changelogs].reverse();
 
     return (

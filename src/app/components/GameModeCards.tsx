@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 const gameModes = [
     {
@@ -22,7 +22,7 @@ const gameModes = [
 ];
 
 export default function GameModeCards() {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     return (
         <section className="py-24 bg-background" id="gamemodes">

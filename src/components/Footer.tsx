@@ -1,10 +1,10 @@
 "use client";
 
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 import React from "react";
 
 export default function Footer() {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     const AuthorLink = () => (
         <a className="text-primary hover:text-primary/80 transition-colors duration-200" href="https://osu.ppy.sh/u/yorunoken" target="_blank" rel="noopener noreferrer">

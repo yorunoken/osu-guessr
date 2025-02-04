@@ -9,7 +9,7 @@ import { Textarea } from "./ui/textarea";
 import { ReportType, createReportAction } from "@/actions/reports-server";
 import { AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 interface ReportDialogProps {
     mapsetId: number;
@@ -26,7 +26,7 @@ const REPORT_TYPES = [
 ] as const;
 
 export function ReportDialog({ mapsetId, mapsetTitle, onOpenChange }: ReportDialogProps) {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
     const [isOpen, setIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [reportType, setReportType] = useState<ReportType>("incorrect_title");

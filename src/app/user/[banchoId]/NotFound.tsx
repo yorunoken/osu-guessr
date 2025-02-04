@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 import React from "react";
 
 const StyledGameName = () => <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">osu!guessr</span>;
 
 export default function UserNotFound() {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     return (
         <div className="container mx-auto px-4 py-16">

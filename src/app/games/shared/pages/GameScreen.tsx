@@ -13,7 +13,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import GameHeader from "../components/Header";
 import { ReportDialog } from "@/components/ReportDialog";
 import { AdPlaceholder } from "@/components/AdPlaceholder";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 interface GameScreenProps {
     onExit(): void;
@@ -38,7 +38,7 @@ interface GameScreenProps {
 }
 
 export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }: GameScreenProps) {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [guess, setGuess] = useState("");

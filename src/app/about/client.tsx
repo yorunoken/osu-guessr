@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 import { TIME_BONUS_MULTIPLIER, BASE_POINTS, SKIP_PENALTY, STREAK_BONUS, MAX_ROUNDS, ROUND_TIME } from "../games/config";
 import React from "react";
 
@@ -23,7 +23,7 @@ const RedditThreadLink = () => (
 );
 
 export default function AboutClient() {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     return (
         <div className="container mx-auto px-4 py-16 max-w-4xl">

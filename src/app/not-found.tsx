@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 export default function NotFound() {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     return (
         <div className="container mx-auto px-4 py-16">

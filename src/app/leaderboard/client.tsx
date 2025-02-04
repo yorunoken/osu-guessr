@@ -7,12 +7,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getTopPlayersAction, TopPlayer } from "@/actions/user-server";
 import { GameVariant } from "@/app/games/config";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 type GameMode = "background" | "audio" | "skin";
 
 export default function LeaderboardClient() {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
     const { data: session } = useSession();
     const [selectedMode, setSelectedMode] = useState<GameMode>("background");
     const [selectedVariant, setSelectedVariant] = useState<GameVariant>("classic");

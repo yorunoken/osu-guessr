@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 const DONATION_LINKS = [
     {
@@ -19,7 +19,7 @@ const DONATION_LINKS = [
 
 export function SupportDialogWrapper() {
     const [showDialog, setShowDialog] = useState(false);
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     return (
         <>

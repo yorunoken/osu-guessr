@@ -10,14 +10,14 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 import { SupportDialogWrapper } from "./SupportDialogWrapper";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 const NAV_ITEMS = ["leaderboard", "about"] as const;
 
 export default function Header() {
     const { data: session } = useSession();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     return (
         <header className="bg-background/95 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">

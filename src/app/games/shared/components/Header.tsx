@@ -1,4 +1,4 @@
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 interface GameHeaderProps {
     streak: number;
@@ -13,7 +13,7 @@ interface GameHeaderProps {
 }
 
 export default function GameHeader({ streak, points, timeLeft, currentRound, totalRounds, mode, gameVariant, maxStreak = 0, lives = 1 }: GameHeaderProps) {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     const getLivesDisplay = (lives: number) => {
         if (lives === 1) {

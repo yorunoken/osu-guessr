@@ -8,10 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { AlertTriangle, AlertCircle, Eye, EyeOff, Copy, Check, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Link from "next/link";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 export default function SettingsClient() {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     const [apiKeys, setApiKeys] = useState<Array<ApiKey & { showValue?: boolean; copied?: boolean }>>([]);
     const [newKeyName, setNewKeyName] = useState("");

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { GameVariant } from "../../config";
-import { useTranslations } from "@/hooks/use-translations";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 interface GameStatsProps {
     totalPoints: number;
@@ -15,7 +15,7 @@ interface GameStatsProps {
 }
 
 export default function GameStats({ totalPoints, correctGuesses, maxStreak, totalRounds, averageTime, onPlayAgain, gameVariant, gameEndReason }: GameStatsProps) {
-    const { t } = useTranslations();
+    const { t } = useTranslationsContext();
 
     return (
         <div className="container mx-auto px-4 py-16">
