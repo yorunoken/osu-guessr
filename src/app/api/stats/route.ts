@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 import { validateApiKey } from "@/actions/api-keys-server";
-import { getTopPlayersAction } from "@/actions/user-server";
+import { getHighestStatsAction } from "@/actions/user-server";
 import { z } from "zod";
 
 const querySchema = z.object({
-    mode: z.enum(["background", "audio", "skin"]).default("background"),
     variant: z.enum(["classic", "death"]).default("classic"),
-    limit: z.coerce.number().min(1).max(100).default(100),
 });
 
 export async function GET(request: Request) {
@@ -22,19 +20,17 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const query = querySchema.parse({
-            mode: searchParams.get("mode"),
-            variant: searchParams.get("variant"),
-            limit: Number(searchParams.get("limit")),
+            variant: searchParams.get("variant") || "classic",
         });
 
-        const leaderboard = await getTopPlayersAction(query.mode, query.variant, query.limit);
+        const stats = await getHighestStatsAction(query.variant);
 
         return NextResponse.json({
             success: true,
-            data: leaderboard,
+            data: stats,
         });
     } catch (error) {
-        console.error("Leaderboard error:", error);
-        return NextResponse.json({ success: false, error: "Failed to fetch leaderboard" }, { status: 500 });
+        console.error("Stats error:", error);
+        return NextResponse.json({ success: false, error: "Failed to fetch stats" }, { status: 500 });
     }
 }
