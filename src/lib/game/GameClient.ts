@@ -1,5 +1,6 @@
-import { startGameAction, startAudioGameAction, submitGuessAction, getGameStateAction, endGameAction, deactivateSessionAction, getSuggestionsAction, GameState } from "@/actions/game-server";
+import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, getSuggestionsAction, GameState } from "@/actions/game-server";
 import { GameSession } from "./types";
+import { GameVariant } from "@/app/games/config";
 
 type GameMode = "background" | "audio";
 
@@ -7,11 +8,13 @@ export class GameClient {
     private session: GameSession | null = null;
     private onStateUpdate: (state: GameState) => void;
     private gameMode: GameMode;
+    private gameVariant: GameVariant;
     private userVolume: number = 0.25;
 
-    constructor(onStateUpdate: (state: GameState) => void, gameMode: GameMode = "background") {
+    constructor(onStateUpdate: (state: GameState) => void, gameMode: GameMode = "background", gameVariant: GameVariant = "classic") {
         this.onStateUpdate = onStateUpdate;
         this.gameMode = gameMode;
+        this.gameVariant = gameVariant;
     }
 
     setVolume(volume: number): void {
@@ -24,7 +27,7 @@ export class GameClient {
 
     async startGame(): Promise<void> {
         try {
-            const initialState = this.gameMode === "audio" ? await startAudioGameAction() : await startGameAction();
+            const initialState = await startGameAction(this.gameMode, this.gameVariant);
 
             this.session = {
                 id: initialState.sessionId,
@@ -33,7 +36,7 @@ export class GameClient {
                 isActive: true,
             };
             this.startTimer();
-            console.log(`[Game Client]: Started ${this.gameMode} Game`);
+            console.log(`[Game Client]: Started ${this.gameMode} Game (${this.gameVariant} mode)`);
         } catch (error) {
             console.error("Failed to start game:", error);
             throw error;
@@ -137,23 +140,6 @@ export class GameClient {
         try {
             await endGameAction(this.session.id);
             console.log("[Game Client]: Ended Game");
-        } catch (error) {
-            console.error("Failed to end game:", error);
-            throw error;
-        } finally {
-            this.cleanup();
-        }
-    }
-
-    async cleanUpSession(): Promise<void> {
-        if (!this.session?.id) return;
-
-        this.stopTimer();
-        this.session.isActive = false;
-
-        try {
-            await deactivateSessionAction(this.session.id);
-            console.log("[Game Client]: Ended Game (0 points, deleted session)");
         } catch (error) {
             console.error("Failed to end game:", error);
             throw error;

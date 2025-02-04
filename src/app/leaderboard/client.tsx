@@ -6,12 +6,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getTopPlayersAction, TopPlayer } from "@/actions/user-server";
+import { GameVariant } from "@/app/games/config";
 
 type GameMode = "background" | "audio" | "skin";
 
 export default function LeaderboardClient() {
     const { data: session } = useSession();
     const [selectedMode, setSelectedMode] = useState<GameMode>("background");
+    const [selectedVariant, setSelectedVariant] = useState<GameVariant>("classic");
     const [leaderboardData, setLeaderboardData] = useState<Array<TopPlayer>>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -22,8 +24,7 @@ export default function LeaderboardClient() {
             setError(null);
 
             try {
-                const data = await getTopPlayersAction(selectedMode, 100);
-
+                const data = await getTopPlayersAction(selectedMode, selectedVariant, 100);
                 setLeaderboardData(data);
             } catch (error) {
                 console.error("Failed to fetch leaderboard:", error);
@@ -34,7 +35,7 @@ export default function LeaderboardClient() {
         }
 
         fetchLeaderboard();
-    }, [selectedMode]);
+    }, [selectedMode, selectedVariant]);
 
     const gameModes: GameMode[] = ["background", "audio", "skin"];
 
@@ -42,12 +43,33 @@ export default function LeaderboardClient() {
         <div className="container mx-auto px-4 py-16">
             <h1 className="text-4xl font-bold mb-8 text-center">Leaderboard</h1>
 
-            <div className="flex justify-center gap-4 mb-8">
-                {gameModes.map((mode) => (
-                    <Button key={mode} variant={selectedMode === mode ? "default" : "outline"} onClick={() => setSelectedMode(mode)} className="capitalize">
-                        {mode}
+            <div className="flex flex-col gap-4 mb-8">
+                <div className="flex justify-center gap-4">
+                    {gameModes.map((mode) => (
+                        <Button key={mode} variant={selectedMode === mode ? "default" : "outline"} onClick={() => setSelectedMode(mode)} className="capitalize">
+                            {mode}
+                        </Button>
+                    ))}
+                </div>
+
+                <div className="flex justify-center gap-4">
+                    <Button
+                        variant={selectedVariant === "classic" ? "default" : "outline"}
+                        onClick={() => setSelectedVariant("classic")}
+                        className={`min-w-[120px] ${selectedVariant === "classic" ? "bg-primary" : ""}`}
+                    >
+                        Classic Mode
                     </Button>
-                ))}
+                    <Button
+                        variant={selectedVariant === "death" ? "default" : "outline"}
+                        onClick={() => setSelectedVariant("death")}
+                        className={`min-w-[120px] ${
+                            selectedVariant === "death" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
+                        }`}
+                    >
+                        Death Mode
+                    </Button>
+                </div>
             </div>
 
             <div className="bg-card rounded-xl border border-border/50 overflow-hidden">
@@ -64,9 +86,9 @@ export default function LeaderboardClient() {
                                 <tr>
                                     <th className="px-6 py-4 text-left">#</th>
                                     <th className="px-6 py-4 text-left">Player</th>
-                                    <th className="px-6 py-4 text-right">Total Score</th>
+                                    {selectedVariant === "classic" && <th className="px-6 py-4 text-right">Total Score</th>}
                                     <th className="px-6 py-4 text-right">Games Played</th>
-                                    <th className="px-6 py-4 text-right">Hi-Score</th>
+                                    <th className="px-6 py-4 text-right">{selectedVariant === "classic" ? "Hi-Score" : "Best Streak"}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/50">
@@ -94,9 +116,9 @@ export default function LeaderboardClient() {
                                                 </div>
                                             </Link>
                                         </td>
-                                        <td className="px-6 py-4 text-right font-mono">{Number(player.total_score).toLocaleString()}</td>
+                                        {selectedVariant === "classic" && <td className="px-6 py-4 text-right font-mono">{Number(player.total_score).toLocaleString()}</td>}
                                         <td className="px-6 py-4 text-right font-mono">{player.games_played}</td>
-                                        <td className="px-6 py-4 text-right font-mono">{player.highest_score}</td>
+                                        <td className="px-6 py-4 text-right font-mono">{selectedVariant === "classic" ? player.highest_score : player.highest_streak}</td>
                                     </tr>
                                 ))}
                             </tbody>

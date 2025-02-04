@@ -13,7 +13,9 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 
 ##### Parameters
 
-> None
+> | name     | type     | data type | description                    |
+> |----------|----------|-----------|--------------------------------|
+> | `variant`| optional | string    | Game variant (classic or death) |
 
 ##### Headers
 
@@ -31,7 +33,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 ##### Example cURL
 
 > ```javascript
-> curl -X GET -H "X-API-Key: your-api-key" /api/stats
+> curl -X GET -H "X-API-Key: your-api-key" /api/stats?variant=classic
 > ```
 
 ##### Stats Object
@@ -42,9 +44,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 >   "data": {
 >     "total_users": 1000,
 >     "total_games": 5000,
->     "highest_score": 10000,
->     "games_today": 150,
->     "active_users": 50
+>     "highest_points": 10000
 >   }
 > }
 > ```
@@ -98,6 +98,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 >       {
 >         "user_id": 12345,
 >         "game_mode": "background",
+>         "variant": "classic",
 >         "total_score": 10000,
 >         "games_played": 50,
 >         "highest_streak": 15,
@@ -257,6 +258,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 >       "game_mode": "background",
 >       "points": 1000,
 >       "streak": 5,
+>       "variant": "classic",
 >       "ended_at": "2024-01-28T12:00:00Z"
 >     }
 >   ],
@@ -275,13 +277,14 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 ## Leaderboard
 
 <details>
- <summary><code>GET</code> <code><b>/api/game/leaderboard</b></code> <code>(get global leaderboard)</code></summary>
+ <summary><code>GET</code> <code><b>/api/games/leaderboard</b></code> <code>(get global leaderboard)</code></summary>
 
 ##### Parameters
 
 > | name    | type     | data type | description                                          |
 > |---------|----------|-----------|------------------------------------------------------|
 > | `mode`  | optional | string    | Game mode (background, audio, or skin)               |
+> | `variant` | optional | string    | Game variant (classic or death)                      |
 > | `limit` | optional | number    | Maximum number of results (default: 100, max: 100)   |
 
 ##### Headers
@@ -300,7 +303,7 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 ##### Example cURL
 
 > ```javascript
-> curl -X GET -H "X-API-Key: your-api-key" "/api/game/leaderboard?mode=background&limit=10"
+> curl -X GET -H "X-API-Key: your-api-key" "/api/games/leaderboard?mode=background&variant=classic&limit=10"
 > ```
 
 ##### Leaderboard Result
@@ -316,12 +319,12 @@ All requests require an API key provided in the `X-API-Key` header. You can obta
 >       "total_score": 50000,
 >       "games_played": 100,
 >       "highest_streak": 25,
->       "highest_score": 1000
+>       "highest_score": 1000,
+>       "variant": "classic"
 >     }
 >   ]
 > }
 > ```
-```
 
 </details>
 

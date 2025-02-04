@@ -3,6 +3,7 @@ import Image from "next/image";
 import UserNotFound from "./NotFound";
 import { Metadata } from "next";
 import Link from "next/link";
+import { GameVariant } from "@/app/games/config";
 
 type GameModes = "background" | "audio" | "skin";
 
@@ -11,6 +12,7 @@ interface GameStats {
     total_score: number;
     games_played: number;
     highest_streak: number;
+    highest_score: number;
     last_played: Date;
 }
 
@@ -18,7 +20,7 @@ const gamemodes: Array<GameModes> = ["audio", "background", "skin"];
 
 interface Props {
     params: Promise<{ banchoId: string }>;
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    searchParams: Promise<{ mode?: string; variant?: string }>;
 }
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
@@ -34,13 +36,14 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 
 export default async function UserProfile({ params, searchParams }: Props) {
     const { banchoId } = await params;
-    const { mode = "background" } = await searchParams;
+    const { mode = "background", variant = "classic" } = await searchParams;
     const currentMode = mode as GameModes;
+    const currentVariant = variant as GameVariant;
 
     const userStats = await getUserStatsAction(Number(banchoId));
     const user = await getUserByIdAction(Number(banchoId));
-    let userGames = await getUserLatestGamesAction(Number(banchoId));
-    const topPlays = await getUserTopGamesAction(Number(banchoId));
+    let userGames = await getUserLatestGamesAction(Number(banchoId), undefined, currentVariant);
+    const topPlays = await getUserTopGamesAction(Number(banchoId), undefined, currentVariant);
 
     const topPlaysByMode = topPlays.reduce(
         (acc, game) => {
@@ -68,6 +71,7 @@ export default async function UserProfile({ params, searchParams }: Props) {
             total_score: 0,
             games_played: 0,
             highest_streak: 0,
+            highest_score: 0,
             last_played: new Date(0),
         },
         audio: {
@@ -75,6 +79,7 @@ export default async function UserProfile({ params, searchParams }: Props) {
             total_score: 0,
             games_played: 0,
             highest_streak: 0,
+            highest_score: 0,
             last_played: new Date(0),
         },
         skin: {
@@ -82,6 +87,7 @@ export default async function UserProfile({ params, searchParams }: Props) {
             total_score: 0,
             games_played: 0,
             highest_streak: 0,
+            highest_score: 0,
             last_played: new Date(0),
         },
     };
@@ -93,6 +99,7 @@ export default async function UserProfile({ params, searchParams }: Props) {
                 total_score: stat.total_score,
                 games_played: stat.games_played,
                 highest_streak: stat.highest_streak,
+                highest_score: stat.highest_score,
                 last_played: new Date(stat.last_played),
             };
         }
@@ -129,22 +136,49 @@ export default async function UserProfile({ params, searchParams }: Props) {
                 </div>
             </div>
 
-            <div className="flex justify-center gap-4">
-                {gamemodes.map((mode) => (
-                    <ModeButton key={mode} mode={mode} currentMode={currentMode} banchoId={banchoId} />
-                ))}
+            <div className="flex flex-col items-center gap-4">
+                <div className="flex justify-center gap-4">
+                    {gamemodes.map((mode) => (
+                        <Link
+                            key={mode}
+                            href={`/user/${banchoId}?mode=${mode}&variant=${currentVariant}`}
+                            className={`px-4 py-2 rounded-lg capitalize ${currentMode === mode ? "bg-primary text-primary-foreground" : "bg-card hover:bg-primary/10"}`}
+                        >
+                            {mode}
+                        </Link>
+                    ))}
+                </div>
+
+                <div className="flex justify-center gap-4">
+                    <Link
+                        href={`/user/${banchoId}?mode=${currentMode}&variant=classic`}
+                        className={`min-w-[120px] text-center px-4 py-2 rounded-lg ${currentVariant === "classic" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-primary/10"}`}
+                    >
+                        Classic Mode
+                    </Link>
+                    <Link
+                        href={`/user/${banchoId}?mode=${currentMode}&variant=death`}
+                        className={`min-w-[120px] text-center px-4 py-2 rounded-lg ${
+                            currentVariant === "death" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-card hover:bg-destructive/10 hover:text-destructive"
+                        }`}
+                    >
+                        Death Mode
+                    </Link>
+                </div>
             </div>
 
             <section>
                 <h2 className="text-2xl font-bold mb-6 text-center capitalize">Game Statistics ({currentMode})</h2>
                 <div className="bg-card p-6 rounded-xl border border-border/50">
-                    {/* <h3 className="text-xl font-semibold mb-4 capitalize">{currentMode} Mode</h3> */}
                     {gameStats[currentMode].games_played > 0 ? (
                         <div className="space-y-4">
-                            <StatItem label="Total Score" value={gameStats[currentMode].games_played > 0 ? gameStats[currentMode].total_score.toLocaleString() : "-"} />
-                            <StatItem label="Games Played" value={gameStats[currentMode].games_played > 0 ? gameStats[currentMode].games_played.toString() : "-"} />
-                            <StatItem label="Highest Streak" value={gameStats[currentMode].games_played > 0 ? gameStats[currentMode].highest_streak.toString() : "-"} />
-                            <StatItem label="Last Played" value={gameStats[currentMode].games_played > 0 ? gameStats[currentMode].last_played.toLocaleDateString() : "-"} />
+                            {currentVariant === "classic" && <StatItem label="Total Score" value={gameStats[currentMode].total_score.toLocaleString()} />}
+                            <StatItem label="Games Played" value={gameStats[currentMode].games_played.toString()} />
+                            <StatItem
+                                label={currentVariant === "classic" ? "Highest Score" : "Best Streak"}
+                                value={currentVariant === "classic" ? gameStats[currentMode].highest_score.toLocaleString() : gameStats[currentMode].highest_streak.toString()}
+                            />
+                            <StatItem label="Last Played" value={gameStats[currentMode].last_played.toLocaleDateString()} />
                         </div>
                     ) : (
                         <div className="text-center py-4 text-foreground/70">No plays yet</div>
@@ -160,10 +194,10 @@ export default async function UserProfile({ params, searchParams }: Props) {
                             <div key={index} className="flex justify-between items-center">
                                 <div className="flex items-center gap-2">
                                     <span className="text-foreground/70">#{index + 1}</span>
-                                    <span>{game.points.toLocaleString()} points</span>
+                                    {currentVariant === "classic" ? <span>{game.points.toLocaleString()} points</span> : <span>{game.streak}x streak</span>}
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-foreground/70">
-                                    <span>{game.streak}x</span>
+                                    {currentVariant === "classic" && <span>{game.streak}x</span>}
                                     <span>{new Date(game.ended_at).toLocaleDateString()}</span>
                                 </div>
                             </div>
@@ -174,7 +208,7 @@ export default async function UserProfile({ params, searchParams }: Props) {
             </section>
 
             <section>
-                <h2 className="text-2xl font-bold mb-6 text-center">Recent Games (All)</h2>
+                <h2 className="text-2xl font-bold mb-6 text-center">Recent Games</h2>
                 <div className="bg-card rounded-xl border border-border/50">
                     {userGames.length > 0 ? (
                         <div className="divide-y divide-border/50">
@@ -184,9 +218,9 @@ export default async function UserProfile({ params, searchParams }: Props) {
                                         <span className="font-medium capitalize">{game.game_mode} Mode</span>
                                         <span className="text-foreground/70 ml-4">{new Date(game.ended_at).toLocaleDateString()}</span>
                                     </div>
-                                    <div className="space-x-2">
-                                        <span className="font-semibold">{game.points.toLocaleString()} score</span>
-                                        <span className="font-semibold">{game.streak.toLocaleString()} streak</span>
+                                    <div className="space-x-4">
+                                        {currentVariant === "classic" && <span className="font-semibold">{game.points.toLocaleString()} score</span>}
+                                        <span className="font-semibold">{game.streak}x streak</span>
                                     </div>
                                 </div>
                             ))}
@@ -217,13 +251,5 @@ function StatBox({ label, value }: { label: string; value: string }) {
             <div className="text-sm text-foreground/70">{label}</div>
             <div className="text-lg font-semibold">{value}</div>
         </div>
-    );
-}
-
-function ModeButton({ mode, currentMode, banchoId }: { mode: GameModes; currentMode: GameModes; banchoId: string }) {
-    return (
-        <Link href={`/user/${banchoId}?mode=${mode}`} className={`px-4 py-2 rounded-lg capitalize ${currentMode === mode ? "bg-primary text-primary-foreground" : "bg-card hover:bg-primary/10"}`}>
-            {mode}
-        </Link>
     );
 }

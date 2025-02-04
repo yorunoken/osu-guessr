@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 interface GameImageProps {
-    imageUrl: string;
+    mediaUrl: string;
     isRevealed: boolean;
     result?: {
         correct: boolean;
@@ -15,11 +15,11 @@ interface GameImageProps {
     };
 }
 
-export default function GameImage({ imageUrl, isRevealed, result, songInfo }: GameImageProps) {
+export default function GameImage({ mediaUrl, isRevealed, result, songInfo }: GameImageProps) {
     return (
         <div className="relative bg-card border border-border rounded-lg overflow-hidden">
             <div className="aspect-video">
-                <Image src={imageUrl || "/placeholder.svg"} alt="Beatmap Background" fill className="object-cover" />
+                <Image src={mediaUrl || "/placeholder.svg"} alt="Beatmap Background" fill className="object-cover" />
             </div>
             {isRevealed && result && songInfo && (
                 <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
