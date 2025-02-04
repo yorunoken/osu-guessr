@@ -39,7 +39,10 @@ export default async function HomeContent() {
 
             <section className="py-16">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold mb-8 text-center">Supporters</h2>
+                    <div className="flex flex-col items-center gap-4 mb-8">
+                        <h2 className="text-3xl font-bold text-center">Supporters</h2>
+                        <SupportDialogWrapper />
+                    </div>
 
                     {supporters.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -70,7 +73,6 @@ export default async function HomeContent() {
                     ) : (
                         <div className="text-center text-foreground/70">
                             <p>Be the first to support osu!guessr!</p>
-                            <SupportDialogWrapper />
                         </div>
                     )}
                 </div>
