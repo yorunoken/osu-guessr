@@ -1,9 +1,6 @@
-import { getHighestStatsAction, getTopPlayersAction } from "@/actions/user-server";
-import Link from "next/link";
-import Image from "next/image";
+import { getHighestStatsAction } from "@/actions/user-server";
 import { readChangelogs } from "@/actions/changelogs";
 import { StatsCard } from "./components/StatsCard";
-import { Button } from "@/components/ui/button";
 import { Gamepad2, Trophy, Users2 } from "lucide-react";
 
 import { supporters } from "@/config/supporters";
