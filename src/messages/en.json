@@ -1,14 +1,583 @@
 {
     "metadata": {
-        "title": "osu!guessr",
-        "description": "Test your osu! knowledge!"
+        "title": "osu! guessr",
+        "description": "Test your {osu_base} knowledge!"
     },
     "home": {
         "hero": {
-            "title": "Welcome to osu!guessr",
-            "subtitle": "Challenge your osu! memory, discover hidden gems, and climb the global rankings",
+            "title": "Welcome to {osu_guessr}",
+            "subtitle": "Challenge your {osu_base} memory, discover hidden gems, and climb the global rankings in this ultimate guessing game",
             "startPlaying": "Start Playing",
-            "learnMore": "Learn More"
+            "signIn": "Sign in with {osu_base}",
+            "learnMore": "Learn More",
+            "artCredit": "Art by {artist_name}"
+        },
+        "statistics": {
+            "title": "Game Statistics",
+            "totalPlayers": {
+                "title": "Total Players",
+                "description": "Players who signed up to play"
+            },
+            "gamesPlayed": {
+                "title": "Games Played",
+                "description": "Total games completed"
+            },
+            "highScore": {
+                "title": "High Score",
+                "description": "Current highest score in one game"
+            }
+        },
+        "supporters": {
+            "title": "Supporters",
+            "beFirst": "Be the first to support {osu_guessr}!"
+        },
+        "updates": {
+            "title": "Latest Updates"
         }
+    },
+    "common": {
+        "loading": "Loading...",
+        "viewMore": "View More",
+        "back": "Back",
+        "cancel": "Cancel",
+        "submit": "Submit",
+        "delete": "Delete",
+        "create": "Create",
+        "save": "Save"
+    },
+    "about": {
+        "title": "About {osu_guessr}",
+        "whatIs": {
+            "title": "What is {osu_guessr}?",
+            "description1": "{osu_guessr} is an engaging trivia game that challenges {osu_base} players to test their knowledge of the vast beatmap library. Whether you're a casual player or a hardcore mapper, this game offers a fun way to discover new songs and show off your familiarity with the community's diverse musical collection.",
+            "description2": "Compete with friends, climb the leaderboards, and maybe even discover some new favorite beatmaps along the way!"
+        },
+        "gameModes": {
+            "title": "Game Modes",
+            "background": {
+                "title": "Background Guessr",
+                "description": "Test your ability to recognize songs from their beatmap backgrounds. From anime screenshots to abstract art, how well do you know these iconic images?"
+            },
+            "audio": {
+                "title": "Audio Guessr",
+                "description": "Put your musical knowledge to the test! Listen to short clips from beatmaps and try to identify the song before time runs out."
+            },
+            "skin": {
+                "title": "Skin Guessr",
+                "comingSoon": "Coming Soon",
+                "description": "Think you know your {osu_base} skins? Challenge yourself to recognize popular skins from gameplay screenshots and menu elements."
+            },
+            "more": {
+                "title": "More Modes",
+                "planned": "Planned",
+                "description": "We're working on exciting new game modes for you. Stay tuned!"
+            }
+        },
+        "howToPlay": {
+            "title": "How to Play",
+            "steps": {
+                "1": {
+                    "title": "Choose Your Mode",
+                    "description": "Select from available game modes based on your preference - backgrounds, audio clips, or skins."
+                },
+                "2": {
+                    "title": "Start Guessing",
+                    "description": "You'll have {seconds} seconds per round to identify the correct song. Type your guess or use the auto-complete suggestions."
+                },
+                "3": {
+                    "title": "Score Points",
+                    "description": "Earn points based on accuracy and speed. Build streaks for bonus points and compete for high scores!"
+                }
+            }
+        },
+        "scoringSystem": {
+            "title": "Scoring System",
+            "points": {
+                "base": "Base Points: {points} per correct guess",
+                "timeBonus": "Time Bonus: {multiplier} × seconds remaining",
+                "streakBonus": "Streak Bonus: {bonus} × current streak",
+                "skipPenalty": "Skip Penalty: {penalty} points"
+            },
+            "gameInfo": {
+                "length": "Game Length: {rounds} rounds",
+                "time": "Round Time: {seconds} seconds"
+            }
+        },
+        "features": {
+            "title": "Features",
+            "leaderboards": {
+                "title": "Leaderboards",
+                "description": "Compete globally with other players. Separate leaderboards for each game mode let you showcase your expertise!"
+            },
+            "autoComplete": {
+                "title": "Auto-Complete",
+                "description": "Smart suggestion system helps you find the right song title without requiring perfect spelling."
+            },
+            "profiles": {
+                "title": "Player Profiles",
+                "description": "Track your progress, view stats, and see your ranking across different game modes."
+            },
+            "api": {
+                "title": "API Access",
+                "description": "Developers can integrate with our API to create their own tools and applications."
+            }
+        },
+        "documentation": {
+            "title": "Documentation",
+            "api": {
+                "title": "API Documentation",
+                "description": "Want to integrate with {osu_guessr}? Our comprehensive API documentation has everything you need to get started."
+            },
+            "technical": {
+                "title": "Technical Details",
+                "description": "Interested in how the game works under the hood? Check out our detailed technical documentation."
+            }
+        },
+        "credits": {
+            "title": "Credits & Attribution",
+            "development": {
+                "title": "Development",
+                "description": "Created and maintained by {author}"
+            },
+            "artwork": {
+                "title": "Artwork"
+            },
+            "inspiration": {
+                "title": "Inspiration",
+                "items": {
+                    "scoreGuesser": "• Inspired by {link}",
+                    "redditThread": "• Original concept from this {link}"
+                }
+            },
+            "specialThanks": {
+                "title": "Special Thanks",
+                "items": {
+                    "peppy": "• Dean Herbert (peppy) and the {osu_base} team",
+                    "community": "• The amazing osu! community",
+                    "creators": "• All beatmap creators and skin designers"
+                }
+            }
+        },
+        "contact": {
+            "title": "Contact & Support",
+            "getInTouch": {
+                "title": "Get in Touch",
+                "github": "• GitHub: {link}",
+                "twitter": "• Twitter: {link}",
+                "discord": "• Discord: {username}"
+            },
+            "contribute": {
+                "title": "Contribute",
+                "description": "Found a bug? Have a suggestion? Want to contribute? Visit our GitHub repository to:",
+                "items": {
+                    "bugs": "• Submit bug reports and feature requests",
+                    "code": "• Contribute to the codebase",
+                    "docs": "• Help improve documentation"
+                }
+            }
+        },
+        "privacy": {
+            "title": "Privacy & Legal",
+            "dataUsage": {
+                "title": "Data Usage",
+                "description": "We only store necessary game data and osu! profile information. Your privacy is important to us!"
+            },
+            "contentUsage": {
+                "title": "Content Usage",
+                "description": "All beatmap content, including backgrounds and audio, belongs to their respective creators and is used under fair use for educational purposes."
+            },
+            "disclaimer": {
+                "title": "Disclaimer"
+            }
+        }
+    },
+    "gameModes": {
+        "title": "Choose Your Game Mode",
+        "modes": {
+            "background": {
+                "title": "Background Guessr",
+                "description": "Identify the song based on the beatmap background image"
+            },
+            "audio": {
+                "title": "Audio Guessr",
+                "description": "Recognize the song from a short audio clip"
+            },
+            "skin": {
+                "title": "Skin Guessr",
+                "description": "Identify popular {osu_base} skins from UI elements"
+            }
+        }
+    },
+    "game": {
+        "preGame": {
+            "title": {
+                "audio": "Audio Guessr",
+                "background": "Background Guessr"
+            },
+            "description": {
+                "audio": "You'll hear short clips from osu! songs",
+                "background": "You'll be shown beatmap backgrounds from osu!"
+            },
+            "howToPlay": {
+                "title": "How to Play",
+                "classic": {
+                    "rounds": "Complete {count} rounds of guessing",
+                    "time": "Try to guess the song title within {seconds} seconds per round",
+                    "points": "Earn points based on speed and accuracy",
+                    "streak": "Build a streak for bonus points"
+                },
+                "death": {
+                    "continuous": "Keep playing until you make a mistake",
+                    "time": "Try to guess the song title within {seconds} seconds per round",
+                    "streak": "Build the longest streak possible"
+                }
+            },
+            "scoring": {
+                "title": "Scoring",
+                "classic": {
+                    "base": "Base Points: {points}",
+                    "timeBonus": "Time Bonus: {points} points per second remaining",
+                    "streakBonus": "Streak Bonus: {points} points per streak level",
+                    "skipPenalty": "Skip Penalty: {points} points"
+                },
+                "death": {
+                    "streakOnly": "Only your streak count matters",
+                    "noPoints": "Points are not recorded in this mode",
+                    "compete": "Compete for the longest streak on the leaderboard"
+                }
+            },
+            "modes": {
+                "classic": {
+                    "title": "Classic Mode",
+                    "description": "10 rounds, score as many points as you can"
+                },
+                "death": {
+                    "title": "Death Mode",
+                    "description": "Only one life, treasure it!"
+                }
+            },
+            "warning": {
+                "title": "Important Note",
+                "description": "Your score will only be counted if you complete all {rounds} rounds. Leaving the game early will forfeit your progress!"
+            },
+            "actions": {
+                "startGame": "Start Game",
+                "backToHome": "Back to Home"
+            }
+        },
+        "modes": {
+            "classic": {
+                "title": "Classic Mode",
+                "description": "10 rounds, score as many points as you can"
+            },
+            "death": {
+                "title": "Death Mode",
+                "description": "Only one life, treasure it!"
+            }
+        },
+        "status": {
+            "loading": "Loading next round..."
+        },
+        "input": {
+            "placeholder": "Song title...",
+            "title": "Enter your guess:",
+            "submit": "Submit",
+            "skip": "Skip (-50 points)"
+        },
+        "header": {
+            "title": "{mode} Guessr",
+            "classic": {
+                "round": "Round: {current}/{total}",
+                "streak": "Streak: {count}",
+                "points": "Points: {count}"
+            },
+            "death": {
+                "lives": {
+                    "oneShot": "One Shot",
+                    "gameOver": "Game Over"
+                },
+                "currentStreak": "Current Streak: {count}",
+                "maxStreak": "Max Streak: {count}"
+            },
+            "timeLeft": "{seconds}s"
+        },
+        "stats": {
+            "classic": {
+                "title": "Game Complete!",
+                "totalPoints": "Total Points",
+                "highestStreak": "Highest Streak",
+                "correctGuesses": "{correct}/{total}",
+                "averageTime": "{time}s"
+            },
+            "death": {
+                "title": {
+                    "died": "Game Over!",
+                    "completed": "Amazing Run!"
+                },
+                "maxStreak": "Maximum Streak",
+                "totalCorrect": "Total Correct",
+                "averageTime": "Average Time",
+                "diedMessage": "You made two mistakes!"
+            },
+            "labels": {
+                "averageTime": "Average Time",
+                "correctGuesses": "Correct Guesses"
+            },
+            "actions": {
+                "tryAgain": "Try Again",
+                "backToHome": "Back to Home"
+            }
+        },
+        "actions": {
+            "endRun": "End Run",
+            "exitGame": "Exit Game",
+            "nextRound": "Next Round",
+            "nextRoundTime": "Next Round ({seconds}s)",
+            "viewResults": "View Results"
+        },
+        "instructions": {
+            "title": "How to play:"
+        }
+    },
+    "leaderboard": {
+        "title": "Leaderboard",
+        "filters": {
+            "mode": {
+                "background": "Background",
+                "audio": "Audio",
+                "skin": "Skin"
+            },
+            "variant": {
+                "classic": "Classic Mode",
+                "death": "Death Mode"
+            }
+        },
+        "table": {
+            "rank": "#",
+            "player": "Player",
+            "totalScore": "Total Score",
+            "gamesPlayed": "Games Played",
+            "hiScore": "Hi-Score",
+            "bestStreak": "Best Streak"
+        },
+        "empty": "No players found for this game mode.",
+        "loading": "Loading..."
+    },
+    "user": {
+        "profile": {
+            "stats": {
+                "hiScore": "Hi-Score",
+                "totalGames": "Total Games",
+                "globalRank": "Global Rank"
+            },
+            "noPlays": "No plays yet",
+            "gameStats": {
+                "title": "Game Statistics",
+                "totalScore": "Total Score",
+                "gamesPlayed": "Games Played",
+                "highestScore": "Highest Score",
+                "bestStreak": "Best Streak",
+                "lastPlayed": "Last Played"
+            },
+            "topGames": {
+                "title": "Top Games",
+                "points": "{points} points",
+                "streak": "{count}x streak"
+            },
+            "recentGames": {
+                "title": "Recent Games",
+                "noGames": "No games played in the last 24 hours"
+            }
+        },
+        "notFound": {
+            "title": "User Not Found",
+            "description": "Sorry, we couldn't find the user you're looking for.",
+            "subDescription": "The user might not exist or hasn't signed up for {osu_guessr} yet.",
+            "actions": {
+                "home": "Return Home",
+                "leaderboard": "Check Leaderboard"
+            }
+        },
+        "search": {
+            "title": "Search Users",
+            "description": "Search for {osu_base} users by their username",
+            "placeholder": "Search users...",
+            "shortcut": "⌘K",
+            "noResults": "No users found",
+            "startTyping": "Start typing to search users",
+            "searching": "Searching..."
+        }
+    },
+    "settings": {
+        "title": "Settings",
+        "apiKeys": {
+            "title": "API Keys",
+            "usage": "{count}/5 keys used",
+            "security": {
+                "title": "Important Security Information",
+                "points": {
+                    "1": "Keep your API keys secure and never share them publicly",
+                    "2": "If a key is exposed, delete it immediately and create a new one",
+                    "3": "Each key has full access to your account's API capabilities"
+                }
+            },
+            "actions": {
+                "create": "Create New API Key",
+                "delete": "Delete Key",
+                "viewDocs": "View API Documentation"
+            },
+            "dialog": {
+                "create": {
+                    "title": "Create New API Key",
+                    "description": "Enter a name for your new API key. This will help you identify it later.",
+                    "placeholder": "Key name"
+                },
+                "delete": {
+                    "title": "Delete API Key",
+                    "description": "Are you sure you want to delete the API key \"{name}\"?",
+                    "warning": "This action cannot be undone and will immediately revoke access for any services using this key."
+                }
+            },
+            "keyInfo": {
+                "created": "Created: {date}",
+                "lastUsed": "Last used: {date}",
+                "noKeys": "No API keys yet"
+            }
+        }
+    },
+    "support": {
+        "dialog": {
+            "title": "Support {osu_guessr}",
+            "description": "If you enjoy using {osu_guessr} and want to support its development, consider making a donation. Your support helps keep the servers running and enables new features! Leave your name with your donation to be featured on the homepage.",
+            "options": {
+                "coffee": {
+                    "title": "Buy me a Coffee",
+                    "description": "Support with a one-time donation"
+                },
+                "kofi": {
+                    "title": "Ko-fi",
+                    "description": "Buy me a coffee through Ko-fi"
+                }
+            }
+        }
+    },
+    "components": {
+        "header": {
+            "nav": {
+                "leaderboard": "Leaderboard",
+                "about": "About",
+                "settings": "Settings",
+                "signIn": "Sign In",
+                "signOut": "Sign out",
+                "viewProfile": "View Profile"
+            }
+        },
+        "footer": {
+            "madeWith": "Made with ❤️ by {author}",
+            "notAffiliated": "Not affiliated with {osu_base}"
+        },
+        "report": {
+            "button": "Report Issue",
+            "dialog": {
+                "title": "Report an Issue",
+                "reportingFor": "Reporting issue for: {title}",
+                "types": {
+                    "title": "Issue Type",
+                    "incorrectTitle": "Incorrect Title",
+                    "inappropriateContent": "Inappropriate Content",
+                    "wrongAudio": "Wrong Audio",
+                    "wrongBackground": "Wrong Background",
+                    "other": "Other"
+                },
+                "description": {
+                    "label": "Description",
+                    "placeholder": "Please provide details about the issue...",
+                    "minLength": "Minimum 10 characters required"
+                },
+                "actions": {
+                    "cancel": "Cancel",
+                    "submit": "Submit Report",
+                    "submitting": "Submitting..."
+                },
+                "messages": {
+                    "success": "Report submitted successfully",
+                    "error": "Failed to submit report",
+                    "validation": "Please provide a more detailed description"
+                }
+            }
+        },
+        "comingSoon": {
+            "title": "{mode} Guessr",
+            "message": "Coming Soon!",
+            "description": "We're working hard to bring you the {mode} guessing game mode. Stay tuned for updates!",
+            "whatToExpect": {
+                "title": "What to expect:",
+                "audio": "Test your music knowledge by identifying {osu_base} songs from short audio clips. How many can you recognize?",
+                "skin": "Challenge yourself to recognize popular {osu_base} skins from gameplay screenshots. Perfect for skin enthusiasts!"
+            },
+            "actions": {
+                "home": "Back to Home",
+                "tryBackground": "Try Background Guessr"
+            }
+        },
+        "adPlaceholder": {
+            "title": "Advertisement",
+            "description": "Ads coming soon to help support {osu_guessr}"
+        }
+    },
+    "errors": {
+        "404": {
+            "title": "404 - Page Not Found",
+            "description": "Oops! Looks like you've hit a missing circle. The page you're looking for doesn't exist.",
+            "reportIssue": "If you believe this is an error, please report it"
+        },
+        "game": {
+            "sessionExpired": "Your session has expired. Please sign in again.",
+            "networkError": "Network error occurred. Please try again.",
+            "unknown": "An unknown error occurred. Please try again."
+        },
+        "auth": {
+            "required": {
+                "title": "Sign in Required",
+                "description": "You need to be signed in with your {osu_base} account to play {osu_guessr}.",
+                "subDescription": "Sign in to track your scores, compete on the leaderboard, and save your progress!",
+                "noAccount": "Don't have an {osu_base} account? Create one here"
+            }
+        }
+    },
+    "confirmations": {
+        "exitGame": {
+            "classic": "Are you sure you want to exit? Your score will not be counted if you leave before completing all rounds!",
+            "classicComplete": "Are you sure you want to exit? Your score will be saved.",
+            "death": "Are you sure you want to end your run? Your highest streak will be saved."
+        }
+    },
+    "notifications": {
+        "volumeChanged": "Volume changed to {value}%",
+        "copied": "Copied to clipboard",
+        "saved": "Changes saved successfully",
+        "error": "An error occurred"
+    },
+    "gameInstructions": {
+        "classic": {
+            "1": "Look at the beatmap background image",
+            "2": "Try to guess the song title",
+            "3": "You have {seconds} seconds per round",
+            "4": "Maintain your streak for bonus points!"
+        },
+        "death": {
+            "1": "Look at the beatmap background image",
+            "2": "Try to guess the song title",
+            "3": "You have {seconds} seconds per round",
+            "4": "One wrong guess or skip ends the game!",
+            "5": "How long can you survive?"
+        }
+    },
+    "timestamps": {
+        "seconds": "{count}s",
+        "minutes": "{count}m",
+        "hours": "{count}h",
+        "days": "{count}d",
+        "ago": "{time} ago"
     }
 }

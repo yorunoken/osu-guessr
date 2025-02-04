@@ -1,14 +1,583 @@
 {
     "metadata": {
-        "title": "osu!guessr",
-        "description": "osu! bilgini test et!"
+        "title": "osu! guessr",
+        "description": "{osu_base} bilgini test et!"
     },
     "home": {
         "hero": {
-            "title": "osu!guessr'e hoş geldiniz!",
-            "subtitle": "osu! hafızanı test et, gizli hazineleri keşfet ve küresel sıralamalarda yüksel",
+            "title": "{osu_guessr}'a Hoş Geldin",
+            "subtitle": "Bu nihai tahmin oyununda {osu_base} hafızanı test et, gizli hazineleri keşfet ve küresel sıralamalarda yüksel",
             "startPlaying": "Oynamaya Başla",
-            "learnMore": "Daha Fazla Bilgi"
+            "signIn": "{osu_base} ile Giriş Yap",
+            "learnMore": "Daha Fazla Bilgi",
+            "artCredit": "Sanatçı: {artist_name}"
+        },
+        "statistics": {
+            "title": "Oyun İstatistikleri",
+            "totalPlayers": {
+                "title": "Toplam Oyuncu",
+                "description": "Oynamak için kayıt olan oyuncular"
+            },
+            "gamesPlayed": {
+                "title": "Oynanan Oyunlar",
+                "description": "Toplam tamamlanan oyunlar"
+            },
+            "highScore": {
+                "title": "En Yüksek Skor",
+                "description": "Tek oyunda alınan en yüksek skor"
+            }
+        },
+        "supporters": {
+            "title": "Destekçiler",
+            "beFirst": "{osu_guessr}'ı destekleyen ilk kişi ol!"
+        },
+        "updates": {
+            "title": "Son Güncellemeler"
         }
+    },
+    "common": {
+        "loading": "Yükleniyor...",
+        "viewMore": "Daha Fazla",
+        "back": "Geri",
+        "cancel": "İptal",
+        "submit": "Gönder",
+        "delete": "Sil",
+        "create": "Oluştur",
+        "save": "Kaydet"
+    },
+    "about": {
+        "title": "{osu_guessr} Hakkında",
+        "whatIs": {
+            "title": "{osu_guessr} Nedir?",
+            "description1": "{osu_guessr}, {osu_base} oyuncularının geniş beatmap kütüphanesi bilgisini test eden eğlenceli bir bilgi yarışması oyunudur. İster gündelik bir oyuncu olun, ister hardcore bir mapper, bu oyun yeni şarkılar keşfetmenin ve topluluğun çeşitli müzik koleksiyonuna olan aşinalığınızı göstermenin eğlenceli bir yolunu sunar.",
+            "description2": "Arkadaşlarınla yarış, lider tablolarında yüksel ve belki de yolda yeni favori beatmapler keşfet!"
+        },
+        "gameModes": {
+            "title": "Oyun Modları",
+            "background": {
+                "title": "Arkaplan Tahmin",
+                "description": "Şarkıları beatmap arkaplanlarından tanıma yeteneğini test et. Anime ekran görüntülerinden soyut sanata, bu ikonik görselleri ne kadar iyi tanıyorsun?"
+            },
+            "audio": {
+                "title": "Ses Tahmin",
+                "description": "Müzik bilgini test et! Beatmaplerden kısa klipleri dinle ve süre bitmeden şarkıyı tahmin etmeye çalış."
+            },
+            "skin": {
+                "title": "Görünüm Tahmin",
+                "comingSoon": "Çok Yakında",
+                "description": "{osu_base} görünümlerini iyi bildiğini mi düşünüyorsun? Oyun içi ekran görüntülerinden ve menü öğelerinden popüler görünümleri tanıma konusunda kendini test et."
+            },
+            "more": {
+                "title": "Daha Fazla Mod",
+                "planned": "Planlanıyor",
+                "description": "Sizin için heyecan verici yeni oyun modları üzerinde çalışıyoruz. Takipte kalın!"
+            }
+        },
+        "howToPlay": {
+            "title": "Nasıl Oynanır",
+            "steps": {
+                "1": {
+                    "title": "Modunu Seç",
+                    "description": "Tercihine göre mevcut oyun modlarından seç - arkaplanlar, ses klipleri veya görünümler."
+                },
+                "2": {
+                    "title": "Tahmin Etmeye Başla",
+                    "description": "Her turda doğru şarkıyı belirlemek için {seconds} saniyen olacak. Tahminini yaz veya otomatik tamamlama önerilerini kullan."
+                },
+                "3": {
+                    "title": "Puan Kazan",
+                    "description": "Doğruluk ve hıza göre puan kazan. Bonus puanlar için seri yap ve yüksek skorlar için yarış!"
+                }
+            }
+        },
+        "scoringSystem": {
+            "title": "Puanlama Sistemi",
+            "points": {
+                "base": "Temel Puan: Doğru tahmin başına {points}",
+                "timeBonus": "Zaman Bonusu: {multiplier} × kalan saniye",
+                "streakBonus": "Seri Bonusu: {bonus} × mevcut seri",
+                "skipPenalty": "Atlama Cezası: {penalty} puan"
+            },
+            "gameInfo": {
+                "length": "Oyun Uzunluğu: {rounds} tur",
+                "time": "Tur Süresi: {seconds} saniye"
+            }
+        },
+        "features": {
+            "title": "Özellikler",
+            "leaderboards": {
+                "title": "Sıralama Tabloları",
+                "description": "Diğer oyuncularla küresel olarak yarış. Her oyun modu için ayrı sıralama tabloları uzmanlığınızı göstermenize olanak tanır!"
+            },
+            "autoComplete": {
+                "title": "Otomatik Tamamlama",
+                "description": "Akıllı öneri sistemi, mükemmel yazım gerektirmeden doğru şarkı başlığını bulmanıza yardımcı olur."
+            },
+            "profiles": {
+                "title": "Oyuncu Profilleri",
+                "description": "İlerlemenizi takip edin, istatistiklerinizi görüntüleyin ve farklı oyun modlarındaki sıralamanızı görün."
+            },
+            "api": {
+                "title": "API Erişimi",
+                "description": "Geliştiriciler kendi araçlarını ve uygulamalarını oluşturmak için API'miz ile entegre olabilir."
+            }
+        },
+        "documentation": {
+            "title": "Dokümantasyon",
+            "api": {
+                "title": "API Dokümantasyonu",
+                "description": "{osu_guessr} ile entegre olmak mı istiyorsunuz? Kapsamlı API dokümantasyonumuz başlamanız için ihtiyacınız olan her şeye sahip."
+            },
+            "technical": {
+                "title": "Teknik Detaylar",
+                "description": "Oyunun perde arkasında nasıl çalıştığıyla mı ilgileniyorsunuz? Detaylı teknik dokümantasyonumuza göz atın."
+            }
+        },
+        "credits": {
+            "title": "Jenerik & Atıflar",
+            "development": {
+                "title": "Geliştirme",
+                "description": "{author} tarafından oluşturuldu ve sürdürülüyor"
+            },
+            "artwork": {
+                "title": "Sanat Çalışması"
+            },
+            "inspiration": {
+                "title": "İlham",
+                "items": {
+                    "scoreGuesser": "• {link}'den esinlenildi",
+                    "redditThread": "• Orijinal fikir bu {link}'den alındı"
+                }
+            },
+            "specialThanks": {
+                "title": "Özel Teşekkürler",
+                "items": {
+                    "peppy": "• Dean Herbert (peppy) ve {osu_base} ekibi",
+                    "community": "• Harika osu! topluluğu",
+                    "creators": "• Tüm beatmap yaratıcıları ve görünüm tasarımcıları"
+                }
+            }
+        },
+        "contact": {
+            "title": "İletişim & Destek",
+            "getInTouch": {
+                "title": "İletişime Geç",
+                "github": "• GitHub: {link}",
+                "twitter": "• Twitter: {link}",
+                "discord": "• Discord: {username}"
+            },
+            "contribute": {
+                "title": "Katkıda Bulun",
+                "description": "Bir hata mı buldunuz? Bir öneriniz mi var? Katkıda bulunmak mı istiyorsunuz? GitHub deposumuzu ziyaret edin:",
+                "items": {
+                    "bugs": "• Hata raporları ve özellik istekleri gönderin",
+                    "code": "• Kod tabanına katkıda bulunun",
+                    "docs": "• Dokümantasyonu geliştirmeye yardımcı olun"
+                }
+            }
+        },
+        "privacy": {
+            "title": "Gizlilik & Yasal",
+            "dataUsage": {
+                "title": "Veri Kullanımı",
+                "description": "Sadece gerekli oyun verilerini ve osu! profil bilgilerini saklıyoruz. Gizliliğiniz bizim için önemli!"
+            },
+            "contentUsage": {
+                "title": "İçerik Kullanımı",
+                "description": "Arkaplanlar ve ses dahil tüm beatmap içeriği, ilgili yaratıcılara aittir ve eğitim amaçlı adil kullanım kapsamında kullanılmaktadır."
+            },
+            "disclaimer": {
+                "title": "Sorumluluk Reddi"
+            }
+        }
+    },
+    "gameModes": {
+        "title": "Oyun Modunu Seç",
+        "modes": {
+            "background": {
+                "title": "Arkaplan Tahmin",
+                "description": "Beatmap arkaplan görselinden şarkıyı tahmin et"
+            },
+            "audio": {
+                "title": "Ses Tahmin",
+                "description": "Kısa ses klibinden şarkıyı tanı"
+            },
+            "skin": {
+                "title": "Görünüm Tahmin",
+                "description": "Arayüz öğelerinden popüler {osu_base} görünümlerini tanı"
+            }
+        }
+    },
+    "game": {
+        "preGame": {
+            "title": {
+                "audio": "Ses Tahmin",
+                "background": "Arkaplan Tahmin"
+            },
+            "description": {
+                "audio": "osu! şarkılarından kısa klipler duyacaksınız",
+                "background": "osu! beatmap arkaplanlarını göreceksiniz"
+            },
+            "howToPlay": {
+                "title": "Nasıl Oynanır",
+                "classic": {
+                    "rounds": "{count} tur tahmin tamamla",
+                    "time": "Her turda şarkı başlığını {seconds} saniye içinde tahmin etmeye çalış",
+                    "points": "Hız ve doğruluğa göre puan kazan",
+                    "streak": "Bonus puanlar için seri yap"
+                },
+                "death": {
+                    "continuous": "Hata yapana kadar oynamaya devam et",
+                    "time": "Her turda şarkı başlığını {seconds} saniye içinde tahmin etmeye çalış",
+                    "streak": "Mümkün olan en uzun seriyi yap"
+                }
+            },
+            "scoring": {
+                "title": "Puanlama",
+                "classic": {
+                    "base": "Temel Puan: {points}",
+                    "timeBonus": "Zaman Bonusu: Kalan saniye başına {points} puan",
+                    "streakBonus": "Seri Bonusu: Seri seviyesi başına {points} puan",
+                    "skipPenalty": "Atlama Cezası: {points} puan"
+                },
+                "death": {
+                    "streakOnly": "Sadece seri sayınız önemli",
+                    "noPoints": "Bu modda puanlar kaydedilmez",
+                    "compete": "Sıralama tablosunda en uzun seri için yarışın"
+                }
+            },
+            "modes": {
+                "classic": {
+                    "title": "Klasik Mod",
+                    "description": "10 tur, yapabildiğin kadar çok puan kazan"
+                },
+                "death": {
+                    "title": "Ölüm Modu",
+                    "description": "Sadece bir canın var, değerini bil!"
+                }
+            },
+            "warning": {
+                "title": "Önemli Not",
+                "description": "Skorunuz sadece tüm {rounds} turu tamamlarsanız sayılacak. Oyundan erken ayrılmak ilerlemenizi kaybetmenize neden olur!"
+            },
+            "actions": {
+                "startGame": "Oyunu Başlat",
+                "backToHome": "Ana Sayfaya Dön"
+            }
+        },
+        "input": {
+            "placeholder": "Şarkı adı...",
+            "title": "Tahmininizi girin:",
+            "submit": "Gönder",
+            "skip": "Atla (-50 puan)"
+        },
+        "status": {
+            "loading": "Sonraki tur yükleniyor..."
+        },
+        "modes": {
+            "classic": {
+                "title": "Klasik Mod",
+                "description": "10 tur, yapabildiğin kadar çok puan kazan"
+            },
+            "death": {
+                "title": "Ölüm Modu",
+                "description": "Sadece bir canın var, değerini bil!"
+            }
+        },
+        "header": {
+            "title": "{mode} Tahmin",
+            "classic": {
+                "round": "Tur: {current}/{total}",
+                "streak": "Seri: {count}",
+                "points": "Puan: {count}"
+            },
+            "death": {
+                "lives": {
+                    "oneShot": "Tek Şans",
+                    "gameOver": "Oyun Bitti"
+                },
+                "currentStreak": "Mevcut Seri: {count}",
+                "maxStreak": "En Yüksek Seri: {count}"
+            },
+            "timeLeft": "{seconds}sn"
+        },
+        "stats": {
+            "classic": {
+                "title": "Oyun Tamamlandı!",
+                "totalPoints": "Toplam Puan",
+                "highestStreak": "En Yüksek Seri",
+                "correctGuesses": "{correct}/{total}",
+                "averageTime": "{time}sn"
+            },
+            "death": {
+                "title": {
+                    "died": "Oyun Bitti!",
+                    "completed": "Muhteşem Bir Oyun!"
+                },
+                "maxStreak": "Maksimum Seri",
+                "totalCorrect": "Toplam Doğru",
+                "averageTime": "Ortalama Süre",
+                "diedMessage": "İki hata yaptın!"
+            },
+            "labels": {
+                "averageTime": "Ortalama Süre",
+                "correctGuesses": "Doğru Tahminler"
+            },
+            "actions": {
+                "tryAgain": "Tekrar Dene",
+                "backToHome": "Ana Sayfaya Dön"
+            }
+        },
+        "actions": {
+            "endRun": "Oyunu Bitir",
+            "exitGame": "Oyundan Çık",
+            "nextRound": "Sonraki Tur",
+            "nextRoundTime": "Sonraki Tur ({seconds}sn)",
+            "viewResults": "Sonuçları Görüntüle"
+        },
+        "instructions": {
+            "title": "Nasıl oynanır:"
+        }
+    },
+    "leaderboard": {
+        "title": "Sıralama",
+        "filters": {
+            "mode": {
+                "background": "Arkaplan",
+                "audio": "Ses",
+                "skin": "Görünüm"
+            },
+            "variant": {
+                "classic": "Klasik Mod",
+                "death": "Ölüm Modu"
+            }
+        },
+        "table": {
+            "rank": "#",
+            "player": "Oyuncu",
+            "totalScore": "Toplam Puan",
+            "gamesPlayed": "Oynanan Oyun",
+            "hiScore": "En Yüksek Skor",
+            "bestStreak": "En İyi Seri"
+        },
+        "empty": "Bu oyun modu için oyuncu bulunamadı.",
+        "loading": "Yükleniyor..."
+    },
+    "user": {
+        "profile": {
+            "stats": {
+                "hiScore": "En Yüksek Skor",
+                "totalGames": "Toplam Oyun",
+                "globalRank": "Küresel Sıralama"
+            },
+            "noPlays": "Henüz oyun yok",
+            "gameStats": {
+                "title": "Oyun İstatistikleri",
+                "totalScore": "Toplam Puan",
+                "gamesPlayed": "Oynanan Oyun",
+                "highestScore": "En Yüksek Skor",
+                "bestStreak": "En İyi Seri",
+                "lastPlayed": "Son Oynama"
+            },
+            "topGames": {
+                "title": "En İyi Oyunlar",
+                "points": "{points} puan",
+                "streak": "{count}x seri"
+            },
+            "recentGames": {
+                "title": "Son Oyunlar",
+                "noGames": "Son 24 saatte oynanmış oyun yok"
+            }
+        },
+        "notFound": {
+            "title": "Kullanıcı Bulunamadı",
+            "description": "Üzgünüz, aradığınız kullanıcıyı bulamadık.",
+            "subDescription": "Kullanıcı mevcut olmayabilir veya henüz {osu_guessr}'a kayıt olmamış olabilir.",
+            "actions": {
+                "home": "Ana Sayfaya Dön",
+                "leaderboard": "Sıralamayı Kontrol Et"
+            }
+        },
+        "search": {
+            "title": "Kullanıcı Ara",
+            "description": "Kullanıcı adıyla {osu_base} kullanıcılarını ara",
+            "placeholder": "Kullanıcı ara...",
+            "shortcut": "⌘K",
+            "noResults": "Kullanıcı bulunamadı",
+            "startTyping": "Aramaya başlamak için yazmaya başla",
+            "searching": "Aranıyor..."
+        }
+    },
+    "settings": {
+        "title": "Ayarlar",
+        "apiKeys": {
+            "title": "API Anahtarları",
+            "usage": "{count}/5 anahtar kullanılıyor",
+            "security": {
+                "title": "Önemli Güvenlik Bilgileri",
+                "points": {
+                    "1": "API anahtarlarınızı güvende tutun ve asla herkese açık olarak paylaşmayın",
+                    "2": "Bir anahtar açığa çıkarsa, hemen silin ve yenisini oluşturun",
+                    "3": "Her anahtar, hesabınızın API özelliklerine tam erişime sahiptir"
+                }
+            },
+            "actions": {
+                "create": "Yeni API Anahtarı Oluştur",
+                "delete": "Anahtarı Sil",
+                "viewDocs": "API Dokümantasyonunu Görüntüle"
+            },
+            "dialog": {
+                "create": {
+                    "title": "Yeni API Anahtarı Oluştur",
+                    "description": "Yeni API anahtarınız için bir isim girin. Bu, daha sonra tanımlamanıza yardımcı olacaktır.",
+                    "placeholder": "Anahtar adı"
+                },
+                "delete": {
+                    "title": "API Anahtarını Sil",
+                    "description": "\"{name}\" API anahtarını silmek istediğinizden emin misiniz?",
+                    "warning": "Bu işlem geri alınamaz ve bu anahtarı kullanan tüm hizmetlerin erişimini anında iptal edecektir."
+                }
+            },
+            "keyInfo": {
+                "created": "Oluşturulma: {date}",
+                "lastUsed": "Son kullanım: {date}",
+                "noKeys": "Henüz API anahtarı yok"
+            }
+        }
+    },
+    "support": {
+        "dialog": {
+            "title": "{osu_guessr}'ı Destekle",
+            "description": "Eğer {osu_guessr}'ı kullanmaktan keyif alıyorsanız ve gelişimine destek olmak istiyorsanız, bağış yapmayı düşünebilirsiniz. Desteğiniz sunucuların çalışmasını sürdürmemize ve yeni özellikler eklememize yardımcı oluyor! Ana sayfada gösterilmek üzere bağışınızla birlikte adınızı bırakabilirsiniz.",
+            "options": {
+                "coffee": {
+                    "title": "Buy Me A Coffe",
+                    "description": "Tek seferlik bağışla destek ol"
+                },
+                "kofi": {
+                    "title": "Ko-fi",
+                    "description": "Ko-fi üzerinden bana bir kahve ısmarla"
+                }
+            }
+        }
+    },
+    "components": {
+        "header": {
+            "nav": {
+                "leaderboard": "Sıralama",
+                "about": "Hakkında",
+                "settings": "Ayarlar",
+                "signIn": "Giriş Yap",
+                "signOut": "Çıkış Yap",
+                "viewProfile": "Profili Görüntüle"
+            }
+        },
+        "footer": {
+            "madeWith": "{author} tarafından ❤️ ile yapıldı",
+            "notAffiliated": "{osu_base} ile bağlantısı yoktur"
+        },
+        "report": {
+            "button": "Sorun Bildir",
+            "dialog": {
+                "title": "Sorun Bildir",
+                "reportingFor": "Bildirilen sorun: {title}",
+                "types": {
+                    "title": "Sorun Türü",
+                    "incorrectTitle": "Yanlış Başlık",
+                    "inappropriateContent": "Uygunsuz İçerik",
+                    "wrongAudio": "Yanlış Ses",
+                    "wrongBackground": "Yanlış Arkaplan",
+                    "other": "Diğer"
+                },
+                "description": {
+                    "label": "Açıklama",
+                    "placeholder": "Lütfen sorun hakkında detay verin...",
+                    "minLength": "En az 10 karakter gerekli"
+                },
+                "actions": {
+                    "cancel": "İptal",
+                    "submit": "Raporu Gönder",
+                    "submitting": "Gönderiliyor..."
+                },
+                "messages": {
+                    "success": "Rapor başarıyla gönderildi",
+                    "error": "Rapor gönderilemedi",
+                    "validation": "Lütfen daha detaylı bir açıklama yapın"
+                }
+            }
+        },
+        "comingSoon": {
+            "title": "{mode} Tahmin",
+            "message": "Çok Yakında!",
+            "description": "{mode} tahmin oyun modunu size getirmek için çok çalışıyoruz. Güncellemeler için takipte kalın!",
+            "whatToExpect": {
+                "title": "Neler bekleyin:",
+                "audio": "Kısa ses kliplerinden {osu_base} şarkılarını tanıyarak müzik bilginizi test edin. Kaç tanesini tanıyabileceksiniz?",
+                "skin": "Oyun içi ekran görüntülerinden popüler {osu_base} görünümlerini tanıma konusunda kendinizi test edin. Görünüm tutkunları için mükemmel!"
+            },
+            "actions": {
+                "home": "Ana Sayfaya Dön",
+                "tryBackground": "Arkaplan Tahmin'i Dene"
+            }
+        },
+        "adPlaceholder": {
+            "title": "Reklam",
+            "description": "{osu_guessr}'ı desteklemek için yakında reklamlar geliyor"
+        }
+    },
+    "errors": {
+        "404": {
+            "title": "404 - Sayfa Bulunamadı",
+            "description": "Ups! Görünüşe göre kayıp bir çembere denk geldiniz. Aradığınız sayfa mevcut değil.",
+            "reportIssue": "Bunun bir hata olduğunu düşünüyorsanız, lütfen bildirin"
+        },
+        "game": {
+            "sessionExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
+            "networkError": "Ağ hatası oluştu. Lütfen tekrar deneyin.",
+            "unknown": "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin."
+        },
+        "auth": {
+            "required": {
+                "title": "Giriş Yapmanız Gerekiyor",
+                "description": "{osu_guessr}'ı oynamak için {osu_base} hesabınızla giriş yapmanız gerekiyor.",
+                "subDescription": "Skorlarınızı takip etmek, sıralamada yarışmak ve ilerlemenizi kaydetmek için giriş yapın!",
+                "noAccount": "Bir {osu_base} hesabınız yok mu? Buradan oluşturun"
+            }
+        }
+    },
+    "confirmations": {
+        "exitGame": {
+            "classic": "Çıkmak istediğinizden emin misiniz? Tüm turları tamamlamadan çıkarsanız skorunuz sayılmayacak!",
+            "classicComplete": "Çıkmak istediğinizden emin misiniz? Skorunuz kaydedilecek.",
+            "death": "Oyunu sonlandırmak istediğinizden emin misiniz? En yüksek seriniz kaydedilecek."
+        }
+    },
+    "notifications": {
+        "volumeChanged": "Ses seviyesi {value}% olarak değiştirildi",
+        "copied": "Panoya kopyalandı",
+        "saved": "Değişiklikler başarıyla kaydedildi",
+        "error": "Bir hata oluştu"
+    },
+    "gameInstructions": {
+        "classic": {
+            "1": "Beatmap arkaplan görüntüsüne bak",
+            "2": "Şarkı adını tahmin etmeye çalış",
+            "3": "Her tur için {seconds} saniyen var",
+            "4": "Bonus puanlar için seriyi devam ettir!"
+        },
+        "death": {
+            "1": "Beatmap arkaplan görüntüsüne bak",
+            "2": "Şarkı adını tahmin etmeye çalış",
+            "3": "Her tur için {seconds} saniyen var",
+            "4": "Bir yanlış tahmin veya atlama oyunu bitirir!",
+            "5": "Ne kadar süre hayatta kalabileceksin?"
+        }
+    },
+    "timestamps": {
+        "seconds": "{count}sn",
+        "minutes": "{count}dk",
+        "hours": "{count}sa",
+        "days": "{count}g",
+        "ago": "{time} önce"
     }
 }
