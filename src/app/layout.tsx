@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     icons: {
         icon: "/favicon.png",
     },
+    keywords: ["osu", "osu!", "osu guessr", "osu guesser", "osu! guessr", "osu! guesser", "osu guessing game", "osu beatmap game", "osu quiz", "osu trivia"].join(", "),
 };
 
 export default function RootLayout({
