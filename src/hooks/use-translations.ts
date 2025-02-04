@@ -11,6 +11,7 @@ export const languages = {
 
 const messages = { en, tr } as const;
 export type Locale = keyof typeof messages;
+type Translations = typeof en;
 
 export function useTranslations() {
     const [locale, setLocale] = useState<Locale>("en");
@@ -28,8 +29,35 @@ export function useTranslations() {
         window.location.reload();
     };
 
+    const processMessage = (message: string) => {
+        return message
+            .replace(/\{osu_guessr\}/g, "osu!guessr")
+            .replace(/\{osu_base\}/g, "osu!")
+            .replace(/\{artist_name\}/g, "Triantafyllia");
+    };
+
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    const processTranslations = (obj: any, fallback: any = messages.en): any => {
+        return new Proxy(
+            {},
+            {
+                get(_, prop) {
+                    const value = obj[prop] ?? fallback[prop];
+
+                    if (typeof value === "string") {
+                        return processMessage(value);
+                    }
+                    if (typeof value === "object" && value !== null) {
+                        return processTranslations(obj[prop] || {}, fallback[prop]);
+                    }
+                    return value;
+                },
+            },
+        );
+    };
+
     return {
-        t: messages[locale],
+        t: processTranslations(messages[locale]) as Translations,
         locale,
         setLanguage,
     };
