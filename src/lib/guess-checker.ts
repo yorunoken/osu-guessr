@@ -2,7 +2,7 @@ import { gestaltPattern, levenshteinSimilarity } from "./stringComputing";
 
 export enum GuessDifficulty {
     Easy = 0.5,
-    Hard = 0.75,
+    Hard = 0.7,
     Impossible = 0.95,
 }
 
