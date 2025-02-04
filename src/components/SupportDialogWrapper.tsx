@@ -11,10 +11,6 @@ const DONATION_LINKS = [
         key: "coffee",
         url: "https://www.buymeacoffee.com/yorunoken",
     },
-    {
-        key: "kofi",
-        url: "https://ko-fi.com/yorunoken",
-    },
 ] as const;
 
 export function SupportDialogWrapper() {
