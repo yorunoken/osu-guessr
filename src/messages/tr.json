@@ -1,0 +1,14 @@
+{
+    "metadata": {
+        "title": "osu!guessr",
+        "description": "osu! bilgini test et!"
+    },
+    "home": {
+        "hero": {
+            "title": "osu!guessr'e hoş geldiniz!",
+            "subtitle": "osu! hafızanı test et, gizli hazineleri keşfet ve küresel sıralamalarda yüksel",
+            "startPlaying": "Oynamaya Başla",
+            "learnMore": "Daha Fazla Bilgi"
+        }
+    }
+}

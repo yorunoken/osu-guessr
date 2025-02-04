@@ -1,0 +1,14 @@
+{
+    "metadata": {
+        "title": "osu!guessr",
+        "description": "Test your osu! knowledge!"
+    },
+    "home": {
+        "hero": {
+            "title": "Welcome to osu!guessr",
+            "subtitle": "Challenge your osu! memory, discover hidden gems, and climb the global rankings",
+            "startPlaying": "Start Playing",
+            "learnMore": "Learn More"
+        }
+    }
+}
