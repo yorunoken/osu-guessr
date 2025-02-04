@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 
 interface GameAudioProps {
-    audioUrl: string;
+    mediaUrl: string;
     isRevealed: boolean;
     result?: {
         correct: boolean;
@@ -20,7 +20,7 @@ interface GameAudioProps {
     initialVolume: number;
 }
 
-export default function GameAudio({ audioUrl, isRevealed, result, songInfo, onVolumeChange, initialVolume }: GameAudioProps) {
+export default function GameAudio({ mediaUrl, isRevealed, result, songInfo, onVolumeChange, initialVolume }: GameAudioProps) {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -53,7 +53,7 @@ export default function GameAudio({ audioUrl, isRevealed, result, songInfo, onVo
                 }
             };
         }
-    }, [audioUrl, isRevealed]);
+    }, [mediaUrl, isRevealed]);
 
     useEffect(() => {
         if (audioRef.current) {
@@ -94,7 +94,7 @@ export default function GameAudio({ audioUrl, isRevealed, result, songInfo, onVo
                     </div>
                 )}
                 <audio ref={audioRef} controls className={`w-full mb-4 ${isLoading ? "hidden" : "block"}`}>
-                    <source src={audioUrl} type="audio/mp3" />
+                    <source src={mediaUrl} type="audio/mp3" />
                     Your browser does not support the audio element.
                 </audio>
                 {!isRevealed && <p className="text-center text-muted-foreground">Listen to the audio and try to guess the song title!</p>}
