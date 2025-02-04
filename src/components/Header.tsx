@@ -9,6 +9,7 @@ import UserSearch from "./UserSearch";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { SupportDialogWrapper } from "./SupportDialogWrapper";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export default function Header() {
     const { data: session } = useSession();
@@ -38,6 +39,7 @@ export default function Header() {
                 </div>
 
                 <div className="flex items-center gap-4">
+                    <LanguageSwitcher />
                     <SupportDialogWrapper />
 
                     <Button variant="ghost" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
