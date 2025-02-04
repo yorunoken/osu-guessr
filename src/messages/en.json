@@ -453,10 +453,6 @@
                 "coffee": {
                     "title": "Buy me a Coffee",
                     "description": "Support with a one-time donation"
-                },
-                "kofi": {
-                    "title": "Ko-fi",
-                    "description": "Buy me a coffee through Ko-fi"
                 }
             }
         }

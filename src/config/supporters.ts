@@ -14,4 +14,10 @@ export const supporters: Array<Supporter> = [
         message: `yoru — Yesterday at 5:41 am
     osu!guessr`,
     },
+    {
+        name: "-spliffy",
+        url: "https://guesser.yorunoken.com/user/20973665",
+        amount: 15,
+        message: `stay silly PagBounce`,
+    },
 ];
