@@ -17,6 +17,16 @@ Test your knowledge of osu! beatmaps in this engaging guessing game. Challenge y
 - [Sequence Diagram](./docs/game-flow.md) - Visual representation of the game flow
 - [API Documentation](./docs/API.md) - API endpoints and usage
 
+## Translations
+
+We welcome translations to make osu!guessr accessible to more players! Check our [Translation Guide](./docs/Translating.md) to help translate the game into your language.
+
+Currently supported languages:
+- English
+- Turkish
+
+Want to add your language? Follow the guide and submit a PR!
+
 ## Features
 
 - **Background Guessr**: Identify songs from their beatmap backgrounds
