@@ -63,9 +63,9 @@
                 "description": "Müzik bilgini test et! Beatmaplerden kısa klipleri dinle ve süre bitmeden şarkıyı tahmin etmeye çalış."
             },
             "skin": {
-                "title": "Görünüm Tahmin",
+                "title": "Skin Tahmin",
                 "comingSoon": "Çok Yakında",
-                "description": "{osu_base} görünümlerini iyi bildiğini mi düşünüyorsun? Oyun içi ekran görüntülerinden ve menü öğelerinden popüler görünümleri tanıma konusunda kendini test et."
+                "description": "{osu_base} skinlerini iyi bildiğini mi düşünüyorsun? Oyun içi ekran görüntülerinden ve menü öğelerinden popüler skinleri tanıma konusunda kendini test et."
             },
             "more": {
                 "title": "Daha Fazla Mod",
@@ -78,7 +78,7 @@
             "steps": {
                 "1": {
                     "title": "Modunu Seç",
-                    "description": "Tercihine göre mevcut oyun modlarından seç - arkaplanlar, ses klipleri veya görünümler."
+                    "description": "Tercihine göre mevcut oyun modlarından seç - arkaplanlar, ses klipleri veya skinler."
                 },
                 "2": {
                     "title": "Tahmin Etmeye Başla",
@@ -154,7 +154,7 @@
                 "items": {
                     "peppy": "• Dean Herbert (peppy) ve {osu_base} ekibi",
                     "community": "• Harika osu! topluluğu",
-                    "creators": "• Tüm beatmap yaratıcıları ve görünüm tasarımcıları"
+                    "creators": "• Tüm beatmap yaratıcıları ve skin tasarımcıları"
                 }
             }
         },
@@ -203,8 +203,8 @@
                 "description": "Kısa ses klibinden şarkıyı tanı"
             },
             "skin": {
-                "title": "Görünüm Tahmin",
-                "description": "Arayüz öğelerinden popüler {osu_base} görünümlerini tanı"
+                "title": "Skin Tahmin",
+                "description": "Arayüz öğelerinden popüler {osu_base} skinleri tanı"
             }
         }
     },
@@ -345,7 +345,7 @@
             "mode": {
                 "background": "Arkaplan",
                 "audio": "Ses",
-                "skin": "Görünüm"
+                "skin": "Skin"
             },
             "variant": {
                 "classic": "Klasik Mod",
@@ -513,7 +513,7 @@
             "whatToExpect": {
                 "title": "Neler bekleyin:",
                 "audio": "Kısa ses kliplerinden {osu_base} şarkılarını tanıyarak müzik bilginizi test edin. Kaç tanesini tanıyabileceksiniz?",
-                "skin": "Oyun içi ekran görüntülerinden popüler {osu_base} görünümlerini tanıma konusunda kendinizi test edin. Görünüm tutkunları için mükemmel!"
+                "skin": "Oyun içi ekran görüntülerinden popüler {osu_base} skinleri tanıma konusunda kendinizi test edin. Skin tutkunları için mükemmel!"
             },
             "actions": {
                 "home": "Ana Sayfaya Dön",
