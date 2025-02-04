@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS games (
     game_mode ENUM ('background', 'audio', 'skin') NOT NULL,
     points INT DEFAULT 0,
     streak INT DEFAULT 0,
+    variant ENUM ('classic', 'death') DEFAULT 'classic',
     ended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE
 );
@@ -87,6 +88,8 @@ CREATE TABLE game_sessions (
     current_round INT DEFAULT 1,
     correct_guesses INT DEFAULT 0,
     total_time_used INT DEFAULT 0,
+    variant ENUM ('classic', 'death') DEFAULT 'classic',
+    lives_left INT,
     is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE,
     FOREIGN KEY (current_beatmap_id) REFERENCES mapset_data (mapset_id)
