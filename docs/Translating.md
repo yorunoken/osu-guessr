@@ -12,16 +12,6 @@ osu!guessr uses JSON-based translation files located in `src/messages/`. Each la
    - Use the standard two-letter language code (e.g., `fr.json` for French)
    - Copy the content from `en.json` as a starting point
 
-2. Add your language to the language list in `src/hooks/use-translations.ts`:
-   ```typescript
-   export const languages = {
-       en: "English",
-       tr: "Türkçe",
-       // Add your language here:
-       fr: "Français",
-   } as const;
-   ```
-
 3. Make sure to maintain the same structure as the English file, only changing the text values
 
 ## Translation Guidelines
