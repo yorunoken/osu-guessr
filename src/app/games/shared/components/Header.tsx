@@ -1,3 +1,5 @@
+import { useTranslations } from "@/hooks/use-translations";
+
 interface GameHeaderProps {
     streak: number;
     points: number;
@@ -11,17 +13,19 @@ interface GameHeaderProps {
 }
 
 export default function GameHeader({ streak, points, timeLeft, currentRound, totalRounds, mode, gameVariant, maxStreak = 0, lives = 1 }: GameHeaderProps) {
+    const { t } = useTranslations();
+
     const getLivesDisplay = (lives: number) => {
         if (lives === 1) {
             return (
                 <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
-                    <span className="font-semibold">🎯 One Shot</span>
+                    <span className="font-semibold">🎯 {t.game.header.death.lives.oneShot}</span>
                 </div>
             );
         } else {
             return (
                 <div className="bg-destructive/20 text-destructive px-4 py-1 rounded-full">
-                    <span className="font-semibold">💀 Game Over</span>
+                    <span className="font-semibold">💀 {t.game.header.death.lives.gameOver}</span>
                 </div>
             );
         }
@@ -30,36 +34,34 @@ export default function GameHeader({ streak, points, timeLeft, currentRound, tot
     return (
         <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-4">
-                <h1 className="text-3xl font-bold">{mode} Guessr</h1>
+                <h1 className="text-3xl font-bold">{t.game.header.title.replace("{mode}", mode)}</h1>
 
                 {gameVariant === "classic" ? (
                     <>
                         <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
-                            <span className="font-semibold">
-                                Round: {currentRound}/{totalRounds}
-                            </span>
+                            <span className="font-semibold">{t.game.header.classic.round.replace("{current}", currentRound.toString()).replace("{total}", totalRounds.toString())}</span>
                         </div>
                         <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
-                            <span className="font-semibold">Streak: {streak}</span>
+                            <span className="font-semibold">{t.game.header.classic.streak.replace("{count}", streak.toString())}</span>
                         </div>
                         <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
-                            <span className="font-semibold">Points: {points}</span>
+                            <span className="font-semibold">{t.game.header.classic.points.replace("{count}", points.toString())}</span>
                         </div>
                     </>
                 ) : (
                     <>
                         {getLivesDisplay(lives)}
                         <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
-                            <span className="font-semibold">Current Streak: {streak}</span>
+                            <span className="font-semibold">{t.game.header.death.currentStreak.replace("{count}", streak.toString())}</span>
                         </div>
                         <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
-                            <span className="font-semibold">Max Streak: {maxStreak}</span>
+                            <span className="font-semibold">{t.game.header.death.maxStreak.replace("{count}", maxStreak.toString())}</span>
                         </div>
                     </>
                 )}
             </div>
             <div className="text-2xl font-mono">
-                <span className={timeLeft < 10 ? "text-destructive" : "text-foreground"}>{timeLeft}s</span>
+                <span className={timeLeft < 10 ? "text-destructive" : "text-foreground"}>{t.game.header.timeLeft.replace("{seconds}", timeLeft.toString())}</span>
             </div>
         </div>
     );

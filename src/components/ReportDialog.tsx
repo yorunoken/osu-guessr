@@ -9,6 +9,7 @@ import { Textarea } from "./ui/textarea";
 import { ReportType, createReportAction } from "@/actions/reports-server";
 import { AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface ReportDialogProps {
     mapsetId: number;
@@ -17,14 +18,15 @@ interface ReportDialogProps {
 }
 
 const REPORT_TYPES = [
-    { value: "incorrect_title", label: "Incorrect Title" },
-    { value: "inappropriate_content", label: "Inappropriate Content" },
-    { value: "wrong_audio", label: "Wrong Audio" },
-    { value: "wrong_background", label: "Wrong Background" },
-    { value: "other", label: "Other" },
+    { value: "incorrect_title", labelKey: "incorrectTitle" },
+    { value: "inappropriate_content", labelKey: "inappropriateContent" },
+    { value: "wrong_audio", labelKey: "wrongAudio" },
+    { value: "wrong_background", labelKey: "wrongBackground" },
+    { value: "other", labelKey: "other" },
 ] as const;
 
 export function ReportDialog({ mapsetId, mapsetTitle, onOpenChange }: ReportDialogProps) {
+    const { t } = useTranslations();
     const [isOpen, setIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [reportType, setReportType] = useState<ReportType>("incorrect_title");
@@ -38,18 +40,18 @@ export function ReportDialog({ mapsetId, mapsetTitle, onOpenChange }: ReportDial
 
     const handleSubmit = async () => {
         if (description.length < 10) {
-            toast({ description: "Please provide a more detailed description" });
+            toast({ description: t.components.report.dialog.messages.validation });
             return;
         }
 
         setIsSubmitting(true);
         try {
             await createReportAction(mapsetId, reportType, description);
-            toast({ description: "Report submitted successfully" });
+            toast({ description: t.components.report.dialog.messages.success });
             handleOpenChange(false);
             setDescription("");
         } catch {
-            toast({ description: "Failed to submit report" });
+            toast({ description: t.components.report.dialog.messages.error });
         } finally {
             setIsSubmitting(false);
         }
@@ -60,43 +62,43 @@ export function ReportDialog({ mapsetId, mapsetTitle, onOpenChange }: ReportDial
             <DialogTrigger asChild>
                 <Button variant="ghost" size="sm">
                     <AlertCircle className="w-4 h-4 mr-2" />
-                    Report Issue
+                    {t.components.report.button}
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Report an Issue</DialogTitle>
+                    <DialogTitle>{t.components.report.dialog.title}</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-4">
                     <div>
-                        <p className="text-sm text-muted-foreground mb-2">Reporting issue for: {mapsetTitle}</p>
+                        <p className="text-sm text-muted-foreground mb-2">{t.components.report.dialog.reportingFor.replace("{title}", mapsetTitle)}</p>
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Issue Type</Label>
+                        <Label>{t.components.report.dialog.types.title}</Label>
                         <RadioGroup value={reportType} onValueChange={(value) => setReportType(value as ReportType)}>
                             {REPORT_TYPES.map((type) => (
                                 <div key={type.value} className="flex items-center space-x-2">
                                     <RadioGroupItem value={type.value} id={type.value} />
-                                    <Label htmlFor={type.value}>{type.label}</Label>
+                                    <Label htmlFor={type.value}>{t.components.report.dialog.types[type.labelKey]}</Label>
                                 </div>
                             ))}
                         </RadioGroup>
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Description</Label>
-                        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Please provide details about the issue..." className="h-32" />
-                        <p className="text-xs text-muted-foreground">Minimum 10 characters required</p>
+                        <Label>{t.components.report.dialog.description.label}</Label>
+                        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.components.report.dialog.description.placeholder} className="h-32" />
+                        <p className="text-xs text-muted-foreground">{t.components.report.dialog.description.minLength}</p>
                     </div>
 
                     <div className="flex justify-end gap-4">
                         <Button variant="outline" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
-                            Cancel
+                            {t.components.report.dialog.actions.cancel}
                         </Button>
                         <Button onClick={handleSubmit} disabled={isSubmitting || description.length < 10}>
-                            {isSubmitting ? "Submitting..." : "Submit Report"}
+                            {isSubmitting ? t.components.report.dialog.actions.submitting : t.components.report.dialog.actions.submit}
                         </Button>
                     </div>
                 </div>

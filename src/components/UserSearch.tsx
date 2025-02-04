@@ -9,6 +9,7 @@ import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import { searchUsersAction } from "@/actions/user-server";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface SearchResult {
     bancho_id: number;
@@ -17,6 +18,7 @@ interface SearchResult {
 }
 
 export default function UserSearch() {
+    const { t } = useTranslations();
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<SearchResult[]>([]);
@@ -65,27 +67,27 @@ export default function UserSearch() {
             <DialogTrigger asChild>
                 <Button variant="outline" className="w-full sm:w-auto gap-2">
                     <Search className="h-4 w-4" />
-                    <span className="text-muted-foreground inline">Search Users</span>
+                    <span className="text-muted-foreground inline">{t.user.search.title}</span>
                     <kbd className="hidden sm:inline-flex pointer-events-none h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground ml-2">
-                        <span className="text-xs">⌘</span>K
+                        {t.user.search.shortcut}
                     </kbd>
                 </Button>
             </DialogTrigger>
             <DialogContent className="w-full sm:max-w-3xl">
                 <VisuallyHidden>
-                    <DialogTitle>Search Users</DialogTitle>
-                    <DialogDescription>Search for osu! users by their username</DialogDescription>
+                    <DialogTitle>{t.user.search.title}</DialogTitle>
+                    <DialogDescription>{t.user.search.description}</DialogDescription>
                 </VisuallyHidden>
                 <div className="p-4 border-b">
                     <div className="relative">
                         <Search className="absolute left-3 top-2.5 h-4 w-4 text-foreground/50" />
-                        <Input autoFocus type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search users..." className="pl-9 pr-4" />
+                        <Input autoFocus type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t.user.search.placeholder} className="pl-9 pr-4" />
                     </div>
                 </div>
 
                 <div className="max-h-[60vh] overflow-y-auto">
                     {isSearching ? (
-                        <div className="p-8 text-center text-foreground/70">Searching...</div>
+                        <div className="p-8 text-center text-foreground/70">{t.user.search.searching}</div>
                     ) : results.length > 0 ? (
                         <div className="py-2">
                             {results.map((user) => (
@@ -101,9 +103,9 @@ export default function UserSearch() {
                             ))}
                         </div>
                     ) : query.length >= 2 ? (
-                        <div className="p-8 text-center text-foreground/70">No users found</div>
+                        <div className="p-8 text-center text-foreground/70">{t.user.search.noResults}</div>
                     ) : (
-                        <div className="p-8 text-center text-foreground/70">Start typing to search users</div>
+                        <div className="p-8 text-center text-foreground/70">{t.user.search.startTyping}</div>
                     )}
                 </div>
             </DialogContent>

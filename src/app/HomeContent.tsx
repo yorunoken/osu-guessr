@@ -1,10 +1,11 @@
-import { getHighestStatsAction } from "@/actions/user-server";
-import { readChangelogs } from "@/actions/changelogs";
+"use client";
+
 import { StatsCard } from "./components/StatsCard";
 import { Gamepad2, Trophy, Users2 } from "lucide-react";
-
 import { supporters } from "@/config/supporters";
 import { SupportDialogWrapper } from "@/components/SupportDialogWrapper";
+import { useTranslations } from "@/hooks/use-translations";
+import React from "react";
 
 interface ChangelogEntry {
     description: string;
@@ -18,21 +19,45 @@ interface Changelog {
     changes: Array<ChangelogEntry>;
 }
 
-export default async function HomeContent() {
-    const changelogs: Array<Changelog> = await readChangelogs();
-    changelogs.reverse();
+interface HomeContentProps {
+    changelogs: Array<Changelog>;
+    highStats: {
+        total_users: number;
+        total_games: number;
+        highest_points: number;
+    };
+}
 
-    const highStats = await getHighestStatsAction();
+const StyledGameName = () => <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">osu!guessr</span>;
+
+export default function HomeContent({ changelogs, highStats }: HomeContentProps) {
+    const { t } = useTranslations();
+    const sortedChangelogs = [...changelogs].reverse();
 
     return (
         <>
             <section className="py-16 bg-secondary/20">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-2xl font-bold mb-6 text-center">Game Statistics</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-center">{t.home.statistics.title}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <StatsCard title="Total Players" value={highStats.total_users.toLocaleString()} description="Players who signed up to play" icon={<Users2 className="h-6 w-6" />} />
-                        <StatsCard title="Games Played" value={highStats.total_games.toLocaleString()} description="Total games completed" icon={<Gamepad2 className="h-6 w-6" />} />
-                        <StatsCard title="High Score" value={highStats.highest_points.toLocaleString()} description="Current highest score in one game" icon={<Trophy className="h-6 w-6" />} />
+                        <StatsCard
+                            title={t.home.statistics.totalPlayers.title}
+                            value={highStats.total_users.toLocaleString()}
+                            description={t.home.statistics.totalPlayers.description}
+                            icon={<Users2 className="h-6 w-6" />}
+                        />
+                        <StatsCard
+                            title={t.home.statistics.gamesPlayed.title}
+                            value={highStats.total_games.toLocaleString()}
+                            description={t.home.statistics.gamesPlayed.description}
+                            icon={<Gamepad2 className="h-6 w-6" />}
+                        />
+                        <StatsCard
+                            title={t.home.statistics.highScore.title}
+                            value={highStats.highest_points.toLocaleString()}
+                            description={t.home.statistics.highScore.description}
+                            icon={<Trophy className="h-6 w-6" />}
+                        />
                     </div>
                 </div>
             </section>
@@ -40,7 +65,7 @@ export default async function HomeContent() {
             <section className="py-16">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col items-center gap-4 mb-8">
-                        <h2 className="text-3xl font-bold text-center">Supporters</h2>
+                        <h2 className="text-3xl font-bold text-center">{t.home.supporters.title}</h2>
                         <SupportDialogWrapper />
                     </div>
 
@@ -72,7 +97,14 @@ export default async function HomeContent() {
                         </div>
                     ) : (
                         <div className="text-center text-foreground/70">
-                            <p>Be the first to support osu!guessr!</p>
+                            <p>
+                                {t.home.supporters.beFirst.split("{osu_guessr}").map((part: string, index: number, array: string[]) => (
+                                    <React.Fragment key={index}>
+                                        {part}
+                                        {index < array.length - 1 && <StyledGameName />}
+                                    </React.Fragment>
+                                ))}
+                            </p>
                         </div>
                     )}
                 </div>
@@ -81,9 +113,9 @@ export default async function HomeContent() {
             <section className="py-16 bg-secondary/20">
                 <div className="container mx-auto px-4">
                     <div className="bg-card rounded-xl p-6 border border-border/50">
-                        <h2 className="text-2xl font-bold mb-6 text-center">Latest Updates</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-center">{t.home.updates.title}</h2>
                         <div className="space-y-6 max-h-[500px] overflow-y-auto">
-                            {changelogs.map((log, i) => (
+                            {sortedChangelogs.map((log, i) => (
                                 <div key={i} className="border-b border-border/50 last:border-0 pb-6 last:pb-0">
                                     <div className="flex items-center gap-2 mb-3">
                                         <span className="text-lg font-semibold">{log.version}</span>

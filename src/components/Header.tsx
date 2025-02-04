@@ -10,10 +10,14 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 import { SupportDialogWrapper } from "./SupportDialogWrapper";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useTranslations } from "@/hooks/use-translations";
+
+const NAV_ITEMS = ["leaderboard", "about"] as const;
 
 export default function Header() {
     const { data: session } = useSession();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { t } = useTranslations();
 
     return (
         <header className="bg-background/95 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">
@@ -24,10 +28,10 @@ export default function Header() {
                     </Link>
                     <nav className="hidden md:block">
                         <ul className="flex space-x-8 items-center">
-                            {["Leaderboard", "About"].map((item) => (
+                            {NAV_ITEMS.map((item) => (
                                 <li key={item}>
-                                    <Link href={"/" + item.toLowerCase()} className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium">
-                                        {item}
+                                    <Link href={`/${item}`} className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium">
+                                        {t.components.header.nav[item]}
                                     </Link>
                                 </li>
                             ))}
@@ -62,20 +66,20 @@ export default function Header() {
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="font-medium">{session.user.name}</span>
-                                            <span className="text-xs text-muted-foreground">View Profile</span>
+                                            <span className="text-xs text-muted-foreground">{t.components.header.nav.viewProfile}</span>
                                         </div>
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="cursor-pointer" asChild>
-                                    <Link href="/settings">Settings</Link>
+                                    <Link href="/settings">{t.components.header.nav.settings}</Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
-                                    Sign out
+                                    {t.components.header.nav.signOut}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (
-                        <Button onClick={() => signIn("osu")}>Sign In</Button>
+                        <Button onClick={() => signIn("osu")}>{t.components.header.nav.signIn}</Button>
                     )}
                 </div>
 
@@ -88,14 +92,14 @@ export default function Header() {
                         <li className="w-full px-4">
                             <UserSearch />
                         </li>
-                        {["Leaderboard", "About"].map((item) => (
+                        {NAV_ITEMS.map((item) => (
                             <li className="flex items-center w-full" key={item}>
                                 <Link
-                                    href={"/" + item.toLowerCase()}
+                                    href={`/${item}`}
                                     className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium w-full text-center px-4 py-2"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
-                                    {item}
+                                    {t.components.header.nav[item]}
                                 </Link>
                             </li>
                         ))}

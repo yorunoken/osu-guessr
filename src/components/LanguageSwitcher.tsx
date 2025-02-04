@@ -15,9 +15,9 @@ export function LanguageSwitcher() {
                     <Globe className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent className="space-y-2" align="end">
                 {Object.entries(languages).map(([code, name]) => (
-                    <DropdownMenuItem key={code} onClick={() => setLanguage(code as Locale)} className={locale === code ? "bg-accent" : ""}>
+                    <DropdownMenuItem key={code} onClick={() => setLanguage(code as Locale)} className={locale === code ? "bg-accent" : "" + " hover:cursor-pointer"}>
                         {name}
                     </DropdownMenuItem>
                 ))}

@@ -1,4 +1,4 @@
-// import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import { SessionWrapper } from "@/context/session-wrapper";
@@ -6,7 +6,6 @@ import { ThemeProvider } from "@/context/theme-provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
-import { headers } from "next/headers";
 import { TranslationsProvider } from "@/context/translations-provider";
 
 const publicSans = Public_Sans({
@@ -14,19 +13,13 @@ const publicSans = Public_Sans({
     variable: "--public-sans",
 });
 
-export async function generateMetadata() {
-    const headersList = await headers();
-    const locale = headersList.get("x-next-locale") || "en";
-    const messages = (await import(`@/messages/${locale}.json`)).default;
-
-    return {
-        title: messages.metadata.title,
-        description: messages.metadata.description,
-        icons: {
-            icon: "/favicon.png",
-        },
-    };
-}
+export const metadata: Metadata = {
+    title: "osu!guessr",
+    description: "Test your osu! knowledge!",
+    icons: {
+        icon: "/favicon.png",
+    },
+};
 
 export default function RootLayout({
     children,

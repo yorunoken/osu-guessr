@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import { GameClient } from "@/lib/game/GameClient";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface GuessInputProps {
     guess: string;
@@ -12,6 +13,7 @@ interface GuessInputProps {
 }
 
 export default function GuessInput({ guess, setGuess, isRevealed, onGuess, onSkip, gameClient }: GuessInputProps) {
+    const { t } = useTranslations();
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -74,6 +76,7 @@ export default function GuessInput({ guess, setGuess, isRevealed, onGuess, onSki
             isSelectingRef.current = false;
         }, 100);
     };
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (isRevealed) return;
 
@@ -96,7 +99,7 @@ export default function GuessInput({ guess, setGuess, isRevealed, onGuess, onSki
 
     return (
         <div className="bg-card p-6 rounded-xl border border-border/50">
-            <h2 className="text-xl font-semibold mb-4">Enter your guess:</h2>
+            <h2 className="text-xl font-semibold mb-4">{t.game.input.title}</h2>
             <div className="relative">
                 <input
                     type="text"
@@ -113,7 +116,7 @@ export default function GuessInput({ guess, setGuess, isRevealed, onGuess, onSki
                         });
                     }}
                     className="w-full p-3 rounded-lg bg-secondary text-foreground border border-border/50 focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Song title..."
+                    placeholder={t.game.input.placeholder}
                     disabled={isRevealed}
                 />
 
@@ -140,10 +143,10 @@ export default function GuessInput({ guess, setGuess, isRevealed, onGuess, onSki
             </div>
             <div className="flex gap-4 mt-4">
                 <Button className="flex-1" onClick={onGuess} disabled={!guess || isRevealed}>
-                    Submit
+                    {t.game.input.submit}
                 </Button>
                 <Button variant="outline" onClick={onSkip} disabled={isRevealed}>
-                    Skip (-50 points)
+                    {t.game.input.skip}
                 </Button>
             </div>
         </div>

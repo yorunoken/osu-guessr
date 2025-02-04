@@ -13,6 +13,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import GameHeader from "../components/Header";
 import { ReportDialog } from "@/components/ReportDialog";
 import { AdPlaceholder } from "@/components/AdPlaceholder";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface GameScreenProps {
     onExit(): void;
@@ -37,6 +38,8 @@ interface GameScreenProps {
 }
 
 export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }: GameScreenProps) {
+    const { t } = useTranslations();
+
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [guess, setGuess] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -245,22 +248,22 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                     <GuessInput guess={guess} setGuess={setGuess} isRevealed={gameState.currentBeatmap.revealed} onGuess={handleGuess} onSkip={handleSkip} gameClient={gameClient.current!} />
 
                     <div className="bg-card p-6 rounded-xl border border-border/50">
-                        <h3 className="font-semibold mb-2">How to play:</h3>
+                        <h3 className="font-semibold mb-2">{t.game.instructions.title}</h3>
                         <ul className="list-disc list-inside space-y-1 text-foreground/70">
                             {gameVariant === "classic" ? (
                                 <>
-                                    <li>Look at the beatmap background image</li>
-                                    <li>Try to guess the song title</li>
-                                    <li>You have {ROUND_TIME} seconds per round</li>
-                                    <li>Maintain your streak for bonus points!</li>
+                                    {t.gameInstructions.classic[1] && <li>{t.gameInstructions.classic[1]}</li>}
+                                    {t.gameInstructions.classic[2] && <li>{t.gameInstructions.classic[2]}</li>}
+                                    {t.gameInstructions.classic[3] && <li>{t.gameInstructions.classic[3].replace("{seconds}", ROUND_TIME.toString())}</li>}
+                                    {t.gameInstructions.classic[4] && <li>{t.gameInstructions.classic[4]}</li>}
                                 </>
                             ) : (
                                 <>
-                                    <li>Look at the beatmap background image</li>
-                                    <li>Try to guess the song title</li>
-                                    <li>You have {ROUND_TIME} seconds per round</li>
-                                    <li>One wrong guess or skip ends the game!</li>
-                                    <li>How long can you survive?</li>
+                                    {t.gameInstructions.death[1] && <li>{t.gameInstructions.death[1]}</li>}
+                                    {t.gameInstructions.death[2] && <li>{t.gameInstructions.death[2]}</li>}
+                                    {t.gameInstructions.death[3] && <li>{t.gameInstructions.death[3].replace("{seconds}", ROUND_TIME.toString())}</li>}
+                                    {t.gameInstructions.death[4] && <li>{t.gameInstructions.death[4]}</li>}
+                                    {t.gameInstructions.death[5] && <li>{t.gameInstructions.death[5]}</li>}
                                 </>
                             )}
                         </ul>
@@ -271,7 +274,7 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
             <div className="flex justify-between mt-8">
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={handleExit} disabled={isLoading}>
-                        {gameVariant === "death" ? "End Run" : "Exit Game"}
+                        {gameVariant === "death" ? t.game.actions.endRun : t.game.actions.exitGame}
                     </Button>
                     {gameState.currentBeatmap.revealed && gameState.currentBeatmap.mapsetId && (
                         <ReportDialog mapsetId={gameState.currentBeatmap.mapsetId} mapsetTitle={gameState.currentBeatmap.title || "Unknown"} onOpenChange={setIsReportDialogOpen} />
@@ -279,7 +282,11 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                 </div>
                 {gameState.currentBeatmap.revealed && (
                     <Button onClick={handleNextRound} className="px-8">
-                        {gameState.rounds.current >= gameState.rounds.total ? "View Results" : isReportDialogOpen ? "Next Round" : `Next Round (${countdown}s)`}
+                        {gameState.rounds.current >= gameState.rounds.total
+                            ? t.game.actions.viewResults
+                            : isReportDialogOpen
+                              ? t.game.actions.nextRound
+                              : t.game.actions.nextRoundTime.replace("{seconds}", countdown.toString())}
                     </Button>
                 )}
             </div>
