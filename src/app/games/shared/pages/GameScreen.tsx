@@ -212,7 +212,6 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                 averageTime={gameState.rounds.totalTimeUsed / gameState.rounds.current}
                 onPlayAgain={handleStartGame}
                 gameVariant={gameVariant}
-                gameEndReason={gameState.livesLeft === -1 ? "died" : "completed"}
             />
         );
     }
@@ -228,7 +227,6 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                 mode={gameMode === "audio" ? "Audio" : "Background"}
                 gameVariant={gameVariant}
                 maxStreak={gameState.score.highestStreak}
-                lives={gameVariant === "death" ? gameState.livesLeft : undefined}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -249,10 +247,22 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                     <div className="bg-card p-6 rounded-xl border border-border/50">
                         <h3 className="font-semibold mb-2">How to play:</h3>
                         <ul className="list-disc list-inside space-y-1 text-foreground/70">
-                            <li>Look at the beatmap background image</li>
-                            <li>Try to guess the song title</li>
-                            <li>You have {ROUND_TIME} seconds per round</li>
-                            <li>Maintain your streak for bonus points!</li>
+                            {gameVariant === "classic" ? (
+                                <>
+                                    <li>Look at the beatmap background image</li>
+                                    <li>Try to guess the song title</li>
+                                    <li>You have {ROUND_TIME} seconds per round</li>
+                                    <li>Maintain your streak for bonus points!</li>
+                                </>
+                            ) : (
+                                <>
+                                    <li>Look at the beatmap background image</li>
+                                    <li>Try to guess the song title</li>
+                                    <li>You have {ROUND_TIME} seconds per round</li>
+                                    <li>One wrong guess or skip ends the game!</li>
+                                    <li>How long can you survive?</li>
+                                </>
+                            )}
                         </ul>
                     </div>
                 </div>

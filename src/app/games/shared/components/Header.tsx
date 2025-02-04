@@ -15,17 +15,16 @@ export default function GameHeader({ streak, points, timeLeft, currentRound, tot
         if (lives === 1) {
             return (
                 <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
-                    <span className="font-semibold">❤️ Full Health</span>
+                    <span className="font-semibold">🎯 One Shot</span>
                 </div>
             );
-        } else if (lives === 0) {
+        } else {
             return (
-                <div className="bg-destructive/20 text-destructive px-4 py-1 rounded-full animate-pulse">
-                    <span className="font-semibold">⚠️ Last Chance!</span>
+                <div className="bg-destructive/20 text-destructive px-4 py-1 rounded-full">
+                    <span className="font-semibold">💀 Game Over</span>
                 </div>
             );
         }
-        return null;
     };
 
     return (

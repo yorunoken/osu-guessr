@@ -3,7 +3,7 @@
 import { getAuthSession } from "./server";
 import { query } from "@/lib/database";
 import { z } from "zod";
-import { BASE_POINTS, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME, GameVariant, DEATH_MODE_HEARTS } from "../app/games/config";
+import { BASE_POINTS, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME, GameVariant } from "../app/games/config";
 import { getRandomAudioAction, getRandomBackgroundAction, MapsetDataWithTags } from "./mapsets-server";
 import path from "path";
 import fs from "fs/promises";
@@ -51,7 +51,6 @@ export interface GameState {
         answer?: string;
     };
     variant: GameVariant;
-    livesLeft?: number;
 }
 
 async function checkRateLimit(userId: number) {
@@ -83,9 +82,9 @@ export async function startGameAction(gameMode: "audio" | "background", variant:
     try {
         await query(
             `INSERT INTO game_sessions
-                (id, user_id, game_mode, total_points, current_streak, highest_streak, variant, lives_left)
-                VALUES (?, ?, ?, 0, 0, 0, ?, ?)`,
-            [sessionId, authSession.user.banchoId, gameMode, variant, variant === "death" ? DEATH_MODE_HEARTS : null],
+                (id, user_id, game_mode, total_points, current_streak, highest_streak, variant)
+                VALUES (?, ?, ?, 0, 0, 0, ?)`,
+            [sessionId, authSession.user.banchoId, gameMode, variant],
         );
 
         const beatmap = gameMode === "audio" ? await getRandomAudioAction(sessionId) : await getRandomBackgroundAction(sessionId);
@@ -130,7 +129,6 @@ export async function startGameAction(gameMode: "audio" | "background", variant:
             timeLeft: ROUND_TIME,
             gameStatus: "active",
             variant,
-            livesLeft: variant === "death" ? DEATH_MODE_HEARTS : undefined,
         };
     } catch (error) {
         await query("ROLLBACK");
@@ -187,45 +185,38 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         const points = isNextRound ? 0 : calculateScore(isCorrect, timeLeft, gameState.current_streak);
 
         if (isDeathMode && (isSkipped || (!isCorrect && isGuess))) {
-            const newLivesLeft = (gameState.lives_left || 0) - 1;
-
-            if (newLivesLeft < 0) {
-                await endGameAction(sessionId);
-                return {
-                    sessionId,
-                    currentBeatmap: {
-                        imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : undefined,
-                        audioUrl: gameState.game_mode === "audio" ? currentMedia.audioData : undefined,
-                        revealed: true,
-                        title: beatmap.title,
-                        artist: beatmap.artist,
-                        mapper: beatmap.mapper,
-                        mapsetId: beatmap.mapset_id,
-                    },
-                    score: {
-                        total: gameState.total_points,
-                        current: 0,
-                        streak: 0,
-                        highestStreak: gameState.highest_streak,
-                    },
-                    rounds: {
-                        current: gameState.current_round,
-                        total: gameState.current_round,
-                        correctGuesses: gameState.correct_guesses,
-                        totalTimeUsed: gameState.total_time_used,
-                    },
-                    timeLeft: 0,
-                    gameStatus: "finished",
-                    variant: "death",
-                    livesLeft: 0,
-                    lastGuess: {
-                        correct: false,
-                        answer: beatmap.title,
-                    },
-                };
-            }
-
-            await query(`UPDATE game_sessions SET lives_left = ? WHERE id = ?`, [newLivesLeft, sessionId]);
+            await endGameAction(sessionId);
+            return {
+                sessionId,
+                currentBeatmap: {
+                    imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : undefined,
+                    audioUrl: gameState.game_mode === "audio" ? currentMedia.audioData : undefined,
+                    revealed: true,
+                    title: beatmap.title,
+                    artist: beatmap.artist,
+                    mapper: beatmap.mapper,
+                    mapsetId: beatmap.mapset_id,
+                },
+                score: {
+                    total: gameState.total_points,
+                    current: 0,
+                    streak: 0,
+                    highestStreak: gameState.highest_streak,
+                },
+                rounds: {
+                    current: gameState.current_round,
+                    total: gameState.current_round,
+                    correctGuesses: gameState.correct_guesses,
+                    totalTimeUsed: gameState.total_time_used,
+                },
+                timeLeft: 0,
+                gameStatus: "finished",
+                variant: "death",
+                lastGuess: {
+                    correct: false,
+                    answer: beatmap.title,
+                },
+            };
         }
 
         let nextBeatmap: { data: MapsetDataWithTags; backgroundData?: string; audioData?: string } | null = null;
@@ -309,7 +300,6 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
             timeLeft: nextBeatmap ? ROUND_TIME : gameState.time_left,
             gameStatus: "active",
             variant: gameState.variant as GameVariant,
-            livesLeft: isDeathMode ? gameState.lives_left || 0 : undefined,
             lastGuess: !isNextRound
                 ? {
                       correct: isCorrect,
@@ -390,7 +380,6 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
             timeLeft,
             gameStatus: gameState.is_active ? "active" : "finished",
             variant: gameState.variant as GameVariant,
-            livesLeft: gameState.variant === "death" ? gameState.lives_left : undefined,
             lastGuess: gameState.last_guess
                 ? {
                       correct: gameState.last_guess_correct === 1,
