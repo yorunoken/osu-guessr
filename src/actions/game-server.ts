@@ -59,7 +59,19 @@ async function checkRateLimit(userId: number) {
 
 async function validateGameSession(sessionId: string, userId: number) {
     const [session] = await query(
-        `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename, mt.audio_filename
+        `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename, mt.audio_filename,
+            CASE
+                WHEN g.current_round = 1 AND g.last_guess IS NULL THEN FALSE
+                WHEN g.last_guess IS NOT NULL
+                    AND g.current_beatmap_id = (
+                        SELECT mapset_id
+                        FROM session_mapsets
+                        WHERE session_id = g.id
+                        ORDER BY round_number DESC
+                        LIMIT 1
+                    ) THEN TRUE
+                ELSE FALSE
+            END as has_guessed_current_round
             FROM game_sessions g
             JOIN mapset_data m ON g.current_beatmap_id = m.mapset_id
             JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
@@ -147,6 +159,11 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         await query("START TRANSACTION");
 
         const gameState = await validateGameSession(validated.sessionId, authSession.user.banchoId);
+
+        if (!guess === undefined && gameState.has_guessed_current_round) {
+            throw new Error("Already submitted a guess for this round");
+        }
+
         const isDeathMode = gameState.variant === "death";
 
         if (!isDeathMode && gameState.current_round > MAX_ROUNDS) {
