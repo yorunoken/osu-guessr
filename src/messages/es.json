@@ -134,9 +134,9 @@
             }
         },
         "credits": {
-            "title": "Credits & Attribution",
+            "title": "Créditos y atribución",
             "development": {
-                "title": "Development",
+                "title": "Desarrollo",
                 "description": "Creado y mantenido por {author}"
             },
             "artwork": {
