@@ -10,7 +10,9 @@
             "startPlaying": "Start Playing",
             "signIn": "Sign in with {osu_base}",
             "learnMore": "Learn More",
-            "artCredit": "Art by {artist_name}"
+            "artCredit": "Art by {artist_name}",
+            "developerCredit": "Created by yorunoken",
+            "discordInvite": "Join our Discord"
         },
         "statistics": {
             "title": "Game Statistics",

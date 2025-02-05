@@ -10,7 +10,9 @@
             "startPlaying": "Oynamaya Başla",
             "signIn": "{osu_base} ile Giriş Yap",
             "learnMore": "Daha Fazla Bilgi",
-            "artCredit": "Sanatçı: {artist_name}"
+            "artCredit": "Sanatçı: {artist_name}",
+            "developerCredit": "Created by yorunoken",
+            "discordInvite": "Join our Discord"
         },
         "statistics": {
             "title": "Oyun İstatistikleri",

@@ -20,9 +20,21 @@ export default function Hero() {
     return (
         <section className="relative min-h-[80vh] flex items-center">
             <div className="absolute inset-0 bg-[url('/main_bg.jpg')] bg-cover bg-center opacity-20 blur-sm"></div>
-            <Link href={"https://twitter.com/Akariimia"} target="_blank" className="absolute bottom-0 p-2 text-muted-foreground hover:underline">
-                {t.home.hero.artCredit}
-            </Link>
+            <div className="absolute bottom-0 p-2 flex flex-col sm:flex-row gap-2 text-muted-foreground">
+                <Link href={"https://twitter.com/Akariimia"} target="_blank" className="hover:underline">
+                    {t.home.hero.artCredit}
+                </Link>
+                <span className="hidden sm:inline">•</span>
+                <div className="flex gap-2">
+                    <Link href={"https://osu.ppy.sh/users/yorunoken"} target="_blank" className="hover:underline">
+                        {t.home.hero.developerCredit}
+                    </Link>
+                    <span>•</span>
+                    <Link href={"https://discord.gg/qrud2g4CA5"} target="_blank" className="hover:underline">
+                        {t.home.hero.discordInvite}
+                    </Link>
+                </div>
+            </div>
 
             <div className="container mx-auto px-4 relative z-10">
                 <div className="max-w-4xl mx-auto text-center">
