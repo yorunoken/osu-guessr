@@ -5,6 +5,7 @@ import { Gamepad2, Trophy, Users2 } from "lucide-react";
 import { supporters } from "@/config/supporters";
 import { SupportDialogWrapper } from "@/components/SupportDialogWrapper";
 import { useTranslationsContext } from "@/context/translations-provider";
+import { AdSense } from "@/components/AdSense";
 import React from "react";
 
 interface ChangelogEntry {
@@ -61,6 +62,10 @@ export default function HomeContent({ changelogs, highStats }: HomeContentProps)
                     </div>
                 </div>
             </section>
+
+            <div className="container mx-auto px-4">
+                <AdSense slot="1796639309" />
+            </div>
 
             <section className="py-16">
                 <div className="container mx-auto px-4">

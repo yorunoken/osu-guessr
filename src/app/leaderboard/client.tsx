@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { getTopPlayersAction, TopPlayer } from "@/actions/user-server";
 import { GameVariant } from "@/app/games/config";
 import { useTranslationsContext } from "@/context/translations-provider";
+import { AdSense } from "@/components/AdSense";
 
 type GameMode = "background" | "audio" | "skin";
 
@@ -134,6 +135,8 @@ export default function LeaderboardClient() {
                     </div>
                 )}
             </div>
+
+            <AdSense slot="1796639309" />
         </div>
     );
 }
