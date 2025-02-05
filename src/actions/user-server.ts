@@ -80,7 +80,8 @@ const SPECIAL_USERS: Array<SpecialUser> = [
     { banchoId: 14519821, badge: "Beta Tester", color: "#7C3AED" },
     { banchoId: 12643934, badge: "Beta Tester", color: "#7C3AED" },
     { banchoId: 4539930, badge: "Fish", color: "#DE9B4A" },
-    { banchoId: 3171691, badge: "The Greatest Of All Time", color: "FFA500" },
+    { banchoId: 3171691, badge: "The Greatest Of All Time", color: "#FFA500" },
+    { banchoId: 3516241, badge: "Fake Italian", color: "#DE9B4A" },
 ];
 
 export async function getSpecialUsers(): Promise<Array<SpecialUser>> {
