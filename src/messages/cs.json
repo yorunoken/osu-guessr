@@ -1,0 +1,585 @@
+{
+    "metadata": {
+        "title": "osu! guessr",
+        "description": "Otestujte své {osu_base} znalosti!"
+    },
+    "home": {
+        "hero": {
+            "title": "Vítejte na {osu_guessr}",
+            "subtitle": "Vyzvěte svojí {osu_base} paměť, objevte skryté klenoty, a vyšplhejte po světovém žebříčku v této ultimátní hádací hře!",
+            "startPlaying": "Začít hru",
+            "signIn": "Přihlásit se přes {osu_base}",
+            "learnMore": "Zjistit více",
+            "artCredit": "Dílo od {artist_name}",
+            "developerCredit": "Vytvořil/a yorunoken",
+            "discordInvite": "Přidejte se na náš Discord"
+        },
+        "statistics": {
+            "title": "Statistiky hry",
+            "totalPlayers": {
+                "title": "Celkový počet hráčů",
+                "description": "Hráči, kteří se zaregistrovali"
+            },
+            "gamesPlayed": {
+                "title": "Počet hraných her",
+                "description": "Počet dokončených her"
+            },
+            "highScore": {
+                "title": "Nejvyšší skóre",
+                "description": "Aktuální nejvyšší skóre v jedné hře"
+            }
+        },
+        "supporters": {
+            "title": "Dárci",
+            "beFirst": "Buďte prvními, kdo podpoří {osu_guessr}!"
+        },
+        "updates": {
+            "title": "Novinky"
+        }
+    },
+    "common": {
+        "loading": "Načítání...",
+        "viewMore": "Zobrazit více",
+        "back": "Zpět",
+        "cancel": "Zrušit",
+        "submit": "Odeslat",
+        "delete": "Smazat",
+        "create": "Vytvořit",
+        "save": "Uložit"
+    },
+    "about": {
+        "title": "O {osu_guessr}",
+        "whatIs": {
+            "title": "Co je {osu_guessr}?",
+            "description1": "{osu_guessr} je poutavá trivia hra, která vyzývá {osu_base} hráče, aby otestovali své znalosti o rozsáhlé knihovně beatmap. Ať už jste příležitostní hráči, či tvrdí hráči, tato hra nabízí zábavný způsob, jak objevovat nové písně a pochlubit se svými znalosti rozmanité hudební sbírky komunity.",
+            "description2": "Soutěžte s přáteli, stoupejte v žebříčcích a možná najdete nové oblíbené beatmapy!"
+        },
+        "gameModes": {
+            "title": "Herní módy",
+            "background": {
+                "title": "Hádání pozadí",
+                "description": "Otestujte svou schopnost poznat písně podle jejich pozadí beatmap. Od anime screenshotů po abstraktní umění - jak dobře dokážete rozpoznat tyto ikonické obrázky?"
+            },
+            "audio": {
+                "title": "Hádání hudby",
+                "description": "Otestujte své hudební znalosti! Poslechněte si krátké klipy z beatmap a pokuste se identifikovat písně, než vyprší čas."
+            },
+            "skin": {
+                "title": "Hádání skinů",
+                "comingSoon": "Již brzy",
+                "description": "Myslíte si, že znáte {osu_base} skiny? Vyzvěte se k rozpoznání známých skinů z gameplay screenshotů a prvky menu."
+            },
+            "more": {
+                "title": "Více módů",
+                "planned": "Naplánováno",
+                "description": "Pracujeme na nových vzrušujících herních módech. Nenechte si to ujít!"
+            }
+        },
+        "howToPlay": {
+            "title": "Jak hrát",
+            "steps": {
+                "1": {
+                    "title": "Vyberte svůj mód",
+                    "description": "Vyberte si jeden z herních módů podle vaší přednosti - hádání pozadí, písní nebo skinů."
+                },
+                "2": {
+                    "title": "Začít hádat",
+                    "description": "Budete mít {seconds} sekund na kolo, abyste identifikovali správnou píseň. Zadejte svou odpověď, nebo použijte automatické doplňování."
+                },
+                "3": {
+                    "title": "Získejte body",
+                    "description": "Získejte body za přesnost a rychlost. Budujte série pro bonusové body a soutěžte o co nejvyšší skóre!"
+                }
+            }
+        },
+        "scoringSystem": {
+            "title": "Bodovací systém",
+            "points": {
+                "base": "Základní body: {points} za správnou odpověď",
+                "timeBonus": "Časový bonus: {multiplier} × zbývající sekundy",
+                "streakBonus": "Sériový bonus: {bonus} × současná série",
+                "skipPenalty": "Trest za přeskočení: {penalty} bodů"
+            },
+            "gameInfo": {
+                "length": "Délka hry: {rounds} kol",
+                "time": "Čas kola: {seconds} sekund"
+            }
+        },
+        "features": {
+            "title": "Funkce",
+            "leaderboards": {
+                "title": "Žebříček",
+                "description": "Soutěžte s ostatními hráči z celého světa! Žebříčky pro každý herní mód vám umožní předvést své znalosti."
+            },
+            "autoComplete": {
+                "title": "Automatické doplňování",
+                "description": "Chytrý systém doplňování vám pomůže najít správné názvy písní, aniž byste museli psát dokonale."
+            },
+            "profiles": {
+                "title": "Profily hráčů",
+                "description": "Sledujte svůj pokrok, prohlédněte si své statistiky a podívejte se na své umístění napříč různými herními módy."
+            },
+            "api": {
+                "title": "Přístup k API",
+                "description": "Vývojáři mohou integrovat naše API, aby vytvořili své vlastní nástroje a aplikace."
+            }
+        },
+        "documentation": {
+            "title": "Dokumentace",
+            "api": {
+                "title": "Dokumentace API",
+                "description": "Chcete integrovat s {osu_guessr}? V naší obsáhlé dokumentaci API najdete vše co potřebujete, abyste mohli začít."
+            },
+            "technical": {
+                "title": "Technické detaily",
+                "description": "Zajímá vás jak hra funguje pod kapotou? Podívejte se na naši podrobnou technickou dokumentaci."
+            }
+        },
+        "credits": {
+            "title": "Poděkování a autorství",
+            "development": {
+                "title": "Vývoj",
+                "description": "Vytvořil/a a udržuje {author}"
+            },
+            "artwork": {
+                "title": "Díla"
+            },
+            "inspiration": {
+                "title": "Inspirace",
+                "items": {
+                    "scoreGuesser": "• Inspirováno z {link}",
+                    "redditThread": "• Původní koncept z {link}"
+                }
+            },
+            "specialThanks": {
+                "title": "Speciální poděkování",
+                "items": {
+                    "peppy": "• Deanu Herbertovi (peppy) a {osu_base} týmu",
+                    "community": "• Úžasné osu! komunitě",
+                    "creators": "• Všem tvůrcům beatmap a skinů"
+                }
+            }
+        },
+        "contact": {
+            "title": "Kontakt a podpora",
+            "getInTouch": {
+                "title": "Spojte se s námi",
+                "github": "• GitHub: {link}",
+                "twitter": "• Twitter: {link}",
+                "discord": "• Discord: {username}"
+            },
+            "contribute": {
+                "title": "Přispět",
+                "description": "Našli jste chybu? Máte návrh? Chcete přispět? Navštivte náš repozitář na GitHubu a:",
+                "items": {
+                    "bugs": "• Odešlete hlášení chyb a požadavky na funkce",
+                    "code": "• Přispějte do kódu",
+                    "docs": "• Pomozte zlepšit dokumentaci"
+                }
+            }
+        },
+        "privacy": {
+            "title": "Ochrana soukromí a právní záležitosti",
+            "dataUsage": {
+                "title": "Použití dat",
+                "description": "Ukládáme pouze potřebná herní data a informace o osu! profilu. Vaše soukromí je pro nás důležité!"
+            },
+            "contentUsage": {
+                "title": "Použití obsahu",
+                "description": "Veškerý obsah beatmap, včetně pozadí a zvuku, patří jejich tvůrcům a je použitý v rámci fair use pro vzdělávací účely."
+            },
+            "disclaimer": {
+                "title": "Prohlášení"
+            }
+        }
+    },
+    "gameModes": {
+        "title": "Vyberte si herní mód",
+        "modes": {
+            "background": {
+                "title": "Hádání pozadí",
+                "description": "Rozpoznejte písně podle pozadí beatmap"
+            },
+            "audio": {
+                "title": "Hádání hudby",
+                "description": "Rozpoznejte písně z krátkých audio klipů"
+            },
+            "skin": {
+                "title": "Hádání skinů",
+                "description": "Rozpoznejte známé {osu_base} skiny z prvků menu"
+            }
+        }
+    },
+    "game": {
+        "preGame": {
+            "title": {
+                "audio": "Hádání hudby",
+                "background": "Hádání pozadí"
+            },
+            "description": {
+                "audio": "Uslyšíte krátké klipy z osu! písní",
+                "background": "Budou vám představena pozadí z osu! beatmap"
+            },
+            "howToPlay": {
+                "title": "Jak hrát",
+                "classic": {
+                    "rounds": "Dokončete {count} kol hádání",
+                    "time": "Pokuste se uhádnout název písně během {seconds} sekund za kolo",
+                    "points": "Získejte body podle rychlosti a přesnosti",
+                    "streak": "Budujte sérii pro bonusové body"
+                },
+                "death": {
+                    "continuous": "Hrajte, dokud neuděláte chybu",
+                    "time": "Pokuste se uhádnout název písně během {seconds} sekund za kolo",
+                    "streak": "Vybudujte co nejdelší sérii"
+                }
+            },
+            "scoring": {
+                "title": "Bodování",
+                "classic": {
+                    "base": "Základní body: {points}",
+                    "timeBonus": "Časový bonus: {points} bodů za zbývající sekundu",
+                    "streakBonus": "Sériový bonus: {points} bodů za sériovou úroveň",
+                    "skipPenalty": "Trest za přeskočení: {points} bodů"
+                },
+                "death": {
+                    "streakOnly": "Závisí jen na vaší sérii",
+                    "noPoints": "Body v tomto módu nejsou počítány",
+                    "compete": "Soutěžte o nejdelší sérii na žebříčku"
+                }
+            },
+            "modes": {
+                "classic": {
+                    "title": "Klasika",
+                    "description": "10 kol, získejte co nejvíce bodů"
+                },
+                "death": {
+                    "title": "Smrtící mód",
+                    "description": "Pouze jeden život, važte si ho!"
+                }
+            },
+            "warning": {
+                "title": "Důležitá poznámka",
+                "description": "Vaše skóre se bude počítat jen, když dohrajete všech {rounds} kol. Předčasným opuštěním hry přijdete o svůj postup!"
+            },
+            "actions": {
+                "startGame": "Začít hru",
+                "backToHome": "Domů"
+            }
+        },
+        "modes": {
+            "classic": {
+                "title": "Klasika",
+                "description": "10 kol, získejte co nejvíce bodů"
+            },
+            "death": {
+                "title": "Smrtící mód",
+                "description": "Pouze jeden život, važte si ho!"
+            }
+        },
+        "status": {
+            "loading": "Načítání dalšího kola..."
+        },
+        "input": {
+            "placeholder": "Název písně...",
+            "title": "Zadejte odpověď:",
+            "submit": "Odeslat",
+            "skip": "Přeskočit (-50 bodů)"
+        },
+        "header": {
+            "title": "{mode} Guessr",
+            "classic": {
+                "round": "Kolo: {current}/{total}",
+                "streak": "Série: {count}",
+                "points": "Body: {count}"
+            },
+            "death": {
+                "lives": {
+                    "oneShot": "One Shot",
+                    "gameOver": "Konec hry"
+                },
+                "currentStreak": "Aktuální série: {count}",
+                "maxStreak": "Nejvyšší série: {count}"
+            },
+            "timeLeft": "{seconds}s"
+        },
+        "stats": {
+            "classic": {
+                "title": "Hra dokončena!",
+                "totalPoints": "Celkový počet bodů",
+                "highestStreak": "Nejdelší série",
+                "correctGuesses": "{correct}/{total}",
+                "averageTime": "{time}s"
+            },
+            "death": {
+                "title": {
+                    "died": "Konec hry!",
+                    "completed": "Úžasný pokus!"
+                },
+                "maxStreak": "Nejdelší série",
+                "totalCorrect": "Celkový počet správných odpovědí",
+                "averageTime": "Průměrný čas",
+                "diedMessage": "Udělali jste dvě chyby!"
+            },
+            "labels": {
+                "averageTime": "Průměrný čas",
+                "correctGuesses": "Správné odpovědi"
+            },
+            "actions": {
+                "tryAgain": "Zkusit znovu",
+                "backToHome": "Domů"
+            }
+        },
+        "actions": {
+            "endRun": "Ukončit pokus",
+            "exitGame": "Ukončit hru",
+            "nextRound": "Další kolo",
+            "nextRoundTime": "Další kolo ({seconds}s)",
+            "viewResults": "Zobrazit výsledky"
+        },
+        "instructions": {
+            "title": "Jak hrát:"
+        }
+    },
+    "leaderboard": {
+        "title": "Žebříček",
+        "filters": {
+            "mode": {
+                "background": "Pozadí",
+                "audio": "Zvuk",
+                "skin": "Skin"
+            },
+            "variant": {
+                "classic": "Klasika",
+                "death": "Smrtící mód"
+            }
+        },
+        "table": {
+            "rank": "#",
+            "player": "Hráč",
+            "totalScore": "Celkové skóre",
+            "gamesPlayed": "Počet her",
+            "hiScore": "Nejvyšší skóre",
+            "bestStreak": "Nejlepší série"
+        },
+        "empty": "Pro tento herní mód nebyl nalezen žádný hráč.",
+        "loading": "Načítání..."
+    },
+    "user": {
+        "profile": {
+            "stats": {
+                "hiScore": "Nejvyšší skóre",
+                "totalGames": "Počet her",
+                "globalRank": "Světové umístění"
+            },
+            "noPlays": "Zatím žádné hry",
+            "gameStats": {
+                "title": "Statistiky",
+                "totalScore": "Celkové skóre",
+                "gamesPlayed": "Počet her",
+                "highestScore": "Nejvyšší skóre",
+                "bestStreak": "Nejlepší série",
+                "lastPlayed": "Naposledy hrál/a"
+            },
+            "topGames": {
+                "title": "Nejlepší hry",
+                "points": "{points} bodů",
+                "streak": "{count}x série"
+            },
+            "recentGames": {
+                "title": "Poslední hry",
+                "noGames": "Žádné hry za posledních 24 hodin"
+            }
+        },
+        "notFound": {
+            "title": "Uživatel nebyl nalezen",
+            "description": "Omlouváme se, ale nemohli jsme najít uživatele, kterého hledáte.",
+            "subDescription": "Uživatel možná neexistuje nebo se ještě na {osu_guessr} nezaregistroval.",
+            "actions": {
+                "home": "Domů",
+                "leaderboard": "Zobrazit žebříček"
+            }
+        },
+        "search": {
+            "title": "Vyhledat uživatele",
+            "description": "Vyhledat {osu_base} uživatele podle jejich jmén",
+            "placeholder": "Vyhledat uživatele...",
+            "shortcut": "⌘K",
+            "noResults": "Uživatelé nebyli nalezeni",
+            "startTyping": "Začněte psát pro vyhledání uživatelů",
+            "searching": "Vyhledávání..."
+        }
+    },
+    "settings": {
+        "title": "Nastavení",
+        "apiKeys": {
+            "title": "Klíče API",
+            "usage": "{count}/5 klíčů použito",
+            "security": {
+                "title": "Důležité bezpečnostní informace",
+                "points": {
+                    "1": "Ponechte své API klíče v bezpečí a nikdy je nesdílejte",
+                    "2": "Pokud je klíč odhalen, okamžitě ho smažte a vytvořte nový",
+                    "3": "Každý klíč má plný přístup k API schopnostem vašeho účtu"
+                }
+            },
+            "actions": {
+                "create": "Vytvořit nový API klíč",
+                "delete": "Smazat klíč",
+                "viewDocs": "Otevřít dokumentaci API"
+            },
+            "dialog": {
+                "create": {
+                    "title": "Vytvořit nový API klíč",
+                    "description": "Zadejte jméno pro váš nový API klíč. Tohle vám pomůže k pozdější identifikaci.",
+                    "placeholder": "Jméno klíče"
+                },
+                "delete": {
+                    "title": "Smazat API klíč",
+                    "description": "Jste si jisti, že chcete smazat API klíč \"{name}\"?",
+                    "warning": "Tato akce nemůže být odvolána a okamžitě zruší přístup ke všem službám, které používají tento klíč."
+                }
+            },
+            "keyInfo": {
+                "created": "Vytvořen: {date}",
+                "lastUsed": "Naposledy použit: {date}",
+                "noKeys": "Zatím žádné API klíče"
+            }
+        }
+    },
+    "support": {
+        "dialog": {
+            "title": "Podpořit {osu_guessr}",
+            "description": "Pokud si užíváte {osu_guessr} a chcete podpořit jeho vývoj, zvažte možnost příspěvku. Vaše podpora pomáhá k běhu serverů a povoluje nové funkce! Zanechte u svého příspěvku své jméno, které bude uvedeno na domovské stránce.",
+            "options": {
+                "coffee": {
+                    "title": "Buy me a Coffee",
+                    "description": "Podpora přes jednorázový příspěvek"
+                },
+                "kofi": {
+                    "title": "Ko-fi",
+                    "description": "Jednorázový příspěvek přes Ko-fi"
+                }
+            }
+        }
+    },
+    "components": {
+        "header": {
+            "nav": {
+                "leaderboard": "Žebříček",
+                "about": "O {osu_guessr}",
+                "settings": "Nastavení",
+                "signIn": "Přihlásit se",
+                "signOut": "Odhlásit se",
+                "viewProfile": "Zobrazit profil"
+            }
+        },
+        "footer": {
+            "madeWith": "Vyrobeno s ❤️ od {author}",
+            "notAffiliated": "Žádná spojitost s {osu_base}"
+        },
+        "report": {
+            "button": "Nahlásit problém",
+            "dialog": {
+                "title": "Nahlásit problém",
+                "reportingFor": "Hlášení problému pro: {title}",
+                "types": {
+                    "title": "Typ problému",
+                    "incorrectTitle": "Neplatný název",
+                    "inappropriateContent": "Nevhodný obsah",
+                    "wrongAudio": "Špatné audio",
+                    "wrongBackground": "Špatné pozadí",
+                    "other": "Jiné"
+                },
+                "description": {
+                    "label": "Popis",
+                    "placeholder": "Prosím uveďte podrobnosti o problému...",
+                    "minLength": "Minimálně 10 znaků"
+                },
+                "actions": {
+                    "cancel": "Zrušit",
+                    "submit": "Odeslat hlášení",
+                    "submitting": "Odesílání..."
+                },
+                "messages": {
+                    "success": "Hlášení bylo úspěšně odesláno",
+                    "error": "Nezdařilo se odeslat hlášení",
+                    "validation": "Prosím uveďte více podrobností v popisu"
+                }
+            }
+        },
+        "comingSoon": {
+            "title": "{mode} Guessr",
+            "message": "Již brzy!",
+            "description": "Těžce pracujeme, abysme vám přinesli {mode} hádací herní mód. Nenechte si to ujít!",
+            "whatToExpect": {
+                "title": "Co očekávat:",
+                "audio": "Otestujte své hudební znalosti rozpoznáním {osu_base} písní z krátkých audio klipů. Kolik jich dokážete rozpoznat?",
+                "skin": "Vyzvěte se k rozpoznání populárních skinů z gameplay screenshotů. Perfektní pro nadšence skinů!"
+            },
+            "actions": {
+                "home": "Domů",
+                "tryBackground": "Zkusit hádání pozadí"
+            }
+        },
+        "adPlaceholder": {
+            "title": "Reklama",
+            "description": "Brzy přibudou reklamy na podporu {osu_guessr}"
+        }
+    },
+    "errors": {
+        "404": {
+            "title": "404 - Stránka nebyla nalezena",
+            "description": "Jejda! Vypadá to, že jste narazili na chybějící kolo. Stránka, kterou hledáte, neexistuje.",
+            "reportIssue": "Pokud si myslíte, že je toto chyba, prosím nahlašte to."
+        },
+        "game": {
+            "sessionExpired": "Vaše relace vypršela. Prosím přihlaste se znovu.",
+            "networkError": "Nastala chyba v síti. Prosím zkuste to znovu.",
+            "unknown": "Nastala neznámá chyba. Prosím zkuste to znovu."
+        },
+        "auth": {
+            "required": {
+                "title": "Nutné přihlášení",
+                "description": "Potřebujete se přihlásit se svým {osu_base} účtem ke hraní {osu_guessr}.",
+                "subDescription": "Přihlaste se k sledování svého skóre, soutěžení na žebříčku, a ukládání svého posunu!",
+                "noAccount": "Nemáte {osu_base} účet? Vytvořte si ho zde"
+            }
+        }
+    },
+    "confirmations": {
+        "exitGame": {
+            "classic": "Jste si jisti, že chcete odejít? Pokud odejdete před dokončením všech kol, vaše skóre se nebude počítat!",
+            "classicComplete": "Jste si jisti, že chcete odejít? Vaše skóre bude uloženo.",
+            "death": "Jste si jisti, že chcete ukončit svůj pokus? Vaše nejdelší série bude uložena."
+        }
+    },
+    "notifications": {
+        "volumeChanged": "Hlasitost změněna na {value}%",
+        "copied": "Zkopírováno do schránky",
+        "saved": "Změny úspěšně uloženy",
+        "error": "Nastala chyba"
+    },
+    "gameInstructions": {
+        "classic": {
+            "1": "Podívejte se na pozadí beatmapy",
+            "2": "Pokuste se uhádnout název písně",
+            "3": "Máte {seconds} sekund na kolo",
+            "4": "Udržte svoji sérii pro bonusové body!"
+        },
+        "death": {
+            "1": "Podívejte se na pozadí beatmapy",
+            "2": "Pokuste se uhádnout název písně",
+            "3": "Máte {seconds} sekund na kolo",
+            "4": "Jedno přeskočení nebo špatná odpověď ukončí hru!",
+            "5": "Jak dlouho dokážete přežít?"
+        }
+    },
+    "timestamps": {
+        "seconds": "{count}s",
+        "minutes": "{count}m",
+        "hours": "{count}h",
+        "days": "{count}d",
+        "ago": "před {time}"
+    }
+}
