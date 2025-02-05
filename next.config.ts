@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     reactStrictMode: false,
     experimental: {
         serverActions: {
-            allowedOrigins: ["guesser.yorunoken.com", "127.0.0.1:3011"],
+            allowedOrigins: ["guesser.yorunoken.com", "osuguessr.com", "127.0.0.1:3011"],
         },
     },
 };
