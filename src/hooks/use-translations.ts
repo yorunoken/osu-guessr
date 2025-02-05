@@ -7,6 +7,7 @@ import tr from "@/messages/tr.json";
 export const languages = {
     en: "English",
     tr: "Türkçe",
+    cs: "Czech",
 } as const;
 
 const messages = { en, tr } as const;
