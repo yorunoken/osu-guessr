@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import en from "@/messages/en.json";
 import tr from "@/messages/tr.json";
+import cs from "@/messages/cs.json";
 
 export const languages = {
     en: "English",
@@ -10,7 +11,7 @@ export const languages = {
     cs: "Čeština",
 } as const;
 
-const messages = { en, tr } as const;
+const messages = { en, tr, cs } as const;
 export type Locale = keyof typeof messages;
 type Translations = typeof en;
 
