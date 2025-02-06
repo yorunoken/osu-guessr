@@ -1,6 +1,8 @@
-import { query } from "../query";
+"use server";
 
-async function syncUserAchievements() {
+import { query } from "@/lib/database";
+
+export async function syncUserAchievements() {
     try {
         await query("START TRANSACTION");
 
@@ -60,5 +62,3 @@ async function syncUserAchievements() {
         console.error("Error syncing user achievements:", error);
     }
 }
-
-syncUserAchievements();

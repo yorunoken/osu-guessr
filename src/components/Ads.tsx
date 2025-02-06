@@ -28,9 +28,9 @@ const createPromos = (t: Translations): Array<Promo> => [
         icon: "🎮",
     },
     {
-        id: "kofi",
-        title: t.components.ads.kofi.title,
-        message: t.components.ads.kofi.message,
+        id: "buymeacoffe",
+        title: t.components.ads.buymeacoffe.title,
+        message: t.components.ads.buymeacoffe.message,
         link: "https://ko-fi.com/yorunoken",
         icon: "☕",
     },

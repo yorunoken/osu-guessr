@@ -1,6 +1,7 @@
-import { query } from "../query";
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
+"use server";
+
+import { query } from "@/lib/database";
+
 import fs from "fs/promises";
 import path from "path";
 import { execSync } from "child_process";
@@ -111,7 +112,7 @@ async function downloadBackground(mapsetId: number): Promise<string | null> {
     }
 }
 
-async function addMapset(mapsetId: number) {
+export async function addMapset(mapsetId: number) {
     try {
         await ensureDirectories();
 
@@ -166,7 +167,7 @@ async function addMapset(mapsetId: number) {
     }
 }
 
-async function removeMapset(mapsetId: number) {
+export async function removeMapset(mapsetId: number) {
     try {
         const files = await query("SELECT image_filename, audio_filename FROM mapset_tags WHERE mapset_id = ?", [mapsetId]);
 
@@ -189,7 +190,7 @@ async function removeMapset(mapsetId: number) {
     }
 }
 
-async function listMapsets() {
+export async function listMapsets() {
     try {
         const mapsets = await query(`
             SELECT
@@ -207,47 +208,3 @@ async function listMapsets() {
         console.error("Error listing mapsets:", error);
     }
 }
-
-void yargs(hideBin(process.argv))
-    .command(
-        "add <mapsetId>",
-        "Add a mapset",
-        (yargs) => {
-            return yargs.positional("mapsetId", {
-                type: "number",
-                describe: "The mapset ID",
-                demandOption: true,
-            });
-        },
-        (argv) => {
-            if (argv.mapsetId) {
-                addMapset(argv.mapsetId);
-            }
-        },
-    )
-    .command(
-        "remove <mapsetId>",
-        "Remove a mapset",
-        (yargs) => {
-            return yargs.positional("mapsetId", {
-                type: "number",
-                describe: "The mapset ID",
-                demandOption: true,
-            });
-        },
-        (argv) => {
-            if (argv.mapsetId) {
-                removeMapset(argv.mapsetId);
-            }
-        },
-    )
-    .command(
-        "list",
-        "List all mapsets",
-        () => {},
-        () => {
-            listMapsets();
-        },
-    )
-    .demandCommand(1)
-    .help().argv;
