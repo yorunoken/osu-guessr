@@ -1,4 +1,4 @@
-import { query } from "@/lib/database";
+import { query } from "../query";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 

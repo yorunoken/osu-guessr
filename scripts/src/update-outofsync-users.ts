@@ -1,4 +1,4 @@
-import { query } from "@/lib/database";
+import { query } from "../query";
 
 async function syncUserAchievements() {
     try {
