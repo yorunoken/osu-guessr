@@ -379,7 +379,8 @@
                 "gamesPlayed": "Games Played",
                 "highestScore": "Highest Score",
                 "bestStreak": "Best Streak",
-                "lastPlayed": "Last Played"
+                "lastPlayed": "Last Played",
+                "modeRank": "Mode Rank"
             },
             "topGames": {
                 "title": "Top Games",

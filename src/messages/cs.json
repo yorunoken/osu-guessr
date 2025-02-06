@@ -379,7 +379,8 @@
                 "gamesPlayed": "Počet her",
                 "highestScore": "Nejvyšší skóre",
                 "bestStreak": "Nejlepší série",
-                "lastPlayed": "Naposledy hrál/a"
+                "lastPlayed": "Naposledy hrál/a",
+                "modeRank": "Mode Rank"
             },
             "topGames": {
                 "title": "Nejlepší hry",

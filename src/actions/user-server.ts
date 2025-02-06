@@ -26,10 +26,14 @@ export interface UserAchievement {
 }
 
 export interface UserRanks {
-    globalRank?: number;
+    globalRank?: {
+        classic?: number;
+        death?: number;
+    };
     modeRanks: {
         [key in GameMode]: {
-            globalRank?: number;
+            classic?: number;
+            death?: number;
         };
     };
 }
@@ -96,7 +100,6 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
     if (!userResult[0]) return null;
     const user = userResult[0];
 
-    // Get achievements for both variants
     const achievements = await query(
         `SELECT g.user_id, g.game_mode, g.variant,
                 COUNT(*) as games_played,
@@ -110,8 +113,7 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
         [banchoId],
     );
 
-    // Only consider classic mode for global ranking
-    const globalRankResult = await query(
+    const globalClassicRankResult = await query(
         `SELECT COUNT(*) as globalRank
          FROM (
              SELECT user_id, SUM(points) as total_points
@@ -127,13 +129,28 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
         [banchoId],
     );
 
-    const modeRanks: { [key in GameMode]: { globalRank?: number } } = {
+    const globalDeathRankResult = await query(
+        `SELECT COUNT(*) as globalRank
+         FROM (
+             SELECT user_id, MAX(streak) as max_streak
+             FROM games
+             WHERE variant = 'death'
+             GROUP BY user_id
+         ) scores
+         WHERE scores.max_streak > (
+             SELECT COALESCE(MAX(streak), 0)
+             FROM games
+             WHERE user_id = ? AND variant = 'death'
+         )`,
+        [banchoId],
+    );
+
+    const modeRanks: { [key in GameMode]: { classic?: number; death?: number } } = {
         background: {},
         audio: {},
         skin: {},
     };
 
-    // Update mode ranks to consider variants
     for (const mode of Object.keys(modeRanks) as GameMode[]) {
         const classicRank = await query(
             `SELECT COUNT(*) as rank
@@ -151,8 +168,25 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
             [mode, banchoId, mode],
         );
 
+        const deathRank = await query(
+            `SELECT COUNT(*) as rank
+             FROM (
+                 SELECT user_id, MAX(streak) as max_streak
+                 FROM games
+                 WHERE game_mode = ? AND variant = 'death'
+                 GROUP BY user_id
+             ) scores
+             WHERE scores.max_streak > (
+                 SELECT COALESCE(MAX(streak), 0)
+                 FROM games
+                 WHERE user_id = ? AND game_mode = ? AND variant = 'death'
+             )`,
+            [mode, banchoId, mode],
+        );
+
         modeRanks[mode] = {
-            globalRank: classicRank[0].rank + 1,
+            classic: classicRank[0].rank + 1,
+            death: deathRank[0].rank + 1,
         };
     }
 
@@ -160,7 +194,10 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
         ...user,
         achievements,
         ranks: {
-            globalRank: globalRankResult[0].globalRank + 1,
+            globalRank: {
+                classic: globalClassicRankResult[0].globalRank + 1,
+                death: globalDeathRankResult[0].globalRank + 1,
+            },
             modeRanks,
         },
     };

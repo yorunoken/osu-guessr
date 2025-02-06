@@ -379,7 +379,8 @@
                 "gamesPlayed": "Juegos jugados",
                 "highestScore": "Puntuación más alta",
                 "bestStreak": "Mejor racha",
-                "lastPlayed": "Última jugada"
+                "lastPlayed": "Última jugada",
+                "modeRank": "Mode Rank"
             },
             "topGames": {
                 "title": "Juegos de primera",

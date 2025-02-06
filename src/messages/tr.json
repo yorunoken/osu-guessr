@@ -379,7 +379,8 @@
                 "gamesPlayed": "Oynanan Oyun",
                 "highestScore": "En Yüksek Skor",
                 "bestStreak": "En İyi Seri",
-                "lastPlayed": "Son Oynama"
+                "lastPlayed": "Son Oynama",
+                "modeRank": "Mode Rank"
             },
             "topGames": {
                 "title": "En İyi Oyunlar",
