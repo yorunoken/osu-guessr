@@ -90,7 +90,7 @@ void yargs(hideBin(process.argv))
                 });
         },
         (argv) => {
-            if (argv.banchoId && argv.badge && argv.color) {
+            if (argv.banchoId && argv.badge) {
                 addBadge(argv.banchoId, argv.badge, argv.color);
             } else {
                 console.error("Missing required arguments");
