@@ -91,7 +91,7 @@ CREATE TABLE game_sessions (
     variant ENUM ('classic', 'death') DEFAULT 'classic',
     is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE,
-    FOREIGN KEY (current_beatmap_id) REFERENCES mapset_data (mapset_id)
+    FOREIGN KEY (current_beatmap_id) REFERENCES mapset_data (mapset_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS session_mapsets (
