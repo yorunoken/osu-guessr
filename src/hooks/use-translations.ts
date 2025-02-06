@@ -15,7 +15,7 @@ export const languages = {
 
 const messages = { en, tr, cs, es } as const;
 export type Locale = keyof typeof messages;
-type Translations = typeof en;
+export type Translations = typeof en;
 
 export function useTranslations() {
     const [locale, setLocale] = useState<Locale>("en");
