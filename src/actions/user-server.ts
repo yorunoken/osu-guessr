@@ -64,30 +64,6 @@ export interface HighestStats {
 
 type GameMode = "background" | "audio" | "skin";
 
-interface SpecialUser {
-    banchoId: number;
-    badge: string;
-    color: string;
-}
-
-const SPECIAL_USERS: Array<SpecialUser> = [
-    { banchoId: 17279598, badge: "Owner", color: "#FF6B6B" },
-    { banchoId: 13845312, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 20367144, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 25468052, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 18567756, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 18153277, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 14519821, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 12643934, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 4539930, badge: "Fish", color: "#DE9B4A" },
-    { banchoId: 3171691, badge: "The Greatest Of All Time", color: "#FFA500" },
-    { banchoId: 3516241, badge: "Fake Italian", color: "#DE9B4A" },
-];
-
-export async function getSpecialUsers(): Promise<Array<SpecialUser>> {
-    return SPECIAL_USERS;
-}
-
 // Schemas
 const gameModeSchema = z.enum(["background", "audio", "skin"]);
 const searchSchema = z.object({
@@ -97,17 +73,13 @@ const searchSchema = z.object({
 
 // Server actions
 export async function createUserAction(banchoId: number, username: string, avatar_url: string) {
-    const specialUser = SPECIAL_USERS.find((user) => user.banchoId === banchoId);
-
     return query(
-        `INSERT INTO users (bancho_id, username, avatar_url, special_badge, special_badge_color)
-         VALUES (?, ?, ?, ?, ?)
+        `INSERT INTO users (bancho_id, username, avatar_url)
+         VALUES (?, ?, ?)
          ON DUPLICATE KEY UPDATE
             username = VALUES(username),
-            avatar_url = VALUES(avatar_url),
-            special_badge = VALUES(special_badge),
-            special_badge_color = VALUES(special_badge_color)`,
-        [banchoId, username, avatar_url, specialUser?.badge || null, specialUser?.color || null],
+            avatar_url = VALUES(avatar_url)`,
+        [banchoId, username, avatar_url],
     );
 }
 
