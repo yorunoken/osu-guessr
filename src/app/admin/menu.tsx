@@ -340,7 +340,7 @@ export default function AdminMenu() {
                     </div>
 
                     <div className="bg-secondary/20 p-6 rounded-xl">
-                        <h3 className="text-lg font-medium mb-4">Bulk Upload</h3>
+                        <h3 className="text-lg font-medium mb-4">Bulk Upload Mapsets</h3>
                         <div className="space-y-4">
                             <div className="flex items-center gap-4">
                                 <Input type="file" accept=".txt" onChange={(e) => setBulkFile(e.target.files?.[0] || null)} className="flex-1" />
