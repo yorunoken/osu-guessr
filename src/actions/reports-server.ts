@@ -3,7 +3,8 @@
 import { z } from "zod";
 import { query } from "@/lib/database";
 import { authenticatedAction } from "./server";
-import { createGithubIssue } from "@/lib/github";
+
+const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK!;
 
 const reportSchema = z.object({
     mapsetId: z.number(),
@@ -24,6 +25,16 @@ export interface Report {
     updated_at: Date;
 }
 
+async function sendDiscordWebhook(content: string) {
+    await fetch(DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content }),
+    });
+}
+
 export async function createReportAction(mapsetId: number, reportType: ReportType, description: string): Promise<void> {
     return authenticatedAction(async (session) => {
         const validated = reportSchema.parse({
@@ -34,28 +45,26 @@ export async function createReportAction(mapsetId: number, reportType: ReportTyp
 
         const [mapset] = await query(`SELECT title, artist FROM mapset_data WHERE mapset_id = ?`, [validated.mapsetId]);
 
-        const issueTitle = `[${reportType}] ${mapset.artist} - ${mapset.title}`;
-        const issueBody = `
-**Report Type:** ${reportType}
-**Mapset ID:** ${mapsetId}
-**Reported By:** ${session.user.banchoId}
+        const reportMessage = `
+**New Report**
+Type: ${reportType}
+Mapset: ${mapset.artist} - ${mapset.title}
+Mapset ID: ${mapsetId}
+Reported By: ${session.user.banchoId}
 
-**Description:**
+Description:
 ${description}
 
-**Links:**
-- [Mapset Page](https://osu.ppy.sh/s/${mapsetId})
+Mapset Link: https://osu.ppy.sh/s/${mapsetId}
 `;
 
-        const labels = ["report", reportType, "pending"];
-        const githubIssue = await createGithubIssue(issueTitle, issueBody, labels);
+        await sendDiscordWebhook(reportMessage);
 
         await query(
             `INSERT INTO reports (
-                user_id, mapset_id, report_type, description,
-                github_issue_number, github_issue_url
-            ) VALUES (?, ?, ?, ?, ?, ?)`,
-            [session.user.banchoId, validated.mapsetId, validated.reportType, validated.description, githubIssue.data.number, githubIssue.data.html_url],
+                user_id, mapset_id, report_type, description
+            ) VALUES (?, ?, ?, ?)`,
+            [session.user.banchoId, validated.mapsetId, validated.reportType, validated.description],
         );
     });
 }
