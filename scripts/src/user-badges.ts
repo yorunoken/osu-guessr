@@ -2,7 +2,23 @@ import { query } from "../query";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
-async function addBadge(banchoId: number, badge: string, color: string) {
+const PRESET_BADGES: Record<string, string> = {
+    developer: "#FF0000",
+    "beta tester": "#7C3AED",
+    translator: "#670067",
+    contributor: "#00FF00",
+    supporter: "#FF69B4",
+    moderator: "#0000FF",
+    admin: "#FFD700",
+};
+
+async function addBadge(banchoId: number, badge: string, color?: string) {
+    const finalColor = badge.toLowerCase() in PRESET_BADGES ? color || PRESET_BADGES[badge.toLowerCase()] : color;
+
+    if (!finalColor) {
+        throw Error("Please either type in a color hex code, or select a badge title from the presets.");
+    }
+
     try {
         await query(
             `
@@ -11,7 +27,7 @@ async function addBadge(banchoId: number, badge: string, color: string) {
                 special_badge_color = ?
             WHERE bancho_id = ?
             `,
-            [badge, color, banchoId],
+            [badge, finalColor, banchoId],
         );
         console.log(`Successfully added badge "${badge}" to user ${banchoId}`);
     } catch (error) {
@@ -64,13 +80,13 @@ void yargs(hideBin(process.argv))
                 })
                 .positional("badge", {
                     type: "string",
-                    describe: "The badge text",
+                    describe: `The badge text (Available presets: ${Object.keys(PRESET_BADGES).join(", ")})`,
                     demandOption: true,
                 })
                 .positional("color", {
                     type: "string",
-                    describe: "The badge color (hex code)",
-                    demandOption: true,
+                    describe: "The badge color (hex code or 'default' to use preset color)",
+                    demandOption: false,
                 });
         },
         (argv) => {
