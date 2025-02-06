@@ -15,6 +15,7 @@ import { processBulkMapsets } from "./actions/bulk-mapsets";
 
 import { CollapsibleSection } from "./ui";
 import { PRESET_BADGES } from "@/lib/badges";
+import { deploy } from "./actions/deploy";
 
 export default function AdminMenu() {
     const [mapsetId, setMapsetId] = useState("");
@@ -293,9 +294,27 @@ export default function AdminMenu() {
         setIsLoading(false);
     };
 
+    const handleDeploy = async () => {
+        setIsLoading(true);
+        appendOutput("Starting deployment...");
+
+        try {
+            deploy();
+        } catch (error) {
+            appendOutput(`Deployment error: ${error}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-8 space-y-4">
-            <h1 className="text-3xl font-bold mb-8">Admin Panel</h1>
+            <div className="flex justify-between items-center mb-8">
+                <h1 className="text-3xl font-bold">Admin Panel</h1>
+                <Button onClick={handleDeploy} disabled={isLoading} className="bg-green-600 hover:bg-green-700">
+                    Deploy Latest Changes
+                </Button>
+            </div>
 
             <CollapsibleSection title="Mapset Management">
                 <div className="space-y-8">
