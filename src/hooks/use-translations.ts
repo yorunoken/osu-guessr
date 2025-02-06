@@ -5,15 +5,17 @@ import en from "@/messages/en.json";
 import tr from "@/messages/tr.json";
 import cs from "@/messages/cs.json";
 import es from "@/messages/es.json";
+import pl from "@/messages/pl.json";
 
 export const languages = {
     en: "English",
     tr: "Türkçe",
     cs: "Čeština",
     es: "Español",
+    pl: "Polski",
 } as const;
 
-const messages = { en, tr, cs, es } as const;
+const messages = { en, tr, cs, es, pl } as const;
 export type Locale = keyof typeof messages;
 export type Translations = typeof en;
 
