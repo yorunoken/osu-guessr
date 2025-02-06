@@ -10,7 +10,9 @@
             "startPlaying": "Zacznij Grać",
             "signIn": "Zaloguj się przy użyciu {osu_base}",
             "learnMore": "Dowiedz się więcej",
-            "artCredit": "Grafika autorstwa: {artist_name}"
+            "artCredit": "Grafika autorstwa: {artist_name}",
+            "developerCredit": "Stworzone przez: yorunoken",
+            "discordInvite": "Dołącz do naszego Discorda"
         },
         "statistics": {
             "title": "Statystyki Gry",
@@ -377,7 +379,8 @@
                 "gamesPlayed": "Ilość Ukończonych Gier",
                 "highestScore": "Najwyższy Wynik",
                 "bestStreak": "Największa Seria",
-                "lastPlayed": "Ostatnia Gra"
+                "lastPlayed": "Ostatnia Gra",
+                "modeRank": "Ranking Trybu"
             },
             "topGames": {
                 "title": "Najlepsze Wyniki",
@@ -458,6 +461,24 @@
         }
     },
     "components": {
+        "ads": {
+            "twitter": {
+                "title": "Obserwuj na Twitterze",
+                "message": "Bądź na bierząco z najnowszymi wiadomościami osu!guessr!"
+            },
+            "osu": {
+                "title": "Dodaj mnie w osu!",
+                "message": "Zostańmy znajomymi w grze!"
+            },
+            "buymeacoffe": {
+                "title": "Wesprzyj na Ko-fi",
+                "message": "Pomóż utrzymać osu!guessr na chodzie!"
+            },
+            "discord": {
+                "title": "Dołącz do naszego Discorda",
+                "message": "Rozmawiaj z innymi graczami osu!guessr!"
+            }
+        },
         "header": {
             "nav": {
                 "leaderboard": "Ranking",
