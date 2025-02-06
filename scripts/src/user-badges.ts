@@ -69,7 +69,7 @@ async function listBadges() {
 
 void yargs(hideBin(process.argv))
     .command(
-        "add <banchoId> <badge> <color>",
+        "add <banchoId> <badge> [color]",
         "Add a badge to a user",
         (yargs) => {
             return yargs
