@@ -114,36 +114,38 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
     );
 
     const globalClassicRankResult = await query(
-        `SELECT COUNT(DISTINCT t.user_id) as globalRank
-         FROM (
-             SELECT user_id, SUM(points) as total_points
-             FROM games
-             WHERE variant = 'classic'
-             GROUP BY user_id
-         ) t
-         WHERE t.total_points > (
-             SELECT COALESCE(SUM(points), 0)
-             FROM games
-             WHERE user_id = ?
-             AND variant = 'classic'
-         )`,
+        `WITH RankedUsers AS (
+            SELECT user_id, SUM(points) as total_score
+            FROM games
+            WHERE variant = 'classic'
+            GROUP BY user_id
+            ORDER BY total_score DESC
+        )
+        SELECT COUNT(*) as globalRank
+        FROM RankedUsers r
+        WHERE r.total_score > (
+            SELECT COALESCE(SUM(points), 0)
+            FROM games
+            WHERE user_id = ? AND variant = 'classic'
+        )`,
         [banchoId],
     );
 
     const globalDeathRankResult = await query(
-        `SELECT COUNT(DISTINCT t.user_id) as globalRank
-         FROM (
-             SELECT user_id, MAX(streak) as max_streak
-             FROM games
-             WHERE variant = 'death'
-             GROUP BY user_id
-         ) t
-         WHERE t.max_streak > (
-             SELECT COALESCE(MAX(streak), 0)
-             FROM games
-             WHERE user_id = ?
-             AND variant = 'death'
-         )`,
+        `WITH RankedUsers AS (
+            SELECT user_id, MAX(streak) as highest_streak
+            FROM games
+            WHERE variant = 'death'
+            GROUP BY user_id
+            ORDER BY highest_streak DESC
+        )
+        SELECT COUNT(*) as globalRank
+        FROM RankedUsers r
+        WHERE r.highest_streak > (
+            SELECT COALESCE(MAX(streak), 0)
+            FROM games
+            WHERE user_id = ? AND variant = 'death'
+        )`,
         [banchoId],
     );
 
@@ -155,40 +157,38 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
 
     for (const mode of Object.keys(modeRanks) as GameMode[]) {
         const classicRank = await query(
-            `SELECT COUNT(DISTINCT t.user_id) as rank
-             FROM (
-                 SELECT user_id, SUM(points) as total_points
-                 FROM games
-                 WHERE game_mode = ?
-                 AND variant = 'classic'
-                 GROUP BY user_id
-             ) t
-             WHERE t.total_points > (
-                 SELECT COALESCE(SUM(points), 0)
-                 FROM games
-                 WHERE user_id = ?
-                 AND game_mode = ?
-                 AND variant = 'classic'
-             )`,
+            `WITH RankedUsers AS (
+                SELECT user_id, SUM(points) as total_score
+                FROM games
+                WHERE game_mode = ? AND variant = 'classic'
+                GROUP BY user_id
+                ORDER BY total_score DESC
+            )
+            SELECT COUNT(*) as rank
+            FROM RankedUsers r
+            WHERE r.total_score > (
+                SELECT COALESCE(SUM(points), 0)
+                FROM games
+                WHERE user_id = ? AND game_mode = ? AND variant = 'classic'
+            )`,
             [mode, banchoId, mode],
         );
 
         const deathRank = await query(
-            `SELECT COUNT(DISTINCT t.user_id) as rank
-             FROM (
-                 SELECT user_id, MAX(streak) as max_streak
-                 FROM games
-                 WHERE game_mode = ?
-                 AND variant = 'death'
-                 GROUP BY user_id
-             ) t
-             WHERE t.max_streak > (
-                 SELECT COALESCE(MAX(streak), 0)
-                 FROM games
-                 WHERE user_id = ?
-                 AND game_mode = ?
-                 AND variant = 'death'
-             )`,
+            `WITH RankedUsers AS (
+                SELECT user_id, MAX(streak) as highest_streak
+                FROM games
+                WHERE game_mode = ? AND variant = 'death'
+                GROUP BY user_id
+                ORDER BY highest_streak DESC
+            )
+            SELECT COUNT(*) as rank
+            FROM RankedUsers r
+            WHERE r.highest_streak > (
+                SELECT COALESCE(MAX(streak), 0)
+                FROM games
+                WHERE user_id = ? AND game_mode = ? AND variant = 'death'
+            )`,
             [mode, banchoId, mode],
         );
 
