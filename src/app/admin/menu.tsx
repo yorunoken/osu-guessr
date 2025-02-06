@@ -299,15 +299,18 @@ export default function AdminMenu() {
         appendOutput("Starting deployment...");
 
         try {
-            deploy();
+            const result = await deploy();
+            if (result.success) {
+                appendOutput("Deployment successful!");
+            } else {
+                appendOutput(`Deployment failed: ${result.message}`);
+            }
         } catch (error) {
             appendOutput(`Deployment error: ${error}`);
         } finally {
-            appendOutput(`Deployment finished!`);
             setIsLoading(false);
         }
     };
-
     return (
         <div className="container mx-auto px-4 py-8 space-y-4">
             <div className="flex justify-between items-center mb-8">
