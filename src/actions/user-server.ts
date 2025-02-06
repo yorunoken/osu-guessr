@@ -114,33 +114,37 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
     );
 
     const globalClassicRankResult = await query(
-        `SELECT COUNT(*) as globalRank
-         FROM (
-             SELECT user_id, SUM(points) as total_points
-             FROM games
-             WHERE variant = 'classic'
-             GROUP BY user_id
-         ) scores
-         WHERE scores.total_points > (
+        `SELECT COUNT(DISTINCT user_id) as globalRank
+         FROM games
+         WHERE variant = 'classic'
+         AND (
              SELECT COALESCE(SUM(points), 0)
              FROM games
-             WHERE user_id = ? AND variant = 'classic'
+             WHERE user_id = g.user_id
+             AND variant = 'classic'
+         ) > (
+             SELECT COALESCE(SUM(points), 0)
+             FROM games
+             WHERE user_id = ?
+             AND variant = 'classic'
          )`,
         [banchoId],
     );
 
     const globalDeathRankResult = await query(
-        `SELECT COUNT(*) as globalRank
-         FROM (
-             SELECT user_id, MAX(streak) as max_streak
+        `SELECT COUNT(DISTINCT user_id) as globalRank
+         FROM games
+         WHERE variant = 'death'
+         AND (
+             SELECT MAX(streak)
              FROM games
-             WHERE variant = 'death'
-             GROUP BY user_id
-         ) scores
-         WHERE scores.max_streak > (
+             WHERE user_id = g.user_id
+             AND variant = 'death'
+         ) > (
              SELECT COALESCE(MAX(streak), 0)
              FROM games
-             WHERE user_id = ? AND variant = 'death'
+             WHERE user_id = ?
+             AND variant = 'death'
          )`,
         [banchoId],
     );
@@ -153,35 +157,45 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
 
     for (const mode of Object.keys(modeRanks) as GameMode[]) {
         const classicRank = await query(
-            `SELECT COUNT(*) as rank
-             FROM (
-                 SELECT user_id, SUM(points) as total_points
-                 FROM games
-                 WHERE game_mode = ? AND variant = 'classic'
-                 GROUP BY user_id
-             ) scores
-             WHERE scores.total_points > (
+            `SELECT COUNT(DISTINCT user_id) as rank
+             FROM games
+             WHERE game_mode = ?
+             AND variant = 'classic'
+             AND (
                  SELECT COALESCE(SUM(points), 0)
                  FROM games
-                 WHERE user_id = ? AND game_mode = ? AND variant = 'classic'
+                 WHERE user_id = g.user_id
+                 AND game_mode = ?
+                 AND variant = 'classic'
+             ) > (
+                 SELECT COALESCE(SUM(points), 0)
+                 FROM games
+                 WHERE user_id = ?
+                 AND game_mode = ?
+                 AND variant = 'classic'
              )`,
-            [mode, banchoId, mode],
+            [mode, mode, banchoId, mode],
         );
 
         const deathRank = await query(
-            `SELECT COUNT(*) as rank
-             FROM (
-                 SELECT user_id, MAX(streak) as max_streak
+            `SELECT COUNT(DISTINCT user_id) as rank
+             FROM games
+             WHERE game_mode = ?
+             AND variant = 'death'
+             AND (
+                 SELECT MAX(streak)
                  FROM games
-                 WHERE game_mode = ? AND variant = 'death'
-                 GROUP BY user_id
-             ) scores
-             WHERE scores.max_streak > (
+                 WHERE user_id = g.user_id
+                 AND game_mode = ?
+                 AND variant = 'death'
+             ) > (
                  SELECT COALESCE(MAX(streak), 0)
                  FROM games
-                 WHERE user_id = ? AND game_mode = ? AND variant = 'death'
+                 WHERE user_id = ?
+                 AND game_mode = ?
+                 AND variant = 'death'
              )`,
-            [mode, banchoId, mode],
+            [mode, mode, banchoId, mode],
         );
 
         modeRanks[mode] = {
