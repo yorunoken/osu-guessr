@@ -37,6 +37,72 @@
             "title": "Najnowsze Aktualizacje"
         }
     },
+    "privacy": {
+        "title": "Polityka Prywatności",
+        "notAffiliated": "Niepowiązane z {osu_base}",
+        "sections": {
+            "dataCollection": {
+                "title": "Przechowywanie Danych",
+                "description": "Gromadzimy i przechowujemy jedynie minimalną ilość informacji niezbędnych do świadczenia usług osu!guessr:",
+                "items": {
+                    "profile": "Informacje o Twoim profilu osu! (nazwa użytkownika, ID, awatar)",
+                    "stats": "Statystyki gry i wyniki",
+                    "session": "Dane sesji gry"
+                }
+            },
+            "dataUsage": {
+                "title": "Wykorzystywanie Danych",
+                "description": "Twoje dane są wykorzystywane w celu:",
+                "items": {
+                    "progress": "Utrzymywania Twoich postępów i statystyk w grze",
+                    "leaderboards": "Wyświetlania tabel wyników i rankingów",
+                    "improvement": "Poprawy wydajności gry oraz doświedczeń użytkownika"
+                }
+            },
+            "dataProtection": {
+                "title": "Ochrona Danych",
+                "description": "Podejmujemy następujące środki w celu ochrony Twoich danych:",
+                "items": {
+                    "encryption": "Bezpieczna transmisja danych za pomocą protokołu HTTPS",
+                    "updates": "Regularne aktualizacje zabezpieczeń i monitorowanie",
+                    "access": "Ograniczony dostęp administratorów do danych użytkowników"
+                }
+            },
+            "thirdParty": {
+                "title": "Usługi Stron Trzecich",
+                "description": "Korzystamy z następujących usług stron trzecich:",
+                "items": {
+                    "osu": "osu! API w celu uwierzytelniania logowania i pozyskiwania danych o beatmapach",
+                    "analytics": "Usługi analityczne poprawiające doświadczenia użytkownika",
+                    "cdn": "Sieci dostarczania treści w celu lepszej wydajności"
+                }
+            },
+            "dataRetention": {
+                "title": "Przechowywanie Danych",
+                "description": "Przechowujemy Twoje dane tak długo, jak Twoje konto jest aktywne. Możesz zażądać usunięcia danych, kontaktując się z nami.",
+                "gameStats": "Statystyki gier i wyniki są przechowywane przez czas nieokreślony do celów historycznych oraz do celów związanych z rywalizacją"
+            },
+            "rights": {
+                "title": "Twoje Prawa",
+                "description": "Masz prawo do:",
+                "items": {
+                    "access": "Uzyskania dostępu do swoich danych osobowych",
+                    "correction": "Poproszenia o poprawienie lub usunięcie danych",
+                    "objection": "Wniesienia sprzeciwu wobec przetwarzania danych",
+                    "export": "Eksportowania swoich danych"
+                }
+            },
+            "contact": {
+                "title": "Informacje Kontaktowe",
+                "description": "W przypadku jakichkolwiek pytań lub próśb związanych z prywatnością prosimy skontaktować się z nami:",
+                "items": {
+                    "email": "Email: noonetr123@gmail.com",
+                    "discord": "Discord: @yorunoken",
+                    "github": "GitHub:"
+                }
+            }
+        }
+    },
     "common": {
         "loading": "Ładowanie...",
         "viewMore": "Zobacz Więcej",
@@ -176,20 +242,6 @@
                     "code": "• Wspieraj rozwój bazy kodu",
                     "docs": "• Pomóż udoskonalić dokumentację"
                 }
-            }
-        },
-        "privacy": {
-            "title": "Prywatność i Przepisy Prawne",
-            "dataUsage": {
-                "title": "Użycie Danych",
-                "description": "Przechowujemy tylko niezbędne dane oraz informacje o profilu osu!. Twoja prywatność jest dla nas bardzo ważna!"
-            },
-            "contentUsage": {
-                "title": "Użycie Treści",
-                "description": "Wszystkie treści związane z beatmapami, w tym tła i audio, należą do ich odpowiednich twórców i są wykorzystywane zgodnie z zasadą dozwolonego użytku w celach edukacyjnych."
-            },
-            "disclaimer": {
-                "title": "Zastrzeżenie"
             }
         }
     },
@@ -491,7 +543,8 @@
         },
         "footer": {
             "madeWith": "Stworzone z ❤️ przez {author}",
-            "notAffiliated": "Niepowiązane z {osu_base}"
+            "about": "O Grze",
+            "privacy": "Polityka Prywatności"
         },
         "report": {
             "button": "Zgłoś Problem",
