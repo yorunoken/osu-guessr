@@ -1,6 +1,6 @@
 "use server";
 
-const API_URL = process.env.SERVER_URL;
+const API_URL = `http://localhost:${process.env.SERVER_PORT}`;
 
 export async function query(sql: string, values?: Array<unknown>) {
     console.log(sql);
