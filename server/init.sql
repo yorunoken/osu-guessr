@@ -91,7 +91,7 @@ CREATE TABLE game_sessions (
     variant ENUM ('classic', 'death') DEFAULT 'classic',
     is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE,
-    FOREIGN KEY (current_beatmap_id) REFERENCES mapset_data (mapset_id)
+    FOREIGN KEY (current_beatmap_id) REFERENCES mapset_data (mapset_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS session_mapsets (
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS session_mapsets (
     mapset_id INT,
     round_number INT,
     FOREIGN KEY (session_id) REFERENCES game_sessions (id) ON DELETE CASCADE,
-    FOREIGN KEY (mapset_id) REFERENCES mapset_data (mapset_id)
+    FOREIGN KEY (mapset_id) REFERENCES mapset_data (mapset_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS reports (
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS reports (
     github_issue_number INT,
     github_issue_url VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE,
-    FOREIGN KEY (mapset_id) REFERENCES mapset_data (mapset_id),
+    FOREIGN KEY (mapset_id) REFERENCES mapset_data (mapset_id) ON DELETE CASCADE,
     INDEX idx_reports_status (status),
     INDEX idx_reports_user (user_id),
     INDEX idx_reports_mapset (mapset_id)

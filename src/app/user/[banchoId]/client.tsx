@@ -18,10 +18,14 @@ interface GameStats {
 }
 
 interface UserRanks {
-    globalRank?: number;
+    globalRank?: {
+        classic?: number;
+        death?: number;
+    };
     modeRanks: {
         [key in GameModes]: {
-            globalRank?: number;
+            classic?: number;
+            death?: number;
         };
     };
 }
@@ -126,7 +130,10 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                         <StatBox label={t.user.profile.stats.hiScore} value={Math.max(...(achievements?.map((a) => a.highest_score) ?? [0])).toLocaleString()} />
                         <StatBox label={t.user.profile.stats.totalGames} value={achievements?.reduce((sum, a) => sum + a.games_played, 0).toLocaleString() ?? "0"} />
-                        <StatBox label={t.user.profile.stats.globalRank} value={ranks?.globalRank?.toLocaleString() ?? "-"} />
+                        <StatBox
+                            label={t.user.profile.stats.globalRank}
+                            value={currentVariant === "classic" ? (ranks.modeRanks[currentMode].classic?.toLocaleString() ?? "-") : (ranks.modeRanks[currentMode].death?.toLocaleString() ?? "-")}
+                        />
                     </div>
                 </div>
             </div>
@@ -169,7 +176,13 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
                 <div className="bg-card p-6 rounded-xl border border-border/50">
                     {gameStats[currentMode].games_played > 0 ? (
                         <div className="space-y-4">
-                            {currentVariant === "classic" && <StatItem label={t.user.profile.gameStats.totalScore} value={gameStats[currentMode].total_score.toLocaleString()} />}
+                            {currentVariant === "classic" && (
+                                <>
+                                    <StatItem label={t.user.profile.gameStats.totalScore} value={gameStats[currentMode].total_score.toLocaleString()} />
+                                    <StatItem label={t.user.profile.gameStats.modeRank} value={ranks.modeRanks[currentMode].classic?.toLocaleString() ?? "-"} />
+                                </>
+                            )}
+                            {currentVariant === "death" && <StatItem label={t.user.profile.gameStats.modeRank} value={ranks.modeRanks[currentMode].death?.toLocaleString() ?? "-"} />}
                             <StatItem label={t.user.profile.gameStats.gamesPlayed} value={gameStats[currentMode].games_played.toString()} />
                             <StatItem
                                 label={currentVariant === "classic" ? t.user.profile.gameStats.highestScore : t.user.profile.gameStats.bestStreak}

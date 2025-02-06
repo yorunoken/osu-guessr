@@ -53,13 +53,37 @@ export interface GameState {
     variant: GameVariant;
 }
 
-async function checkRateLimit(userId: number) {
-    console.log(userId);
+const activeSessions = new Map<string, boolean>();
+
+async function acquireSessionLock(sessionId: string, timeoutMs: number = 5000): Promise<boolean> {
+    if (activeSessions.get(sessionId)) {
+        return false;
+    }
+
+    activeSessions.set(sessionId, true);
+
+    setTimeout(() => {
+        activeSessions.delete(sessionId);
+    }, timeoutMs);
+
+    return true;
 }
 
 async function validateGameSession(sessionId: string, userId: number) {
     const [session] = await query(
-        `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename, mt.audio_filename
+        `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename, mt.audio_filename,
+            CASE
+                WHEN g.current_round = 1 AND g.last_guess IS NULL THEN FALSE
+                WHEN g.last_guess IS NOT NULL
+                    AND g.current_beatmap_id = (
+                        SELECT mapset_id
+                        FROM session_mapsets
+                        WHERE session_id = g.id
+                        ORDER BY round_number DESC
+                        LIMIT 1
+                    ) THEN TRUE
+                ELSE FALSE
+            END as has_guessed_current_round
             FROM game_sessions g
             JOIN mapset_data m ON g.current_beatmap_id = m.mapset_id
             JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
@@ -140,13 +164,19 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
     const authSession = await getAuthSession();
     const validated = gameSchema.parse({ sessionId, guess });
 
-    // Check rate limit
-    // await checkRateLimit(authSession.user.banchoId);
+    if (!(await acquireSessionLock(validated.sessionId))) {
+        throw new Error("Action in progress, please wait");
+    }
 
     try {
         await query("START TRANSACTION");
 
         const gameState = await validateGameSession(validated.sessionId, authSession.user.banchoId);
+
+        if (guess !== undefined && gameState.has_guessed_current_round) {
+            throw new Error("Already submitted a guess for this round");
+        }
+
         const isDeathMode = gameState.variant === "death";
 
         if (!isDeathMode && gameState.current_round > MAX_ROUNDS) {
@@ -310,6 +340,8 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
     } catch (error) {
         await query("ROLLBACK");
         throw error;
+    } finally {
+        activeSessions.delete(validated.sessionId);
     }
 }
 
@@ -396,7 +428,6 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
 export async function endGameAction(sessionId: string): Promise<void> {
     console.log("Ending game for:", sessionId);
     const authSession = await getAuthSession();
-    await checkRateLimit(authSession.user.banchoId);
 
     try {
         await query("START TRANSACTION");

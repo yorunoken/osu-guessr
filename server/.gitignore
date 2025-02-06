@@ -1,6 +1,3 @@
 target
 .env*
 !.env
-
-mapset_tags.sql
-mapset_data.sql

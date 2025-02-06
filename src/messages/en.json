@@ -10,7 +10,9 @@
             "startPlaying": "Start Playing",
             "signIn": "Sign in with {osu_base}",
             "learnMore": "Learn More",
-            "artCredit": "Art by {artist_name}"
+            "artCredit": "Art by {artist_name}",
+            "developerCredit": "Created by yorunoken",
+            "discordInvite": "Join our Discord"
         },
         "statistics": {
             "title": "Game Statistics",
@@ -33,6 +35,72 @@
         },
         "updates": {
             "title": "Latest Updates"
+        }
+    },
+    "privacy": {
+        "title": "Privacy Policy",
+        "notAffiliated": "Not affiliated with {osu_base}",
+        "sections": {
+            "dataCollection": {
+                "title": "Data Collection",
+                "description": "We collect and store only the minimum amount of information necessary to provide osu!guessr services:",
+                "items": {
+                    "profile": "Your osu! profile information (username, ID, avatar)",
+                    "stats": "Game statistics and scores",
+                    "session": "Game session data"
+                }
+            },
+            "dataUsage": {
+                "title": "Data Usage",
+                "description": "Your data is used for:",
+                "items": {
+                    "progress": "Maintaining your game progress and statistics",
+                    "leaderboards": "Displaying leaderboards and rankings",
+                    "improvement": "Improving game performance and user experience"
+                }
+            },
+            "dataProtection": {
+                "title": "Data Protection",
+                "description": "We take the following measures to protect your data:",
+                "items": {
+                    "encryption": "Secure data transmission using HTTPS",
+                    "updates": "Regular security updates and monitoring",
+                    "access": "Limited access to user data by administrators"
+                }
+            },
+            "thirdParty": {
+                "title": "Third-Party Services",
+                "description": "We use the following third-party services:",
+                "items": {
+                    "osu": "osu! API for authentication and beatmap data",
+                    "analytics": "Analytics services to improve user experience",
+                    "cdn": "Content delivery networks for improved performance"
+                }
+            },
+            "dataRetention": {
+                "title": "Data Retention",
+                "description": "We retain your data for as long as your account is active. You can request data deletion by contacting us.",
+                "gameStats": "Game statistics and scores are retained indefinitely for historical and competitive purposes."
+            },
+            "rights": {
+                "title": "Your Rights",
+                "description": "You have the right to:",
+                "items": {
+                    "access": "Access your personal data",
+                    "correction": "Request data correction or deletion",
+                    "objection": "Object to data processing",
+                    "export": "Export your data"
+                }
+            },
+            "contact": {
+                "title": "Contact Information",
+                "description": "For any privacy-related questions or requests, contact us:",
+                "items": {
+                    "email": "Email: noonetr123@gmail.com",
+                    "discord": "Discord: @yorunoken",
+                    "github": "GitHub:"
+                }
+            }
         }
     },
     "common": {
@@ -174,20 +242,6 @@
                     "code": "• Contribute to the codebase",
                     "docs": "• Help improve documentation"
                 }
-            }
-        },
-        "privacy": {
-            "title": "Privacy & Legal",
-            "dataUsage": {
-                "title": "Data Usage",
-                "description": "We only store necessary game data and osu! profile information. Your privacy is important to us!"
-            },
-            "contentUsage": {
-                "title": "Content Usage",
-                "description": "All beatmap content, including backgrounds and audio, belongs to their respective creators and is used under fair use for educational purposes."
-            },
-            "disclaimer": {
-                "title": "Disclaimer"
             }
         }
     },
@@ -377,7 +431,8 @@
                 "gamesPlayed": "Games Played",
                 "highestScore": "Highest Score",
                 "bestStreak": "Best Streak",
-                "lastPlayed": "Last Played"
+                "lastPlayed": "Last Played",
+                "modeRank": "Mode Rank"
             },
             "topGames": {
                 "title": "Top Games",
@@ -458,6 +513,24 @@
         }
     },
     "components": {
+        "ads": {
+            "twitter": {
+                "title": "Follow on Twitter",
+                "message": "Stay updated with the latest osu!guessr news!"
+            },
+            "osu": {
+                "title": "Add me on osu!",
+                "message": "Let's be friends in-game!"
+            },
+            "buymeacoffe": {
+                "title": "Support on Ko-fi",
+                "message": "Help keep osu!guessr running!"
+            },
+            "discord": {
+                "title": "Join our Discord",
+                "message": "Chat with other osu!guessr players!"
+            }
+        },
         "header": {
             "nav": {
                 "leaderboard": "Leaderboard",
@@ -470,7 +543,8 @@
         },
         "footer": {
             "madeWith": "Made with ❤️ by {author}",
-            "notAffiliated": "Not affiliated with {osu_base}"
+            "about": "About",
+            "privacy": "Privacy Policy"
         },
         "report": {
             "button": "Report Issue",

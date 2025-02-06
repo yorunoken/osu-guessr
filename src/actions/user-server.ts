@@ -26,10 +26,14 @@ export interface UserAchievement {
 }
 
 export interface UserRanks {
-    globalRank?: number;
+    globalRank?: {
+        classic?: number;
+        death?: number;
+    };
     modeRanks: {
         [key in GameMode]: {
-            globalRank?: number;
+            classic?: number;
+            death?: number;
         };
     };
 }
@@ -64,29 +68,6 @@ export interface HighestStats {
 
 type GameMode = "background" | "audio" | "skin";
 
-interface SpecialUser {
-    banchoId: number;
-    badge: string;
-    color: string;
-}
-
-const SPECIAL_USERS: Array<SpecialUser> = [
-    { banchoId: 17279598, badge: "Owner", color: "#FF6B6B" },
-    { banchoId: 13845312, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 20367144, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 25468052, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 18567756, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 18153277, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 14519821, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 12643934, badge: "Beta Tester", color: "#7C3AED" },
-    { banchoId: 4539930, badge: "Fish", color: "#DE9B4A" },
-    { banchoId: 3171691, badge: "The Greatest Of All Time", color: "FFA500" },
-];
-
-export async function getSpecialUsers(): Promise<Array<SpecialUser>> {
-    return SPECIAL_USERS;
-}
-
 // Schemas
 const gameModeSchema = z.enum(["background", "audio", "skin"]);
 const searchSchema = z.object({
@@ -96,17 +77,13 @@ const searchSchema = z.object({
 
 // Server actions
 export async function createUserAction(banchoId: number, username: string, avatar_url: string) {
-    const specialUser = SPECIAL_USERS.find((user) => user.banchoId === banchoId);
-
     return query(
-        `INSERT INTO users (bancho_id, username, avatar_url, special_badge, special_badge_color)
-         VALUES (?, ?, ?, ?, ?)
+        `INSERT INTO users (bancho_id, username, avatar_url)
+         VALUES (?, ?, ?)
          ON DUPLICATE KEY UPDATE
             username = VALUES(username),
-            avatar_url = VALUES(avatar_url),
-            special_badge = VALUES(special_badge),
-            special_badge_color = VALUES(special_badge_color)`,
-        [banchoId, username, avatar_url, specialUser?.badge || null, specialUser?.color || null],
+            avatar_url = VALUES(avatar_url)`,
+        [banchoId, username, avatar_url],
     );
 }
 
@@ -123,7 +100,6 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
     if (!userResult[0]) return null;
     const user = userResult[0];
 
-    // Get achievements for both variants
     const achievements = await query(
         `SELECT g.user_id, g.game_mode, g.variant,
                 COUNT(*) as games_played,
@@ -137,49 +113,88 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
         [banchoId],
     );
 
-    // Only consider classic mode for global ranking
-    const globalRankResult = await query(
-        `SELECT COUNT(*) as globalRank
-         FROM (
-             SELECT user_id, SUM(points) as total_points
-             FROM games
-             WHERE variant = 'classic'
-             GROUP BY user_id
-         ) scores
-         WHERE scores.total_points > (
-             SELECT COALESCE(SUM(points), 0)
-             FROM games
-             WHERE user_id = ? AND variant = 'classic'
-         )`,
+    const globalClassicRankResult = await query(
+        `WITH RankedUsers AS (
+            SELECT user_id, SUM(points) as total_score
+            FROM games
+            WHERE variant = 'classic'
+            GROUP BY user_id
+            ORDER BY total_score DESC
+        )
+        SELECT COUNT(*) as globalRank
+        FROM RankedUsers r
+        WHERE r.total_score > (
+            SELECT COALESCE(SUM(points), 0)
+            FROM games
+            WHERE user_id = ? AND variant = 'classic'
+        )`,
         [banchoId],
     );
 
-    const modeRanks: { [key in GameMode]: { globalRank?: number } } = {
+    const globalDeathRankResult = await query(
+        `WITH RankedUsers AS (
+            SELECT user_id, MAX(streak) as highest_streak
+            FROM games
+            WHERE variant = 'death'
+            GROUP BY user_id
+            ORDER BY highest_streak DESC
+        )
+        SELECT COUNT(*) as globalRank
+        FROM RankedUsers r
+        WHERE r.highest_streak > (
+            SELECT COALESCE(MAX(streak), 0)
+            FROM games
+            WHERE user_id = ? AND variant = 'death'
+        )`,
+        [banchoId],
+    );
+
+    const modeRanks: { [key in GameMode]: { classic?: number; death?: number } } = {
         background: {},
         audio: {},
         skin: {},
     };
 
-    // Update mode ranks to consider variants
     for (const mode of Object.keys(modeRanks) as GameMode[]) {
         const classicRank = await query(
-            `SELECT COUNT(*) as rank
-             FROM (
-                 SELECT user_id, SUM(points) as total_points
-                 FROM games
-                 WHERE game_mode = ? AND variant = 'classic'
-                 GROUP BY user_id
-             ) scores
-             WHERE scores.total_points > (
-                 SELECT COALESCE(SUM(points), 0)
-                 FROM games
-                 WHERE user_id = ? AND game_mode = ? AND variant = 'classic'
-             )`,
+            `WITH RankedUsers AS (
+                SELECT user_id, SUM(points) as total_score
+                FROM games
+                WHERE game_mode = ? AND variant = 'classic'
+                GROUP BY user_id
+                ORDER BY total_score DESC
+            )
+            SELECT COUNT(*) as rank
+            FROM RankedUsers r
+            WHERE r.total_score > (
+                SELECT COALESCE(SUM(points), 0)
+                FROM games
+                WHERE user_id = ? AND game_mode = ? AND variant = 'classic'
+            )`,
+            [mode, banchoId, mode],
+        );
+
+        const deathRank = await query(
+            `WITH RankedUsers AS (
+                SELECT user_id, MAX(streak) as highest_streak
+                FROM games
+                WHERE game_mode = ? AND variant = 'death'
+                GROUP BY user_id
+                ORDER BY highest_streak DESC
+            )
+            SELECT COUNT(*) as rank
+            FROM RankedUsers r
+            WHERE r.highest_streak > (
+                SELECT COALESCE(MAX(streak), 0)
+                FROM games
+                WHERE user_id = ? AND game_mode = ? AND variant = 'death'
+            )`,
             [mode, banchoId, mode],
         );
 
         modeRanks[mode] = {
-            globalRank: classicRank[0].rank + 1,
+            classic: classicRank[0].rank + 1,
+            death: deathRank[0].rank + 1,
         };
     }
 
@@ -187,7 +202,10 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
         ...user,
         achievements,
         ranks: {
-            globalRank: globalRankResult[0].globalRank + 1,
+            globalRank: {
+                classic: globalClassicRankResult[0].globalRank + 1,
+                death: globalDeathRankResult[0].globalRank + 1,
+            },
             modeRanks,
         },
     };

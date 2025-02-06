@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslationsContext } from "@/context/translations-provider";
+import Link from "next/link";
 import React from "react";
 
 export default function Footer() {
@@ -23,7 +24,14 @@ export default function Footer() {
                         </React.Fragment>
                     ))}
                 </p>
-                <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-foreground/50">{t.components.footer.notAffiliated}</p>
+                <div className="mt-2 sm:mt-3 text-xs sm:text-sm text-foreground/50 flex justify-center gap-4">
+                    <Link href="/about" className="hover:text-foreground transition-colors duration-200">
+                        About
+                    </Link>
+                    <Link href="/privacy" className="hover:text-foreground transition-colors duration-200">
+                        Privacy Policy
+                    </Link>
+                </div>
             </div>
         </footer>
     );

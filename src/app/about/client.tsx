@@ -246,24 +246,6 @@ export default function AboutClient() {
                         </div>
                     </div>
                 </section>
-
-                <section className="bg-card rounded-xl p-8 border border-border/50">
-                    <h2 className="text-2xl font-semibold mb-4">{t.about.privacy.title}</h2>
-                    <div className="space-y-4">
-                        <div className="bg-background/50 p-6 rounded-lg">
-                            <h3 className="text-xl font-medium mb-2 text-primary">{t.about.privacy.dataUsage.title}</h3>
-                            <p className="text-foreground/80">{t.about.privacy.dataUsage.description}</p>
-                        </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
-                            <h3 className="text-xl font-medium mb-2 text-primary">{t.about.privacy.contentUsage.title}</h3>
-                            <p className="text-foreground/80">{t.about.privacy.contentUsage.description}</p>
-                        </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
-                            <h3 className="text-xl font-medium mb-2 text-primary">{t.about.privacy.disclaimer.title}</h3>
-                            <p className="text-foreground/80">{t.components.footer.notAffiliated}</p>
-                        </div>
-                    </div>
-                </section>
             </div>
         </div>
     );

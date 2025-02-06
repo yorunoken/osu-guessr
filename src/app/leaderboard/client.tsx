@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { getTopPlayersAction, TopPlayer } from "@/actions/user-server";
 import { GameVariant } from "@/app/games/config";
 import { useTranslationsContext } from "@/context/translations-provider";
+import { AdSlider } from "@/components/Ads";
 
 type GameMode = "background" | "audio" | "skin";
 
@@ -134,6 +135,8 @@ export default function LeaderboardClient() {
                     </div>
                 )}
             </div>
+
+            <AdSlider />
         </div>
     );
 }
