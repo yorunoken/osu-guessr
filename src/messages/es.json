@@ -1,0 +1,579 @@
+{
+    "metadata": {
+        "title": "osu! guessr",
+        "description": "¡Pon a prueba tus conocimientos de {osu_base}!"
+    },
+    "home": {
+        "hero": {
+            "title": "Bienvenido a {osu_guessr}",
+            "subtitle": "Desafía tu memoria {osu_base}, descubre joyas ocultas y asciende en la clasificación mundial en este juego de adivinanzas definitivo!",
+            "startPlaying": "Empezar a jugar",
+            "signIn": "Iniciar sesión con {osu_base}",
+            "learnMore": "Más información",
+            "artCredit": "Arte de {artist_name}"
+        },
+        "statistics": {
+            "title": "Estadísticas del juego",
+            "totalPlayers": {
+                "title": "Total jugadores",
+                "description": "Jugadores inscritos"
+            },
+            "gamesPlayed": {
+                "title": "Juegos jugados",
+                "description": "Total de partidos completados"
+            },
+            "highScore": {
+                "title": "Puntuación alta",
+                "description": "Máxima puntuación actual en una partida"
+            }
+        },
+        "supporters": {
+            "title": "Partidarios",
+            "beFirst": "Sé el primero en apoyar a {osu_guessr}!"
+        },
+        "updates": {
+            "title": "Últimas actualizaciones"
+        }
+    },
+    "common": {
+        "loading": "Cargando...",
+        "viewMore": "Ver más",
+        "back": "Volver",
+        "cancel": "Cancelar",
+        "submit": "Enviar",
+        "delete": "Borrar",
+        "create": "Crear",
+        "save": "Guardar"
+    },
+    "about": {
+        "title": "Acerca de {osu_guessr}",
+        "whatIs": {
+            "title": "¿Qué es el {osu_guessr}?",
+            "description1": "{osu_guessr}  es un atractivo juego de preguntas y respuestas que reta a los jugadores de {osu_base} a poner a prueba sus conocimientos sobre la amplia biblioteca de beatmaps. Tanto si eres un jugador ocasional como un mapper empedernido, este juego te ofrece una forma divertida de descubrir nuevas canciones y demostrar tu familiaridad con la variada colección musical de la comunidad.",
+            "description2": "Compite con tus amigos, escala posiciones en la clasificación y, tal vez, ¡descubre nuevos beatmaps favoritos por el camino!"
+        },
+        "gameModes": {
+            "title": "Modos de juego",
+            "background": {
+                "title": "Fondo Guessr",
+                "description": "Pon a prueba tu habilidad para reconocer canciones a partir de sus fondos beatmap. Desde capturas de pantalla de anime hasta arte abstracto, ¿conoces bien estas imágenes icónicas?"
+            },
+            "audio": {
+                "title": "Audio Guessr",
+                "description": "¡Pon a prueba tus conocimientos musicales! Escucha clips cortos de beatmaps e intenta identificar la canción antes de que se acabe el tiempo."
+            },
+            "skin": {
+                "title": "Skin Guessr",
+                "comingSoon": "Próximamente",
+                "description": "¿Crees que conoces las skins de {osu_base}? Desafíate a ti mismo a reconocer los skins más populares a partir de capturas de pantalla y elementos del menú."
+            },
+            "more": {
+                "title": "Más modos",
+                "planned": "Planificado",
+                "description": "Estamos trabajando en nuevos y emocionantes modos de juego para ti. Permanece atento."
+            }
+        },
+        "howToPlay": {
+            "title": "Cómo jugar",
+            "steps": {
+                "1": {
+                    "title": "Elija su modo",
+                    "description": "Selecciona uno de los modos de juego disponibles según tus preferencias: fondos, clips de audio o skins."
+                },
+                "2": {
+                    "title": "Empieza a adivinar",
+                    "description": "Tendrás {seconds} segundos por ronda para identificar la canción correcta. Escribe tu respuesta o utiliza las sugerencias de autocompletar."
+                },
+                "3": {
+                    "title": "Puntos",
+                    "description": "Gana puntos según tu precisión y velocidad. Crea rachas para conseguir puntos extra y compite por las mejores puntuaciones."
+                }
+            }
+        },
+        "scoringSystem": {
+            "title": "Sistema de puntuación",
+            "points": {
+                "base": "Puntos básicos: {points} por acierto",
+                "timeBonus": "Bonificación de tiempo: {multiplier} × segundos restantes",
+                "streakBonus": "Bonificación por racha: {bonus} × racha actual",
+                "skipPenalty": "Saltar la sanción: {penalty} puntos"
+            },
+            "gameInfo": {
+                "length": "Duración del juego: {rounds} rondas",
+                "time": "Tiempo de ronda: {seconds} segundos"
+            }
+        },
+        "features": {
+            "title": "Características",
+            "leaderboards": {
+                "title": "Tablas de clasificación",
+                "description": "Compite globalmente con otros jugadores. Las tablas de clasificación independientes para cada modo de juego te permiten demostrar tu pericia."
+            },
+            "autoComplete": {
+                "title": "Autocompletar",
+                "description": "El sistema inteligente de sugerencias te ayuda a encontrar el título de la canción correcta sin necesidad de una ortografía perfecta."
+            },
+            "profiles": {
+                "title": "Perfiles de los jugadores",
+                "description": "Sigue tu progreso, consulta las estadísticas y mira tu clasificación en los distintos modos de juego."
+            },
+            "api": {
+                "title": "Acceso a API",
+                "description": "Los desarrolladores pueden integrarse con nuestra API para crear sus propias herramientas y aplicaciones."
+            }
+        },
+        "documentation": {
+            "title": "Documentación",
+            "api": {
+                "title": "Documentación de API",
+                "description": "¿Quieres integrarte con {osu_guessr}? Nuestra completa documentación de la API tiene todo lo que necesitas para empezar."
+            },
+            "technical": {
+                "title": "Detalles técnicos",
+                "description": "¿Te interesa saber cómo funciona el juego? Consulta nuestra documentación técnica detallada."
+            }
+        },
+        "credits": {
+            "title": "Créditos y atribución",
+            "development": {
+                "title": "Desarrollo",
+                "description": "Creado y mantenido por {author}"
+            },
+            "artwork": {
+                "title": "Obras de arte"
+            },
+            "inspiration": {
+                "title": "Inspiración",
+                "items": {
+                    "scoreGuesser": "• Inspirado por {link}",
+                    "redditThread": "• Concepto original de este {link}"
+                }
+            },
+            "specialThanks": {
+                "title": "Agradecimientos especiales",
+                "items": {
+                    "peppy": "• Dean Herbert (peppy) y la {osu_base} equipo",
+                    "community": "• ¡La increíble comunidad osu!",
+                    "creators": "• Todos los creadores de beatmaps y diseñadores de skins"
+                }
+            }
+        },
+        "contact": {
+            "title": "Contacto y asistencia",
+            "getInTouch": {
+                "title": "Ponte en contacto",
+                "github": "• GitHub: {link}",
+                "twitter": "• Twitter: {link}",
+                "discord": "• Discord: {username}"
+            },
+            "contribute": {
+                "title": "Contribuir",
+                "description": "¿Ha encontrado un error? ¿Tienes alguna sugerencia? ¿Quieres contribuir? Visite nuestro repositorio GitHub:",
+                "items": {
+                    "bugs": "• Envíe informes de errores y solicitudes de funciones",
+                    "code": "• Contribuir al código base",
+                    "docs": "• Ayudar a mejorar la documentación"
+                }
+            }
+        },
+        "privacy": {
+            "title": "Protección de datos",
+            "dataUsage": {
+                "title": "Uso de datos",
+                "description": "¡Sólo almacenamos los datos de juego necesarios y la información del perfil de osu! Tu privacidad es importante para nosotros."
+            },
+            "contentUsage": {
+                "title": "Uso de los contenidos",
+                "description": "Todo el contenido del beatmap, incluidos los fondos y el audio, pertenece a sus respectivos creadores y se utiliza bajo uso legítimo con fines educativos."
+            },
+            "disclaimer": {
+                "title": "Descargo de responsabilidad"
+            }
+        }
+    },
+    "gameModes": {
+        "title": "Elige tu modo de juego",
+        "modes": {
+            "background": {
+                "title": "Fondo Guessr",
+                "description": "Identificar la canción a partir de la imagen de fondo del beatmap"
+            },
+            "audio": {
+                "title": "Audio Guessr",
+                "description": "Reconocer la canción a partir de un breve clip de audio"
+            },
+            "skin": {
+                "title": "Skin Guessr",
+                "description": "Identificar skins {osu_base} populares a partir de elementos de interfaz de usuario"
+            }
+        }
+    },
+    "game": {
+        "preGame": {
+            "title": {
+                "audio": "Audio Guessr",
+                "background": "Fondo Guessr"
+            },
+            "description": {
+                "audio": "Escuchará breves fragmentos de canciones de osu!",
+                "background": "Se te mostrarán fondos beatmap de osu!"
+            },
+            "howToPlay": {
+                "title": "Cómo jugar",
+                "classic": {
+                    "rounds": "Completa {count} rondas de adivinanzas",
+                    "time": "Intenta adivinar el título de la canción en {seconds} segundos por ronda",
+                    "points": "Gana puntos en función de la velocidad y la precisión",
+                    "streak": "Construye una racha para conseguir puntos extra"
+                },
+                "death": {
+                    "continuous": "Sigue jugando hasta que cometas un error",
+                    "time": "Intenta adivinar el título de la canción en {seconds} segundos por ronda",
+                    "streak": "Construye la racha más larga posible"
+                }
+            },
+            "scoring": {
+                "title": "Puntuación",
+                "classic": {
+                    "base": "Puntos básicos: {points}",
+                    "timeBonus": "TBonificación de tiempo: {points} puntos por segundo restante",
+                    "streakBonus": "Bonificación por racha: {points} puntos por nivel de racha",
+                    "skipPenalty": "Skip Penalty: {points} points"
+                },
+                "death": {
+                    "streakOnly": "Sólo importa tu racha",
+                    "noPoints": "Los puntos no se registran en este modo",
+                    "compete": "Compite por la racha más larga en la tabla de clasificación"
+                }
+            },
+            "modes": {
+                "classic": {
+                    "title": "Modo clásico",
+                    "description": "10 rondas, anota tantos puntos como puedas"
+                },
+                "death": {
+                    "title": "Modo Muerte",
+                    "description": "Sólo hay una vida, ¡aprovéchala!"
+                }
+            },
+            "warning": {
+                "title": "Nota importante",
+                "description": "Tu puntuación sólo se contabilizará si completas todas las {rounds} rondas. Si abandonas el juego antes de tiempo, perderás tu progreso."
+            },
+            "actions": {
+                "startGame": "Comenzar el juego",
+                "backToHome": "Volver al inicio"
+            }
+        },
+        "modes": {
+            "classic": {
+                "title": "Modo clásico",
+                "description": "10 rondas, anota tantos puntos como puedas"
+            },
+            "death": {
+                "title": "Modo Muerte",
+                "description": "Sólo hay una vida, ¡aprovéchala!"
+            }
+        },
+        "status": {
+            "loading": "Carga de la siguiente ronda..."
+        },
+        "input": {
+            "placeholder": "Título de la canción...",
+            "title": "Introduce tus conjeturas:",
+            "submit": "Enviar",
+            "skip": "Saltar (-50 puntos)"
+        },
+        "header": {
+            "title": "{mode} Guessr",
+            "classic": {
+                "round": "Ronda: {current}/{total}",
+                "streak": "Racha: {count}",
+                "points": "Puntos: {count}"
+            },
+            "death": {
+                "lives": {
+                    "oneShot": "Un disparo",
+                    "gameOver": "Se acabó el juego"
+                },
+                "currentStreak": "Racha actual: {count}",
+                "maxStreak": "Racha Max: {count}"
+            },
+            "timeLeft": "{seconds}s"
+        },
+        "stats": {
+            "classic": {
+                "title": "¡Juego completado!",
+                "totalPoints": "Puntos totales",
+                "highestStreak": "Racha más alta",
+                "correctGuesses": "{correct}/{total}",
+                "averageTime": "{time}s"
+            },
+            "death": {
+                "title": {
+                    "died": "¡Se acabó el juego!",
+                    "completed": "¡Una carrera increíble!"
+                },
+                "maxStreak": "Racha máxima",
+                "totalCorrect": "Total Correcto",
+                "averageTime": "Tiempo medio",
+                "diedMessage": "¡Cometiste dos errores!"
+            },
+            "labels": {
+                "averageTime": "Tiempo medio",
+                "correctGuesses": "Adivinanzas correctas"
+            },
+            "actions": {
+                "tryAgain": "Inténtelo de nuevo",
+                "backToHome": "Volver al inicio"
+            }
+        },
+        "actions": {
+            "endRun": "Fin de la carrera",
+            "exitGame": "Salir del juego",
+            "nextRound": "Próxima ronda",
+            "nextRoundTime": "Próxima ronda ({seconds}s)",
+            "viewResults": "Ver resultados"
+        },
+        "instructions": {
+            "title": "Cómo se juega:"
+        }
+    },
+    "leaderboard": {
+        "title": "Clasificación",
+        "filters": {
+            "mode": {
+                "background": "Fondo",
+                "audio": "Audio",
+                "skin": "Skin"
+            },
+            "variant": {
+                "classic": "Modo clásico",
+                "death": "Modo Muerte"
+            }
+        },
+        "table": {
+            "rank": "#",
+            "player": "Jugador",
+            "totalScore": "Puntuación total",
+            "gamesPlayed": "Juegos jugados",
+            "hiScore": "Puntuación alta",
+            "bestStreak": "Mejor racha"
+        },
+        "empty": "No se han encontrado jugadores para este modo de juego.",
+        "loading": "Cargando..."
+    },
+    "user": {
+        "profile": {
+            "stats": {
+                "hiScore": "Puntuación alta",
+                "totalGames": "Juego totals",
+                "globalRank": "Clasificación mundial"
+            },
+            "noPlays": "Aún no hay obras",
+            "gameStats": {
+                "title": "Estadísticas del juego",
+                "totalScore": "Puntuación total",
+                "gamesPlayed": "Juegos jugados",
+                "highestScore": "Puntuación más alta",
+                "bestStreak": "Mejor racha",
+                "lastPlayed": "Última jugada"
+            },
+            "topGames": {
+                "title": "Juegos de primera",
+                "points": "{points} puntos",
+                "streak": "{count}x racha"
+            },
+            "recentGames": {
+                "title": "Juegos recientes",
+                "noGames": "Ningún partido jugado en las últimas 24 horas"
+            }
+        },
+        "notFound": {
+            "title": "Usuario no encontrado",
+            "description": "Lo sentimos, no hemos podido encontrar al usuario que busca.",
+            "subDescription": "Es posible que el usuario no exista o que aún no se haya registrado en {osu_guessr}.",
+            "actions": {
+                "home": "Volver a casa",
+                "leaderboard": "Comprobar clasificación"
+            }
+        },
+        "search": {
+            "title": "Buscar usuarios",
+            "description": "Buscar usuarios de {osu_base} por su nombre de usuario",
+            "placeholder": "Buscar usuarios...",
+            "shortcut": "⌘K",
+            "noResults": "No se han encontrado usuarios",
+            "startTyping": "Empieza a escribir para buscar usuarios",
+            "searching": "Buscar en..."
+        }
+    },
+    "settings": {
+        "title": "Ajustes",
+        "apiKeys": {
+            "title": "Claves de API",
+            "usage": "{count}/5 teclas utilizadas",
+            "security": {
+                "title": "Información importante sobre seguridad",
+                "points": {
+                    "1": "Mantenga seguras sus claves API y nunca las comparta públicamente",
+                    "2": "Si una clave queda expuesta, elimínela inmediatamente y cree una nueva",
+                    "3": "Cada clave tiene acceso completo a las funciones de la API de su cuenta"
+                }
+            },
+            "actions": {
+                "create": "Crear nueva clave de API",
+                "delete": "Tecla Suprimir",
+                "viewDocs": "Ver la documentación de la API"
+            },
+            "dialog": {
+                "create": {
+                    "title": "Crear nueva clave de API",
+                    "description": "Introduzca un nombre para su nueva clave API. Esto le ayudará a identificarla más tarde.",
+                    "placeholder": "Nombre clave"
+                },
+                "delete": {
+                    "title": "Borrar clave API",
+                    "description": "Está seguro de que desea eliminar la clave API \"{name}\"?",
+                    "warning": "Esta acción no puede deshacerse y revocará inmediatamente el acceso a cualquier servicio que utilice esta clave.."
+                }
+            },
+            "keyInfo": {
+                "created": "Creado: {date}",
+                "lastUsed": "Utilizado por última vez: {date}",
+                "noKeys": "Aún no hay claves de API"
+            }
+        }
+    },
+    "support": {
+        "dialog": {
+            "title": "Ayuda {osu_guessr}",
+            "description": "Si disfrutas usando {osu_guessr} y quieres apoyar su desarrollo, considera hacer una donación. Tu apoyo ayuda a mantener los servidores en funcionamiento y permite nuevas funcionalidades. Deja tu nombre con tu donación para que aparezca en la página de inicio.",
+            "options": {
+                "coffee": {
+                    "title": "Buy me a Coffee (Invítame a un café)",
+                    "description": "Apoye con una donación única"
+                }
+            }
+        }
+    },
+    "components": {
+        "header": {
+            "nav": {
+                "leaderboard": "Clasificación",
+                "about": "Acerca de",
+                "settings": "Ajustes",
+                "signIn": "Iniciar sesión",
+                "signOut": "Cerrar sesión",
+                "viewProfile": "Ver perfil"
+            }
+        },
+        "footer": {
+            "madeWith": "Elaborado con ❤️ por {author}",
+            "notAffiliated": "No afiliado a {osu_base}"
+        },
+        "report": {
+            "button": "Emisión del informe",
+            "dialog": {
+                "title": "Informar de un problema",
+                "reportingFor": "Emisión de informes para: {title}",
+                "types": {
+                    "title": "Tipo de problema",
+                    "incorrectTitle": "Título incorrecto",
+                    "inappropriateContent": "Contenido inapropiado",
+                    "wrongAudio": "Audio incorrecto",
+                    "wrongBackground": "Antecedentes erróneos",
+                    "other": "Otros"
+                },
+                "description": {
+                    "label": "Descripción",
+                    "placeholder": "Proporcione detalles sobre el problema...",
+                    "minLength": "Se requiere un mínimo de 10 caracteres"
+                },
+                "actions": {
+                    "cancel": "Cancelar",
+                    "submit": "Enviar informe",
+                    "submitting": "Enviar..."
+                },
+                "messages": {
+                    "success": "Informe enviado correctamente",
+                    "error": "No se ha presentado el informe",
+                    "validation": "Proporcione una descripción más detallada"
+                }
+            }
+        },
+        "comingSoon": {
+            "title": "{mode} Guessr",
+            "message": "Próximamente!",
+            "description": "Estamos trabajando duro para traerte el modo de juego de adivinanzas {mode}. ¡Permanece atento a las actualizaciones!",
+            "whatToExpect": {
+                "title": "Qué esperar:",
+                "audio": "Pon a prueba tus conocimientos musicales identificando {osu_base} canciones a partir de breves clips de audio. ¿Cuántas puedes reconocer?",
+                "skin": "Desafíate a ti mismo a reconocer skins {osu_base} populares a partir de capturas de pantalla del juego. Perfecto para los entusiastas de las skins."
+            },
+            "actions": {
+                "home": "Volver al inicio",
+                "tryBackground": "Pruebe Fondo Guessr"
+            }
+        },
+        "adPlaceholder": {
+            "title": "Publicidad",
+            "description": "Pronto habrá anuncios para ayudar a {osu_guessr}"
+        }
+    },
+    "errors": {
+        "404": {
+            "title": "404 - Página no encontrada",
+            "description": "¡Uy! Parece que has dado con un círculo perdido. La página que buscas no existe.",
+            "reportIssue": "Si cree que se trata de un error, notifíquelo"
+        },
+        "game": {
+            "sessionExpired": "Su sesión ha expirado. Por favor, inicie sesión de nuevo.",
+            "networkError": "Se ha producido un error de red. Por favor, inténtelo de nuevo.",
+            "unknown": "Se ha producido un error desconocido. Por favor, inténtalo de nuevo."
+        },
+        "auth": {
+            "required": {
+                "title": "Inicio de sesión obligatorio",
+                "description": "Debes iniciar sesión con tu cuenta {osu_base} para jugar a {osu_guessr}.",
+                "subDescription": "Inicia sesión para registrar tus puntuaciones, competir en la clasificación y guardar tus progresos.",
+                "noAccount": "¿No tienes una cuenta {osu_base}? Crea una aquí"
+            }
+        }
+    },
+    "confirmations": {
+        "exitGame": {
+            "classic": "¿Estás seguro de que quieres salir? Su puntuación no se contabilizará si abandona antes de completar todas las rondas.",
+            "classicComplete": "¿Seguro que quieres salir? Se guardará tu puntuación.",
+            "death": "¿Estás seguro de que quieres terminar tu racha? Tu racha más alta se guardará."
+        }
+    },
+    "notifications": {
+        "volumeChanged": "Volumen cambiado a {value}%",
+        "copied": "Copiado al portapapeles",
+        "saved": "Cambios guardados correctamente",
+        "error": "Se ha producido un error"
+    },
+    "gameInstructions": {
+        "classic": {
+            "1": "Mira la imagen de fondo del beatmap",
+            "2": "Intenta adivinar el título de la canción",
+            "3": "Tienes {seconds} segundos por ronda",
+            "4": "Mantén tu racha para conseguir puntos extra."
+        },
+        "death": {
+            "1": "Mira la imagen de fondo del beatmap",
+            "2": "Intenta adivinar el título de la canción",
+            "3": "Tienes {seconds} segundos por ronda",
+            "4": "Si te equivocas o te saltas el juego se acaba.",
+            "5": "¿Cuánto tiempo puedes sobrevivir?"
+        }
+    },
+    "timestamps": {
+        "seconds": "{count}s",
+        "minutes": "{count}m",
+        "hours": "{count}h",
+        "days": "{count}d",
+        "ago": "{time} ago"
+    }
+}
