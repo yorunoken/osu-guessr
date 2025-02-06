@@ -55,17 +55,17 @@
         "gameModes": {
             "title": "Tryby Gry",
             "background": {
-                "title": "Rozpoznaj mapę po tle",
+                "title": "Background Guessr",
                 "description": "Sprawdź swoją umiejętność rozpoznawania mapy na podstawie jej tła. Od obrazków z anime, aż po sztukę abstrakcyjną. Jak dobrze znasz te ikoniczne obrazki?"
             },
             "audio": {
-                "title": "Rozpoznaj mapę po muzyce",
+                "title": "Audio Guessr",
                 "description": "Rzuć wyzwanie swojej wiedzy muzycznej! Posłuchaj krótkiego kawałka mapy i spróbuj zgadnąć jej nazwę zanim skończy się czas."
             },
             "skin": {
-                "title": "Rozpoznaj skórkę",
+                "title": "Skin Guessr",
                 "comingSoon": "Już wkrótce",
-                "description": "Myślisz, że znasz wiele skórek {osu_base}? Podejmij wyzwanie i spróbuj odgadnąć nazwy popularnych skórek na podstawie elementów menu oraz zrutów ekranu z gry."
+                "description": "Myślisz, że znasz wiele skinów z {osu_base}? Podejmij wyzwanie i spróbuj odgadnąć nazwy popularnych skinów na podstawie elementów menu oraz zrutów ekranu z gry."
             },
             "more": {
                 "title": "Więcej Trybów",
@@ -78,7 +78,7 @@
             "steps": {
                 "1": {
                     "title": "Wybierz Tryb",
-                    "description": "Wybierz jeden z dostępnych trybów gry w oparciu o swoje preferencje - tła, wycinki audio, lub skórki."
+                    "description": "Wybierz jeden z dostępnych trybów gry w oparciu o swoje preferencje - tła, wycinki audio, lub skiny."
                 },
                 "2": {
                     "title": "Zacznij Zgadywać",
@@ -154,7 +154,7 @@
                 "items": {
                     "peppy": "• Dean Herbert (peppy) oraz cały zespół {osu_base}",
                     "community": "• Wspaniała społeczność osu!",
-                    "creators": "• Wszyscy twórcy map oraz skórek"
+                    "creators": "• Wszyscy twórcy map oraz skinów"
                 }
             }
         },
@@ -195,24 +195,24 @@
         "title": "Wybierz Tryb Gry",
         "modes": {
             "background": {
-                "title": "Rozpoznaj mapę po tle",
+                "title": "Background Guessr",
                 "description": "Rozpoznaj piosenkę na podstawie ilustracji z tła beatmapy"
             },
             "audio": {
-                "title": "Rozpoznaj mapę po muzyce",
+                "title": "Audio Guessr",
                 "description": "Rozpoznaj piosenkę na podstawie krótkiego wycinka audio"
             },
             "skin": {
-                "title": "Rozpoznaj skórkę",
-                "description": "Rozpoznaj popularne skórki {osu_base} na podstawie ich elementów"
+                "title": "Skin Guessr",
+                "description": "Rozpoznaj popularne skiny z {osu_base} na podstawie ich elementów"
             }
         }
     },
     "game": {
         "preGame": {
             "title": {
-                "audio": "Rozpoznaj mapę po muzyce",
-                "background": "Rozpoznaj mapę po tle"
+                "audio": "Audio Guessr",
+                "background": "Background Guessr"
             },
             "description": {
                 "audio": "Usłyszysz krótkie wycinki piosenek z osu!",
@@ -221,238 +221,238 @@
             "howToPlay": {
                 "title": "Jak Grać",
                 "classic": {
-                    "rounds": "Complete {count} rounds of guessing",
-                    "time": "Try to guess the song title within {seconds} seconds per round",
-                    "points": "Earn points based on speed and accuracy",
-                    "streak": "Build a streak for bonus points"
+                    "rounds": "Ukończ {count} rund zgadywania",
+                    "time": "Spróbuj odgadnąć tytuł piosenki w {seconds} sekund na każdą rundę",
+                    "points": "Zdobywaj punkty na podstawie dokładności i szybkości",
+                    "streak": "Zdobądź serię dobrych odpowiedzi aby uzyskać bonusowe punkty"
                 },
                 "death": {
-                    "continuous": "Keep playing until you make a mistake",
-                    "time": "Try to guess the song title within {seconds} seconds per round",
-                    "streak": "Build the longest streak possible"
+                    "continuous": "Graj, dopóki nie zrobisz błędu",
+                    "time": "Spróbuj odgadnąć tytuł piosenki w {seconds} sekund na każdą rundę",
+                    "streak": "Zdobądź serię dobrych odpowiedzi aby uzyskać bonusowe punkty"
                 }
             },
             "scoring": {
-                "title": "Scoring",
+                "title": "Punktacja",
                 "classic": {
-                    "base": "Base Points: {points}",
-                    "timeBonus": "Time Bonus: {points} points per second remaining",
-                    "streakBonus": "Streak Bonus: {points} points per streak level",
-                    "skipPenalty": "Skip Penalty: {points} points"
+                    "base": "Punkty Podstawowe: {points} za każdą dobrą odpowiedź",
+                    "timeBonus": "Bonus Czasu: {multiplier} × pozostałe sekundy",
+                    "streakBonus": "Bonus Za Serię: {bonus} × aktualna seria",
+                    "skipPenalty": "Kara Za Pominięcie: {penalty} punktów"
                 },
                 "death": {
-                    "streakOnly": "Only your streak count matters",
-                    "noPoints": "Points are not recorded in this mode",
-                    "compete": "Compete for the longest streak on the leaderboard"
+                    "streakOnly": "Liczy się tylko ilość dobrych odpowiedzi z rzędu",
+                    "noPoints": "Punkty nie są liczone w tym trybie",
+                    "compete": "Konkuruj o jak największą serię w rankingu"
                 }
             },
             "modes": {
                 "classic": {
-                    "title": "Classic Mode",
-                    "description": "10 rounds, score as many points as you can"
+                    "title": "Tryb Klasyczny",
+                    "description": "10 rund, zdobądź jak najwięcej punktów"
                 },
                 "death": {
-                    "title": "Death Mode",
-                    "description": "Only one life, treasure it!"
+                    "title": "Tryb Śmierci",
+                    "description": "Tylko jedna szansa, nie zmarnuj jej!"
                 }
             },
             "warning": {
-                "title": "Important Note",
-                "description": "Your score will only be counted if you complete all {rounds} rounds. Leaving the game early will forfeit your progress!"
+                "title": "Ważna Uwaga",
+                "description": "Twój wynik zostanie zapisany tylko, jeżeli ukończysz {rounds} rund. Opuszczenie gry wcześniej spowoduje, że twój postęp zostanie utracony!"
             },
             "actions": {
-                "startGame": "Start Game",
-                "backToHome": "Back to Home"
+                "startGame": "Rozpocznij Grę",
+                "backToHome": "Wróć na Stronę Główną"
             }
         },
         "modes": {
             "classic": {
-                "title": "Classic Mode",
-                "description": "10 rounds, score as many points as you can"
+                "title": "Tryb klasyczny",
+                "description": "10 rund, zdobądź jak najwięcej punktów"
             },
             "death": {
-                "title": "Death Mode",
-                "description": "Only one life, treasure it!"
+                "title": "Tryb Śmierci",
+                "description": "Tylko jedna szansa, nie zmarnuj jej!"
             }
         },
         "status": {
-            "loading": "Loading next round..."
+            "loading": "Ładowanie następnej rundy..."
         },
         "input": {
-            "placeholder": "Song title...",
-            "title": "Enter your guess:",
-            "submit": "Submit",
-            "skip": "Skip (-50 points)"
+            "placeholder": "Tytuł piosenki...",
+            "title": "Wpisz odpowiedź:",
+            "submit": "Potwierdź",
+            "skip": "Pomiń (-50 punktów)"
         },
         "header": {
             "title": "{mode} Guessr",
             "classic": {
-                "round": "Round: {current}/{total}",
-                "streak": "Streak: {count}",
-                "points": "Points: {count}"
+                "round": "Runda: {current}/{total}",
+                "streak": "Seria: {count}",
+                "points": "PPunkty: {count}"
             },
             "death": {
                 "lives": {
-                    "oneShot": "One Shot",
-                    "gameOver": "Game Over"
+                    "oneShot": "Jedna Szansa",
+                    "gameOver": "Koniec Gry"
                 },
-                "currentStreak": "Current Streak: {count}",
-                "maxStreak": "Max Streak: {count}"
+                "currentStreak": "Aktualna Seria: {count}",
+                "maxStreak": "Największa Seria: {count}"
             },
             "timeLeft": "{seconds}s"
         },
         "stats": {
             "classic": {
-                "title": "Game Complete!",
-                "totalPoints": "Total Points",
-                "highestStreak": "Highest Streak",
+                "title": "Gra Ukończona!",
+                "totalPoints": "Suma Punktów",
+                "highestStreak": "Największa Seria",
                 "correctGuesses": "{correct}/{total}",
                 "averageTime": "{time}s"
             },
             "death": {
                 "title": {
-                    "died": "Game Over!",
-                    "completed": "Amazing Run!"
+                    "died": "Koniec Gry!",
+                    "completed": "Świetny Wynik!"
                 },
-                "maxStreak": "Maximum Streak",
-                "totalCorrect": "Total Correct",
-                "averageTime": "Average Time",
-                "diedMessage": "You made two mistakes!"
+                "maxStreak": "Największa Seria",
+                "totalCorrect": "Ilość Poprawnych Odpowiedzi",
+                "averageTime": "Średni Czas",
+                "diedMessage": "Zrobiłeś/aś dwa błędy!"
             },
             "labels": {
-                "averageTime": "Average Time",
-                "correctGuesses": "Correct Guesses"
+                "averageTime": "Średni Czas",
+                "correctGuesses": "Poprawne Odpowiedzi"
             },
             "actions": {
-                "tryAgain": "Try Again",
-                "backToHome": "Back to Home"
+                "tryAgain": "Spróbuj Ponownie",
+                "backToHome": "Wróć na Stronę Główną"
             }
         },
         "actions": {
-            "endRun": "End Run",
-            "exitGame": "Exit Game",
-            "nextRound": "Next Round",
-            "nextRoundTime": "Next Round ({seconds}s)",
-            "viewResults": "View Results"
+            "endRun": "Zakończ Grę",
+            "exitGame": "Wyjdź Z Gry",
+            "nextRound": "Następna Runda",
+            "nextRoundTime": "Następna Runda ({seconds}s)",
+            "viewResults": "Zobacz Wynik"
         },
         "instructions": {
-            "title": "How to play:"
+            "title": "Jak grać:"
         }
     },
     "leaderboard": {
-        "title": "Leaderboard",
+        "title": "Ranking",
         "filters": {
             "mode": {
-                "background": "Background",
+                "background": "Tło",
                 "audio": "Audio",
                 "skin": "Skin"
             },
             "variant": {
-                "classic": "Classic Mode",
-                "death": "Death Mode"
+                "classic": "Tryb Klasyczny",
+                "death": "Tryb Śmierci"
             }
         },
         "table": {
             "rank": "#",
-            "player": "Player",
-            "totalScore": "Total Score",
-            "gamesPlayed": "Games Played",
-            "hiScore": "Hi-Score",
-            "bestStreak": "Best Streak"
+            "player": "Gracz",
+            "totalScore": "Suma Punktów",
+            "gamesPlayed": "Ilość Ukończonych Gier",
+            "hiScore": "Najwyższy Wynik",
+            "bestStreak": "Największa Seria"
         },
-        "empty": "No players found for this game mode.",
-        "loading": "Loading..."
+        "empty": "Nie znaleziono graczy dla tego trybu gry.",
+        "loading": "Ładowanie..."
     },
     "user": {
         "profile": {
             "stats": {
-                "hiScore": "Hi-Score",
-                "totalGames": "Total Games",
-                "globalRank": "Global Rank"
+                "hiScore": "Najwyższy Wynik",
+                "totalGames": "Ilość Ukończonych Gier",
+                "globalRank": "Ranking Globalny"
             },
-            "noPlays": "No plays yet",
+            "noPlays": "Brak wyników",
             "gameStats": {
-                "title": "Game Statistics",
-                "totalScore": "Total Score",
-                "gamesPlayed": "Games Played",
-                "highestScore": "Highest Score",
-                "bestStreak": "Best Streak",
-                "lastPlayed": "Last Played"
+                "title": "Statystyki Gry",
+                "totalScore": "Suma Punktów",
+                "gamesPlayed": "Ilość Ukończonych Gier",
+                "highestScore": "Najwyższy Wynik",
+                "bestStreak": "Największa Seria",
+                "lastPlayed": "Ostatnia Gra"
             },
             "topGames": {
-                "title": "Top Games",
-                "points": "{points} points",
-                "streak": "{count}x streak"
+                "title": "Najlepsze Wyniki",
+                "points": "{points} punktów",
+                "streak": "{count}x seria"
             },
             "recentGames": {
-                "title": "Recent Games",
-                "noGames": "No games played in the last 24 hours"
+                "title": "Najnowsze Wyniki",
+                "noGames": "Brak wyników przez ostatnie 24 godziny"
             }
         },
         "notFound": {
-            "title": "User Not Found",
-            "description": "Sorry, we couldn't find the user you're looking for.",
-            "subDescription": "The user might not exist or hasn't signed up for {osu_guessr} yet.",
+            "title": "Nie Znaleziono Użytkownika",
+            "description": "Przepraszamy, nie mogliśmy znaleźć użytkownika, którego szukasz.",
+            "subDescription": "Ten użytkownik nie istnieje, lub jeszcze nie stworzył konta w {osu_guessr}",
             "actions": {
-                "home": "Return Home",
-                "leaderboard": "Check Leaderboard"
+                "home": "Wróć na Stronę Główną",
+                "leaderboard": "Sprawdź Ranking"
             }
         },
         "search": {
-            "title": "Search Users",
-            "description": "Search for {osu_base} users by their username",
-            "placeholder": "Search users...",
+            "title": "Znajdź Profil",
+            "description": "Znajdź profil {osu_base} po jego nazwie użytkownika",
+            "placeholder": "Znajdź profil...",
             "shortcut": "⌘K",
-            "noResults": "No users found",
-            "startTyping": "Start typing to search users",
-            "searching": "Searching..."
+            "noResults": "Nie znaleziono użytkowników",
+            "startTyping": "Zacznij pisać, aby znaleźć użytkowników",
+            "searching": "Szukanie..."
         }
     },
     "settings": {
-        "title": "Settings",
+        "title": "Ustawienia",
         "apiKeys": {
-            "title": "API Keys",
-            "usage": "{count}/5 keys used",
+            "title": "Klucze API",
+            "usage": "{count}/5 użyte klucze",
             "security": {
-                "title": "Important Security Information",
+                "title": "Ważne Informacje o Bezpieczeństwie",
                 "points": {
-                    "1": "Keep your API keys secure and never share them publicly",
-                    "2": "If a key is exposed, delete it immediately and create a new one",
-                    "3": "Each key has full access to your account's API capabilities"
+                    "1": "Chroń swoje klucze API i nigdy nie udostępniaj ich publicznie",
+                    "2": "Jeżeli klucz został ujawniony, usuń go natychmiastowo i stwórz nowy",
+                    "3": "Każdy klucz ma pełny dostęp do możliwości API Twojego konta"
                 }
             },
             "actions": {
-                "create": "Create New API Key",
-                "delete": "Delete Key",
-                "viewDocs": "View API Documentation"
+                "create": "Stwórz Nowy Klucz API",
+                "delete": "Usuń Klucz",
+                "viewDocs": "Zobacz Dokumentację API"
             },
             "dialog": {
                 "create": {
-                    "title": "Create New API Key",
-                    "description": "Enter a name for your new API key. This will help you identify it later.",
-                    "placeholder": "Key name"
+                    "title": "Stwórz Nowy Klucz API",
+                    "description": "Wpisz nazwę swojego nowego klucza API. To pomoże Ci w jego późniejszej identyfikacji.",
+                    "placeholder": "Nazwa klucza"
                 },
                 "delete": {
-                    "title": "Delete API Key",
-                    "description": "Are you sure you want to delete the API key \"{name}\"?",
-                    "warning": "This action cannot be undone and will immediately revoke access for any services using this key."
+                    "title": "Usuń Klucz API",
+                    "description": "Czy jesteś pewny, że chcesz usunąć klucz API \"{name}\"?",
+                    "warning": "Tej akcji nie można cofnąć i natychmiast odbierze ona dostęp wszystkim usługom korzystającym z tego klucza."
                 }
             },
             "keyInfo": {
-                "created": "Created: {date}",
-                "lastUsed": "Last used: {date}",
-                "noKeys": "No API keys yet"
+                "created": "Utworzono: {date}",
+                "lastUsed": "Ostatnie użycie: {date}",
+                "noKeys": "Nie masz jeszcze żadnych kluczy API"
             }
         }
     },
     "support": {
         "dialog": {
-            "title": "Support {osu_guessr}",
-            "description": "If you enjoy using {osu_guessr} and want to support its development, consider making a donation. Your support helps keep the servers running and enables new features! Leave your name with your donation to be featured on the homepage.",
+            "title": "Wesprzyj {osu_guessr}",
+            "description": "Jeżeli podoba Ci się {osu_guessr} i chcesz wesprzeć jego rozwój, rozważ przekazanie darowizny. Twoje wsparcie pomaga utrzymać serwery na chodzie i umożliwia wprowadzanie nowych funkcji! Wpisz swoje imię przy donacji aby zostać wyróżnionym na stronie głównej.",
             "options": {
                 "coffee": {
-                    "title": "Buy me a Coffee",
-                    "description": "Support with a one-time donation"
+                    "title": "Postaw Mi Kawę",
+                    "description": "Wesprzyj za pomocą jednorazowej darowizny"
                 }
             }
         }
@@ -460,113 +460,113 @@
     "components": {
         "header": {
             "nav": {
-                "leaderboard": "Leaderboard",
-                "about": "About",
-                "settings": "Settings",
-                "signIn": "Sign In",
-                "signOut": "Sign out",
-                "viewProfile": "View Profile"
+                "leaderboard": "Ranking",
+                "about": "O Grze",
+                "settings": "Ustawienia",
+                "signIn": "Zaloguj się",
+                "signOut": "Wyloguj się",
+                "viewProfile": "Zobacz Profil"
             }
         },
         "footer": {
-            "madeWith": "Made with ❤️ by {author}",
-            "notAffiliated": "Not affiliated with {osu_base}"
+            "madeWith": "Stworzone z ❤️ przez {author}",
+            "notAffiliated": "Niepowiązane z {osu_base}"
         },
         "report": {
-            "button": "Report Issue",
+            "button": "Zgłoś Problem",
             "dialog": {
-                "title": "Report an Issue",
-                "reportingFor": "Reporting issue for: {title}",
+                "title": "Zgłoś Problem",
+                "reportingFor": "Zgłaszanie problemu dla: {title}",
                 "types": {
-                    "title": "Issue Type",
-                    "incorrectTitle": "Incorrect Title",
-                    "inappropriateContent": "Inappropriate Content",
-                    "wrongAudio": "Wrong Audio",
-                    "wrongBackground": "Wrong Background",
-                    "other": "Other"
+                    "title": "Rodzaj Problemu",
+                    "incorrectTitle": "Niepoprawny Tytuł",
+                    "inappropriateContent": "Nieodpowiednia Treść",
+                    "wrongAudio": "Niepoprawne Audio",
+                    "wrongBackground": "Niepoprawne Tło",
+                    "other": "Inne"
                 },
                 "description": {
-                    "label": "Description",
-                    "placeholder": "Please provide details about the issue...",
-                    "minLength": "Minimum 10 characters required"
+                    "label": "Opis",
+                    "placeholder": "Podaj szczegóły dotyczące problemu...",
+                    "minLength": "Wymagane minimum 10 znaków"
                 },
                 "actions": {
-                    "cancel": "Cancel",
-                    "submit": "Submit Report",
-                    "submitting": "Submitting..."
+                    "cancel": "Anuluj",
+                    "submit": "Prześlij Zgłoszenie",
+                    "submitting": "Przesyłanie..."
                 },
                 "messages": {
-                    "success": "Report submitted successfully",
-                    "error": "Failed to submit report",
-                    "validation": "Please provide a more detailed description"
+                    "success": "Zgłoszenie zostało przesłane pomyślnie",
+                    "error": "Nie udało się przesłać zgłoszenia",
+                    "validation": "Prosimy o bardziej szczegółowy opis"
                 }
             }
         },
         "comingSoon": {
             "title": "{mode} Guessr",
-            "message": "Coming Soon!",
-            "description": "We're working hard to bring you the {mode} guessing game mode. Stay tuned for updates!",
+            "message": "Już Wkrótce!",
+            "description": "Pracujemy ciężko, aby wprowadzić tryb {mode} Guessr. Nie przegap aktualizacji!",
             "whatToExpect": {
-                "title": "What to expect:",
-                "audio": "Test your music knowledge by identifying {osu_base} songs from short audio clips. How many can you recognize?",
-                "skin": "Challenge yourself to recognize popular {osu_base} skins from gameplay screenshots. Perfect for skin enthusiasts!"
+                "title": "Czego możesz oczekiwać:",
+                "audio": "Sprawdź swoją wiedzę muzyczną rozpoznając piosenki z {osu_base} na podstawie krótkich wycinków audio. Jak wiele jesteś w stanie rozpoznać?",
+                "skin": "Rzuć sobie wyzwanie, aby odgadnąć skiny z {osu_base} na podstawie zrzutów ekranu. Idealne dla miłośników skinów!"
             },
             "actions": {
-                "home": "Back to Home",
-                "tryBackground": "Try Background Guessr"
+                "home": "Wróć na Stronę Główną",
+                "tryBackground": "Zagraj w Background Guessr"
             }
         },
         "adPlaceholder": {
-            "title": "Advertisement",
-            "description": "Ads coming soon to help support {osu_guessr}"
+            "title": "Reklama",
+            "description": "Reklamy już wkrótce, aby pomóc wesprzeć {osu_guessr}"
         }
     },
     "errors": {
         "404": {
-            "title": "404 - Page Not Found",
-            "description": "Oops! Looks like you've hit a missing circle. The page you're looking for doesn't exist.",
-            "reportIssue": "If you believe this is an error, please report it"
+            "title": "404 - Nie Znaleziono Strony",
+            "description": "Ups! Wygląda na to, że trafiłeś w nieistniejące kółko. Strona, której szukasz, nie istnieje.",
+            "reportIssue": "Jeżeli wierzysz, że jest to błąd, zgłoś go tutaj: "
         },
         "game": {
-            "sessionExpired": "Your session has expired. Please sign in again.",
-            "networkError": "Network error occurred. Please try again.",
-            "unknown": "An unknown error occurred. Please try again."
+            "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
+            "networkError": "Wystąpił błąd sieci. Spróbuj ponownie.",
+            "unknown": "Wystąpił nienznay błąd. Spróbuj ponownie."
         },
         "auth": {
             "required": {
-                "title": "Sign in Required",
-                "description": "You need to be signed in with your {osu_base} account to play {osu_guessr}.",
-                "subDescription": "Sign in to track your scores, compete on the leaderboard, and save your progress!",
-                "noAccount": "Don't have an {osu_base} account? Create one here"
+                "title": "Musisz się zalogować",
+                "description": "Musisz być zalogowany za pomocą konta {osu_base}, aby móc grać w {osu_guessr}.",
+                "subDescription": "Zaloguj się, aby śledzić swoje wyniki, rywalizować w rankingach oraz zapisywać swoje postępy!",
+                "noAccount": "Nie masz konta {osu_base}? Stwórz je tutaj."
             }
         }
     },
     "confirmations": {
         "exitGame": {
-            "classic": "Are you sure you want to exit? Your score will not be counted if you leave before completing all rounds!",
-            "classicComplete": "Are you sure you want to exit? Your score will be saved.",
-            "death": "Are you sure you want to end your run? Your highest streak will be saved."
+            "classic": "Czy na pewno chcesz wyjść? Twój wynik nie zostanie zapisany, jeżeli opuścisz grę przed ukończeniem wszystkich rund!",
+            "classicComplete": "Czy na pewno chcesz wyjść? Twój wynik zostanie zapisany.",
+            "death": "Czy na pewno chcesz zakończyć grę? Twoja największa seria zostanie zapisana."
         }
     },
     "notifications": {
-        "volumeChanged": "Volume changed to {value}%",
-        "copied": "Copied to clipboard",
-        "saved": "Changes saved successfully",
-        "error": "An error occurred"
+        "volumeChanged": "Głośność zmieniona na {value}%",
+        "copied": "Skopiowano do schowka",
+        "saved": "Zmiany zapisane pomyślnie",
+        "error": "Wystąpił błąd"
     },
     "gameInstructions": {
         "classic": {
-            "1": "Look at the beatmap background image",
-            "2": "Try to guess the song title",
-            "3": "You have {seconds} seconds per round",
-            "4": "Maintain your streak for bonus points!"
+            "1": "Spójrz na obrazek z tła beatmapy",
+            "2": "Spróbuj odgadnąć tytuł piosenki",
+            "3": "Masz {seconds} sekund na rundę",
+            "4": "Utrzymaj swoją serię, aby dostać punkty bonusowe!"
         },
         "death": {
-            "1": "Look at the beatmap background image",
-            "2": "Try to guess the song title",
-            "3": "You have {seconds} seconds per round",
-            "4": "One wrong guess or skip ends the game!",
-            "5": "How long can you survive?"
+            "1": "Spójrz na obrazek z tła beatmapy",
+            "2": "Spróbuj odgadnąć tytuł piosenki",
+            "3": "Masz {seconds} sekund na rundę",
+            "4": "Jeden zły strzał, lub pominięcie kończy grę!",
+            "5": "Jak długo jesteś w stanie przetrwać?"
         }
     },
     "timestamps": {
@@ -574,6 +574,6 @@
         "minutes": "{count}m",
         "hours": "{count}h",
         "days": "{count}d",
-        "ago": "{time} ago"
+        "ago": "{time} temu"
     }
 }
