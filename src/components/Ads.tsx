@@ -38,7 +38,7 @@ const createPromos = (t: Translations): Array<Promo> => [
         id: "discord",
         title: t.components.ads.discord.title,
         message: t.components.ads.discord.message,
-        link: "your-discord-link",
+        link: "https://discord.gg/qrud2g4CA5",
         icon: "👾",
     },
 ];
@@ -46,20 +46,36 @@ const createPromos = (t: Translations): Array<Promo> => [
 export function AdSlider() {
     const { t } = useTranslations();
     const promos = createPromos(t);
-    const [currentIndex, setCurrentIndex] = useState(() => Math.floor(Math.random() * promos.length));
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [sequence, setSequence] = useState(() => shuffle([...Array(promos.length).keys()]));
+    const [sequenceIndex, setSequenceIndex] = useState(0);
+
+    function shuffle(array: number[]): number[] {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+    }
 
     useEffect(() => {
         const timer = setInterval(() => {
-            let nextIndex;
-            do {
-                nextIndex = Math.floor(Math.random() * promos.length);
-            } while (nextIndex === currentIndex && promos.length > 1);
-
-            setCurrentIndex(nextIndex);
+            setSequenceIndex((current) => {
+                if (current >= sequence.length - 1) {
+                    setSequence(shuffle([...Array(promos.length).keys()]));
+                    return 0;
+                }
+                return current + 1;
+            });
         }, 30 * 1000);
 
         return () => clearInterval(timer);
-    }, [promos.length, currentIndex]);
+    }, [promos.length, sequence.length]);
+
+    useEffect(() => {
+        setCurrentIndex(sequence[sequenceIndex]);
+    }, [sequenceIndex, sequence]);
 
     return (
         <div className="max-w-md mx-auto bg-transparent border border-dashed border-border rounded-lg my-8">
