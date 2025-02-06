@@ -306,6 +306,7 @@ export default function AdminMenu() {
                 appendOutput(`Deployment failed: ${result.message}`);
             }
         } catch (error) {
+            console.log(error);
             appendOutput(`Deployment error: ${error}`);
         } finally {
             setIsLoading(false);
