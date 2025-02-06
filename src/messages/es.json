@@ -177,20 +177,6 @@
                     "docs": "• Ayudar a mejorar la documentación"
                 }
             }
-        },
-        "privacy": {
-            "title": "Protección de datos",
-            "dataUsage": {
-                "title": "Uso de datos",
-                "description": "¡Sólo almacenamos los datos de juego necesarios y la información del perfil de osu! Tu privacidad es importante para nosotros."
-            },
-            "contentUsage": {
-                "title": "Uso de los contenidos",
-                "description": "Todo el contenido del beatmap, incluidos los fondos y el audio, pertenece a sus respectivos creadores y se utiliza bajo uso legítimo con fines educativos."
-            },
-            "disclaimer": {
-                "title": "Descargo de responsabilidad"
-            }
         }
     },
     "gameModes": {
@@ -491,7 +477,8 @@
         },
         "footer": {
             "madeWith": "Elaborado con ❤️ por {author}",
-            "notAffiliated": "No afiliado a {osu_base}"
+            "about": "About",
+            "privacy": "Privacy Policy"
         },
         "report": {
             "button": "Emisión del informe",
@@ -596,5 +583,71 @@
         "hours": "{count}h",
         "days": "{count}d",
         "ago": "{time} ago"
+    },
+    "privacy": {
+        "title": "Privacy Policy",
+        "notAffiliated": "Not affiliated with {osu_base}",
+        "sections": {
+            "dataCollection": {
+                "title": "Data Collection",
+                "description": "We collect and store only the minimum amount of information necessary to provide osu!guessr services:",
+                "items": {
+                    "profile": "Your osu! profile information (username, ID, avatar)",
+                    "stats": "Game statistics and scores",
+                    "session": "Game session data"
+                }
+            },
+            "dataUsage": {
+                "title": "Data Usage",
+                "description": "Your data is used for:",
+                "items": {
+                    "progress": "Maintaining your game progress and statistics",
+                    "leaderboards": "Displaying leaderboards and rankings",
+                    "improvement": "Improving game performance and user experience"
+                }
+            },
+            "dataProtection": {
+                "title": "Data Protection",
+                "description": "We take the following measures to protect your data:",
+                "items": {
+                    "encryption": "Secure data transmission using HTTPS",
+                    "updates": "Regular security updates and monitoring",
+                    "access": "Limited access to user data by administrators"
+                }
+            },
+            "thirdParty": {
+                "title": "Third-Party Services",
+                "description": "We use the following third-party services:",
+                "items": {
+                    "osu": "osu! API for authentication and beatmap data",
+                    "analytics": "Analytics services to improve user experience",
+                    "cdn": "Content delivery networks for improved performance"
+                }
+            },
+            "dataRetention": {
+                "title": "Data Retention",
+                "description": "We retain your data for as long as your account is active. You can request data deletion by contacting us.",
+                "gameStats": "Game statistics and scores are retained indefinitely for historical and competitive purposes."
+            },
+            "rights": {
+                "title": "Your Rights",
+                "description": "You have the right to:",
+                "items": {
+                    "access": "Access your personal data",
+                    "correction": "Request data correction or deletion",
+                    "objection": "Object to data processing",
+                    "export": "Export your data"
+                }
+            },
+            "contact": {
+                "title": "Contact Information",
+                "description": "For any privacy-related questions or requests, contact us:",
+                "items": {
+                    "email": "Email: noonetr123@gmail.com",
+                    "discord": "Discord: @yorunoken",
+                    "github": "GitHub:"
+                }
+            }
+        }
     }
 }
