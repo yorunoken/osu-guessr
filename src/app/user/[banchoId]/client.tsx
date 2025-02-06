@@ -132,7 +132,7 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
                         <StatBox label={t.user.profile.stats.totalGames} value={achievements?.reduce((sum, a) => sum + a.games_played, 0).toLocaleString() ?? "0"} />
                         <StatBox
                             label={t.user.profile.stats.globalRank}
-                            value={currentVariant === "classic" ? (ranks?.globalRank?.classic?.toLocaleString() ?? "-") : (ranks?.globalRank?.death?.toLocaleString() ?? "-")}
+                            value={currentVariant === "classic" ? (ranks.modeRanks[currentMode].classic?.toLocaleString() ?? "-") : (ranks.modeRanks[currentMode].death?.toLocaleString() ?? "-")}
                         />
                     </div>
                 </div>
