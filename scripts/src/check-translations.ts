@@ -29,8 +29,8 @@ if (!languageCode) {
 }
 
 try {
-    const enJson = JSON.parse(readFileSync("./src/messages/en.json", "utf8"));
-    const targetJson = JSON.parse(readFileSync(`./src/messages/${languageCode}.json`, "utf8"));
+    const enJson = JSON.parse(readFileSync("../src/messages/en.json", "utf8"));
+    const targetJson = JSON.parse(readFileSync(`../src/messages/${languageCode}.json`, "utf8"));
 
     const enKeys = getAllKeys(enJson);
     const targetKeys = getAllKeys(targetJson);
@@ -46,7 +46,7 @@ try {
     }
 } catch (error) {
     if (error instanceof Error && "code" in error && error.code === "ENOENT") {
-        console.error(`❌ Translation file not found: ./src/messages/${languageCode}.json`);
+        console.error(`❌ Translation file not found: src/messages/${languageCode}.json`);
     } else {
         console.error("Error processing files:", error);
     }
