@@ -95,6 +95,51 @@ export default function PrivacyPolicy() {
                         </ul>
                     </div>
                 </section>
+
+                <section className="bg-card rounded-xl p-8 border border-border/50">
+                    <h2 className="text-2xl font-semibold mb-4">{t.privacy.sections.ezoic.title}</h2>
+                    <div className="space-y-4 text-foreground/80">
+                        <span id="ezoic-privacy-policy-embed"></span>
+                    </div>
+                    <div className="space-y-4 text-foreground/80">
+                        <p>{t.privacy.sections.ezoic.description}</p>
+
+                        <p>{t.privacy.sections.ezoic.cookies.description}</p>
+                        <p>
+                            {t.privacy.sections.ezoic.cookies.note}{" "}
+                            <a href="https://allaboutcookies.org/" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                                {t.privacy.sections.ezoic.cookies.link.text}
+                            </a>
+                            .
+                        </p>
+
+                        <p className="font-semibold">{t.privacy.sections.ezoic.dataCollection.title}</p>
+                        <ul className="list-disc list-inside space-y-2 ml-4">
+                            <li>{t.privacy.sections.ezoic.dataCollection.items.ip}</li>
+                            <li>{t.privacy.sections.ezoic.dataCollection.items.os}</li>
+                            <li>{t.privacy.sections.ezoic.dataCollection.items.device}</li>
+                            <li>{t.privacy.sections.ezoic.dataCollection.items.language}</li>
+                            <li>{t.privacy.sections.ezoic.dataCollection.items.browser}</li>
+                            <li>{t.privacy.sections.ezoic.dataCollection.items.email}</li>
+                        </ul>
+
+                        <p>{t.privacy.sections.ezoic.partners.description}</p>
+                        <p>
+                            <a href="https://youradchoices.com/" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                                {t.privacy.sections.ezoic.partners.links.iba.text}
+                            </a>
+                            .{" "}
+                            <a href="https://ezoic.com/privacy/" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                                {t.privacy.sections.ezoic.partners.links.privacy.text}
+                            </a>
+                            , {t.privacy.sections.ezoic.partners.links.partners.prefix}{" "}
+                            <a href="https://www.ezoic.com/privacy-policy/advertising-partners/" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                                {t.privacy.sections.ezoic.partners.links.partners.text}
+                            </a>
+                            .
+                        </p>
+                    </div>
+                </section>
             </div>
         </div>
     );
