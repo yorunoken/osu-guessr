@@ -303,6 +303,7 @@ export default function AdminMenu() {
         } catch (error) {
             appendOutput(`Deployment error: ${error}`);
         } finally {
+            appendOutput(`Deployment finished`);
             setIsLoading(false);
         }
     };
