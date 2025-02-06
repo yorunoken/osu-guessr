@@ -46,7 +46,7 @@ const createPromos = (t: Translations): Array<Promo> => [
 export function AdSlider() {
     const { t } = useTranslations();
     const promos = createPromos(t);
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(() => Math.floor(Math.random() * promos.length));
 
     useEffect(() => {
         const timer = setInterval(() => {
