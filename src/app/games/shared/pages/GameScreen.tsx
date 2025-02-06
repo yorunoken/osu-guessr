@@ -12,7 +12,7 @@ import GuessInput from "../components/GuessInput";
 import LoadingScreen from "../components/LoadingScreen";
 import GameHeader from "../components/Header";
 import { ReportDialog } from "@/components/ReportDialog";
-import { AdSense } from "@/components/AdSense";
+import { AdSlider } from "@/components/Ads";
 import { useTranslationsContext } from "@/context/translations-provider";
 
 interface GameScreenProps {
@@ -291,7 +291,7 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                 )}
             </div>
 
-            <AdSense slot="1796639309" />
+            <AdSlider />
         </div>
     );
 }

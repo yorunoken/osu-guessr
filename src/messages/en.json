@@ -461,6 +461,24 @@
         }
     },
     "components": {
+        "ads": {
+            "twitter": {
+                "title": "Follow on Twitter",
+                "message": "Stay updated with the latest osu!guessr news!"
+            },
+            "osu": {
+                "title": "Add me on osu!",
+                "message": "Let's be friends in-game!"
+            },
+            "kofi": {
+                "title": "Support on Ko-fi",
+                "message": "Help keep osu!guessr running!"
+            },
+            "discord": {
+                "title": "Join our Discord",
+                "message": "Chat with other osu!guessr players!"
+            }
+        },
         "header": {
             "nav": {
                 "leaderboard": "Leaderboard",
