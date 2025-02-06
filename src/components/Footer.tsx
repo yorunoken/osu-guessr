@@ -26,10 +26,10 @@ export default function Footer() {
                 </p>
                 <div className="mt-2 sm:mt-3 text-xs sm:text-sm text-foreground/50 flex justify-center gap-4">
                     <Link href="/about" className="hover:text-foreground transition-colors duration-200">
-                        About
+                        {t.components.footer.about}
                     </Link>
                     <Link href="/privacy" className="hover:text-foreground transition-colors duration-200">
-                        Privacy Policy
+                        {t.components.footer.privacy}
                     </Link>
                 </div>
             </div>

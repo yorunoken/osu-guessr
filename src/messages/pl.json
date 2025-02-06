@@ -380,7 +380,7 @@
             "classic": {
                 "round": "Runda: {current}/{total}",
                 "streak": "Seria: {count}",
-                "points": "PPunkty: {count}"
+                "points": "Punkty: {count}"
             },
             "death": {
                 "lives": {
