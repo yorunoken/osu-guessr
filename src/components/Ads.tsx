@@ -50,11 +50,16 @@ export function AdSlider() {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentIndex((current) => (current + 1) % promos.length);
+            let nextIndex;
+            do {
+                nextIndex = Math.floor(Math.random() * promos.length);
+            } while (nextIndex === currentIndex && promos.length > 1);
+
+            setCurrentIndex(nextIndex);
         }, 30 * 1000);
 
         return () => clearInterval(timer);
-    }, [promos.length]);
+    }, [promos.length, currentIndex]);
 
     return (
         <div className="max-w-md mx-auto bg-transparent border border-dashed border-border rounded-lg my-8">
