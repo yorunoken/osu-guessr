@@ -456,10 +456,6 @@
                 "coffee": {
                     "title": "Buy Me A Coffe",
                     "description": "Tek seferlik bağışla destek ol"
-                },
-                "kofi": {
-                    "title": "Ko-fi",
-                    "description": "Ko-fi üzerinden bana bir kahve ısmarla"
                 }
             }
         }
@@ -474,13 +470,13 @@
                 "title": "Add me on osu!",
                 "message": "Let's be friends in-game!"
             },
-            "kofi": {
-                "title": "Support on Ko-fi",
-                "message": "Help keep osu!guessr running!"
-            },
             "discord": {
                 "title": "Join our Discord",
                 "message": "Chat with other osu!guessr players!"
+            },
+            "buymeacoffe": {
+                "title": "Support on Ko-fi",
+                "message": "Help keep osu!guessr running!"
             }
         },
         "header": {
