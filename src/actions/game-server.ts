@@ -53,8 +53,20 @@ export interface GameState {
     variant: GameVariant;
 }
 
-async function checkRateLimit(userId: number) {
-    console.log(userId);
+const activeSessions = new Map<string, boolean>();
+
+async function acquireSessionLock(sessionId: string, timeoutMs: number = 5000): Promise<boolean> {
+    if (activeSessions.get(sessionId)) {
+        return false;
+    }
+
+    activeSessions.set(sessionId, true);
+
+    setTimeout(() => {
+        activeSessions.delete(sessionId);
+    }, timeoutMs);
+
+    return true;
 }
 
 async function validateGameSession(sessionId: string, userId: number) {
@@ -152,15 +164,16 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
     const authSession = await getAuthSession();
     const validated = gameSchema.parse({ sessionId, guess });
 
-    // Check rate limit
-    // await checkRateLimit(authSession.user.banchoId);
+    if (!(await acquireSessionLock(validated.sessionId))) {
+        throw new Error("Action in progress, please wait");
+    }
 
     try {
         await query("START TRANSACTION");
 
         const gameState = await validateGameSession(validated.sessionId, authSession.user.banchoId);
 
-        if (!guess === undefined && gameState.has_guessed_current_round) {
+        if (guess !== undefined && gameState.has_guessed_current_round) {
             throw new Error("Already submitted a guess for this round");
         }
 
@@ -327,6 +340,8 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
     } catch (error) {
         await query("ROLLBACK");
         throw error;
+    } finally {
+        activeSessions.delete(validated.sessionId);
     }
 }
 
@@ -413,7 +428,6 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
 export async function endGameAction(sessionId: string): Promise<void> {
     console.log("Ending game for:", sessionId);
     const authSession = await getAuthSession();
-    await checkRateLimit(authSession.user.banchoId);
 
     try {
         await query("START TRANSACTION");
