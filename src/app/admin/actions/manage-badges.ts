@@ -34,7 +34,7 @@ export async function addBadgeToFile(name: string, color: string) {
 
         const formattedName = capitalizeWords(validated.name);
 
-        badges[formattedName.toLowerCase()] = validated.color;
+        badges[formattedName] = validated.color;
 
         await fs.writeFile(BADGES_PATH, JSON.stringify(badges, null, 4));
         return `Successfully added badge "${formattedName}" with color ${validated.color}`;
@@ -49,13 +49,13 @@ export async function addBadgeToFile(name: string, color: string) {
 export async function removeBadgeFromFile(name: string) {
     try {
         const badges = await getBadgesFile();
-        const lowercaseName = name.toLowerCase();
+        const formattedName = capitalizeWords(name);
 
-        if (!(lowercaseName in badges)) {
+        if (!(formattedName in badges)) {
             throw new Error(`Badge "${name}" not found`);
         }
 
-        delete badges[lowercaseName];
+        delete badges[formattedName];
         await fs.writeFile(BADGES_PATH, JSON.stringify(badges, null, 4));
         return `Successfully removed badge "${name}"`;
     } catch (error) {
