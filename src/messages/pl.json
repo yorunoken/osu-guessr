@@ -50,43 +50,6 @@
                     "session": "Dane sesji gry"
                 }
             },
-            "ezoic": {
-                "title": "Usługi ezoiczne",
-                "description": "Ta strona internetowa korzysta z usług Ezoic Inc. (\"Ezoic\"), w tym do zarządzania reklamami opartymi na zainteresowaniach stron trzecich. Ezoic może wykorzystywać w tej witrynie różne technologie, w tym narzędzia do serwowania treści, wyświetlania reklam i umożliwiania reklamowania się osobom odwiedzającym tę witrynę, co może wykorzystywać pliki cookies własne i stron trzecich.",
-                "cookies": {
-                    "description": "Plik cookie to mały plik tekstowy wysyłany do Twojego urządzenia przez serwer internetowy, który umożliwia witrynie zapamiętanie informacji o Twojej aktywności przeglądania. Własne pliki cookies są tworzone przez odwiedzaną witrynę, natomiast pliki cookies stron trzecich są ustawiane przez domeny inne niż ta, którą odwiedzasz. Ezoic i nasi partnerzy mogą umieszczać pliki cookies, tagi, sygnalizatory, piksele i podobne technologie stron trzecich w celu monitorowania interakcji z reklamami i optymalizacji kierowania reklam.",
-                    "note": "Należy pamiętać, że wyłączenie plików cookies może ograniczyć dostęp do niektórych treści i funkcji witryny, a odrzucenie plików cookies nie eliminuje reklam, ale spowoduje wyświetlanie reklam niespersonalizowanych.",
-                    "link": {
-                        "text": "Więcej informacji na temat plików cookie i sposobów zarządzania nimi znajdziesz tutaj"
-                    }
-                },
-                "dataCollection": {
-                    "title": "Podczas wyświetlania reklam spersonalizowanych w pliku cookie mogą być gromadzone, wykorzystywane i przechowywane następujące informacje:",
-                    "items": {
-                        "ip": "adres IP",
-                        "os": "Rodzaj systemu operacyjnego oraz jego wersja",
-                        "device": "Rodzaj urządzenia",
-                        "language": "Preferencje językowe",
-                        "browser": "Rodzaj przeglądarki internetowej",
-                        "email": "Email (w formie zahaszowanej lub zaszyfrowanej)"
-                    }
-                },
-                "partners": {
-                    "description": "Ezoic i jej partnerzy mogą wykorzystywać te dane w połączeniu z informacjami, które zostały niezależnie zebrane w celu dostarczania ukierunkowanych reklam na różnych platformach i stronach internetowych. Partnerzy Ezoic mogą również gromadzić dodatkowe dane, takie jak unikalne identyfikatory, identyfikatory reklam, dane geolokalizacyjne, dane o użytkowaniu, informacje o urządzeniu, dane o ruchu, źródła poleceń i interakcje między użytkownikami a stronami internetowymi lub reklamami, aby utworzyć segmenty odbiorców dla ukierunkowanych reklam na różnych urządzeniach, przeglądarkach i aplikacjach.",
-                    "links": {
-                        "iba": {
-                            "text": "Możesz znaleźć więcej informacji na temat reklam opartych na zainteresowaniach i sposobów zarządzania nimi"
-                        },
-                        "privacy": {
-                            "text": "Możesz zapoznać się z polityką prywatności Ezoic"
-                        },
-                        "partners": {
-                            "text": "zobaczyć partnerów reklamowych Ezoic",
-                            "prefix": "lub aby uzyskać dodatkowe informacje na temat reklam Ezoic i innych partnerów, możesz"
-                        }
-                    }
-                }
-            },
             "dataUsage": {
                 "title": "Wykorzystywanie Danych",
                 "description": "Twoje dane są wykorzystywane w celu:",
