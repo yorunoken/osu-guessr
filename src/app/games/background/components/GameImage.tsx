@@ -1,21 +1,8 @@
 import Image from "next/image";
+import { GameMediaProps } from "../../shared/types/props";
+import { ResultMessage } from "../../shared/components/Result";
 
-interface GameImageProps {
-    mediaUrl: string;
-    isRevealed: boolean;
-    result?: {
-        correct: boolean;
-        answer?: string;
-    };
-    songInfo?: {
-        title?: string;
-        artist?: string;
-        mapper?: string;
-        mapsetId?: number;
-    };
-}
-
-export default function GameImage({ mediaUrl, isRevealed, result, songInfo }: GameImageProps) {
+export default function GameImage({ mediaUrl, isRevealed, result, songInfo }: GameMediaProps) {
     return (
         <div className="relative bg-card border border-border rounded-lg overflow-hidden">
             <div className="aspect-video">
@@ -23,7 +10,7 @@ export default function GameImage({ mediaUrl, isRevealed, result, songInfo }: Ga
             </div>
             {isRevealed && result && songInfo && (
                 <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
-                    <div className={`text-2xl font-bold mb-4 ${result.correct ? "text-green-500" : "text-destructive"}`}>{result.correct ? "Correct!" : "Wrong!"}</div>
+                    <ResultMessage result={result} />
                     <div className="space-y-2">
                         <p className="text-xl font-semibold">{songInfo.title}</p>
                         <p className="text-foreground/70">by {songInfo.artist}</p>

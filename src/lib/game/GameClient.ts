@@ -68,8 +68,17 @@ export class GameClient {
     }
 
     private async handleTimeout(): Promise<void> {
+        if (!this.session?.isActive || !this.session?.id) return;
+
         this.stopTimer();
-        await this.revealAnswer();
+        try {
+            const newState = await submitGuessAction(this.session.id, "");
+            this.updateState(newState);
+            console.log("[Game Client]: Round timed out");
+        } catch (error) {
+            console.error("Failed to handle timeout:", error);
+            await this.recoverState();
+        }
     }
 
     async submitGuess(guess: string): Promise<void> {

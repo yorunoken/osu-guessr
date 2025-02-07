@@ -2,25 +2,10 @@
 
 import { Loader2 } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
+import { GameMediaProps } from "../../shared/types/props";
+import { ResultMessage } from "../../shared/components/Result";
 
-interface GameAudioProps {
-    mediaUrl: string;
-    isRevealed: boolean;
-    result?: {
-        correct: boolean;
-        answer?: string;
-    };
-    songInfo?: {
-        title?: string;
-        artist?: string;
-        mapper?: string;
-        mapsetId?: number;
-    };
-    onVolumeChange(volume: number): void;
-    initialVolume: number;
-}
-
-export default function GameAudio({ mediaUrl, isRevealed, result, songInfo, onVolumeChange, initialVolume }: GameAudioProps) {
+export default function GameAudio({ mediaUrl, isRevealed, result, songInfo, onVolumeChange, initialVolume }: GameMediaProps) {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -101,7 +86,7 @@ export default function GameAudio({ mediaUrl, isRevealed, result, songInfo, onVo
             </div>
             {isRevealed && result && songInfo && (
                 <div className="bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
-                    <div className={`text-2xl font-bold mb-4 ${result.correct ? "text-green-500" : "text-destructive"}`}>{result.correct ? "Correct!" : "Wrong!"}</div>
+                    <ResultMessage result={result} />
                     <div className="space-y-2">
                         <p className="text-xl font-semibold">{songInfo.title}</p>
                         <p className="text-foreground/70">by {songInfo.artist}</p>

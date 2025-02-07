@@ -26,6 +26,12 @@ export interface MapsetData {
 
 export interface MapsetDataWithTags extends MapsetData, MapsetTags {}
 
+export type GuessResult = {
+    correct: boolean;
+    answer: string;
+    type: "guess" | "timeout" | "skip";
+};
+
 export interface GameState {
     sessionId: string;
     currentBeatmap: {
@@ -51,10 +57,7 @@ export interface GameState {
     };
     timeLeft: number;
     gameStatus: "active" | "finished";
-    lastGuess?: {
-        correct: boolean;
-        answer?: string;
-    };
+    lastGuess?: GuessResult;
     variant: GameVariant;
 }
 

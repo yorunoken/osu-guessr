@@ -158,11 +158,11 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         const timeLeft = Math.max(0, gameState.time_left - timeElapsed + GRACE_PERIOD);
 
         const guessingDifficulty: GuessDifficulty = 0.5;
-
         let isSkipped = guess === null;
         const isNextRound = guess === undefined;
+        const isTimeout = guess === "";
         let effectiveGuess = isSkipped ? "" : guess;
-        const isGuess = !isNextRound;
+        const isGuess = !isNextRound && !isTimeout;
 
         if (timeLeft <= -GRACE_PERIOD && !isSkipped) {
             isSkipped = true;
@@ -213,10 +213,13 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 timeLeft: 0,
                 gameStatus: "finished",
                 variant: "death",
-                lastGuess: {
-                    correct: false,
-                    answer: beatmap.title,
-                },
+                lastGuess: !isNextRound
+                    ? {
+                          correct: isCorrect,
+                          answer: beatmap.title,
+                          type: isTimeout ? "timeout" : isSkipped ? "skip" : "guess",
+                      }
+                    : undefined,
             };
         }
 
@@ -255,7 +258,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 isCorrect ? gameState.current_streak + 1 : gameState.highest_streak,
                 nextBeatmap ? nextBeatmap.data.mapset_id : gameState.current_beatmap_id,
                 nextBeatmap ? ROUND_TIME : gameState.time_left,
-                isSkipped ? "SKIPPED" : effectiveGuess,
+                isTimeout ? "TIMEOUT" : isSkipped ? "SKIPPED" : effectiveGuess,
                 isCorrect,
                 points,
                 isNextRound ? 1 : 0,
@@ -305,6 +308,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 ? {
                       correct: isCorrect,
                       answer: beatmap.title,
+                      type: isTimeout ? "timeout" : isSkipped ? "skip" : "guess",
                   }
                 : undefined,
         };
@@ -387,6 +391,7 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
                 ? {
                       correct: gameState.last_guess_correct === 1,
                       answer: gameState.title,
+                      type: gameState.last_guess === "TIMEOUT" ? "timeout" : gameState.last_guess === "SKIPPED" ? "skip" : "guess",
                   }
                 : undefined,
         };
