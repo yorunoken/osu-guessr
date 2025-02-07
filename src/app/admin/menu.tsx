@@ -7,10 +7,9 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 import { addMapset, removeMapset, listMapsets } from "./actions/mapsets";
-import { addBadge, removeBadge, listBadges } from "./actions/user-badges";
 import { syncUserAchievements } from "./actions/update-outofsync-users";
 import { checkTranslation, fillMissingTranslations, removeExtraTranslations, getAllLanguages } from "./actions/check-translations";
-import { addBadgeToFile, getBadgesFile, removeBadgeFromFile } from "./actions/manage-badges";
+import { getBadges, addBadge, removeBadge, assignBadgeToUser, removeBadgeFromUser, listBadges } from "./actions/manage-badges";
 import { processBulkMapsets } from "./actions/bulk-mapsets";
 
 import { CollapsibleSection } from "./ui";
@@ -46,8 +45,12 @@ export default function AdminMenu() {
 
     const loadAvailableBadges = async () => {
         try {
-            const badges = await getBadgesFile();
-            setAvailableBadges(badges);
+            const badges = await getBadges();
+            const badgeMap: Record<string, string> = {};
+            badges.forEach((badge: { name: string; color: string }) => {
+                badgeMap[badge.name] = badge.color;
+            });
+            setAvailableBadges(badgeMap);
         } catch (error) {
             appendOutput(`Error loading badges: ${error}`);
         }
@@ -63,7 +66,7 @@ export default function AdminMenu() {
         setIsLoading(true);
         appendOutput(`Adding new badge type "${newBadgeName}"...`);
         try {
-            const result = await addBadgeToFile(newBadgeName, newBadgeColor);
+            const result = await addBadge(newBadgeName, newBadgeColor);
             appendOutput(result);
             await loadAvailableBadges();
             setNewBadgeName("");
@@ -78,9 +81,48 @@ export default function AdminMenu() {
         setIsLoading(true);
         appendOutput(`Removing badge type "${badgeName}"...`);
         try {
-            const result = await removeBadgeFromFile(badgeName);
+            const result = await removeBadge(badgeName);
             appendOutput(result);
             await loadAvailableBadges();
+        } catch (error) {
+            appendOutput(`Error: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
+    const handleAddBadge = async () => {
+        if (!badgeUserId || !badgeTitle) return;
+        setIsLoading(true);
+        appendOutput(`Adding badge to user ${badgeUserId}...`);
+        try {
+            const result = await assignBadgeToUser(parseInt(badgeUserId), badgeTitle);
+            appendOutput(result);
+        } catch (error) {
+            appendOutput(`Error: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
+    const handleRemoveBadge = async () => {
+        if (!badgeUserId || !badgeTitle) return;
+        setIsLoading(true);
+        appendOutput(`Removing badge from user ${badgeUserId}...`);
+        try {
+            const result = await removeBadgeFromUser(parseInt(badgeUserId), badgeTitle);
+            appendOutput(result);
+        } catch (error) {
+            appendOutput(`Error: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
+    const handleListBadges = async () => {
+        setIsLoading(true);
+        appendOutput("Listing badges...");
+        try {
+            const badges = await listBadges();
+            console.table(badges);
+            appendOutput("Badges listed in console");
         } catch (error) {
             appendOutput(`Error: ${error}`);
         }
@@ -145,45 +187,6 @@ export default function AdminMenu() {
             setIsLoading(false);
             setBulkFile(null);
         }
-    };
-
-    const handleAddBadge = async () => {
-        if (!badgeUserId || !badgeTitle) return;
-        setIsLoading(true);
-        appendOutput(`Adding badge to user ${badgeUserId}...`);
-        try {
-            const result = await addBadge(parseInt(badgeUserId), badgeTitle, badgeColor);
-            appendOutput(result);
-        } catch (error) {
-            appendOutput(`Error: ${error}`);
-        }
-        setIsLoading(false);
-    };
-
-    const handleRemoveBadge = async () => {
-        if (!badgeUserId) return;
-        setIsLoading(true);
-        appendOutput(`Removing badge from user ${badgeUserId}...`);
-        try {
-            const result = await removeBadge(parseInt(badgeUserId));
-            appendOutput(result);
-        } catch (error) {
-            appendOutput(`Error: ${error}`);
-        }
-        setIsLoading(false);
-    };
-
-    const handleListBadges = async () => {
-        setIsLoading(true);
-        appendOutput("Listing badges...");
-        try {
-            const badges = await listBadges();
-            console.table(badges);
-            appendOutput("Badges listed in console");
-        } catch (error) {
-            appendOutput(`Error: ${error}`);
-        }
-        setIsLoading(false);
     };
 
     const handleSyncUsers = async () => {
@@ -311,6 +314,7 @@ export default function AdminMenu() {
             setIsLoading(false);
         }
     };
+
     return (
         <div className="container mx-auto px-4 py-8 space-y-4">
             <div className="flex justify-between items-center mb-8">

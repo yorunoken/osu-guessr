@@ -1,6 +1,6 @@
 "use client";
 
-import { Game, UserAchievement } from "@/actions/user-server";
+import { Game, UserAchievement, UserBadge } from "@/actions/user-server";
 import Image from "next/image";
 import Link from "next/link";
 import { GameVariant } from "@/app/games/config";
@@ -38,8 +38,7 @@ interface UserProfileClientProps {
         avatar_url: string;
         achievements: UserAchievement[];
         ranks: UserRanks;
-        special_badge?: string;
-        special_badge_color?: string;
+        badges: Array<UserBadge>;
     };
     userStats: UserAchievement[];
     userGames: Game[];
@@ -115,17 +114,18 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
                         <Link href={`https://osu.ppy.sh/u/${banchoId}`} target="_blank" rel="noopener noreferrer" className="text-4xl font-bold hover:text-primary transition-colors">
                             {username}
                         </Link>
-                        {user.special_badge && (
+                        {user.badges.map((badge, index) => (
                             <span
-                                className={`px-2 py-1 rounded text-sm`}
+                                key={index}
+                                className="px-2 py-1 rounded text-sm"
                                 style={{
-                                    backgroundColor: user.special_badge_color ? `${user.special_badge_color}10` : "var(--primary-10)",
-                                    color: user.special_badge_color || "var(--primary)",
+                                    backgroundColor: `${badge.color}10`,
+                                    color: badge.color,
                                 }}
                             >
-                                {user.special_badge}
+                                {badge.name}
                             </span>
-                        )}
+                        ))}
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                         <StatBox label={t.user.profile.stats.hiScore} value={Math.max(...(achievements?.map((a) => a.highest_score) ?? [0])).toLocaleString()} />

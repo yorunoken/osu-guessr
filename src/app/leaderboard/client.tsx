@@ -107,17 +107,19 @@ export default function LeaderboardClient() {
                                                 <Image src={player.avatar_url} alt={player.username} width={32} height={32} className="rounded-full" />
                                                 <div className="flex items-center gap-2">
                                                     <span className="font-medium">{player.username}</span>
-                                                    {player.special_badge && (
-                                                        <span
-                                                            className="text-xs px-1.5 py-0.5 rounded"
-                                                            style={{
-                                                                backgroundColor: player.special_badge_color ? `${player.special_badge_color}10` : "var(--primary-10)",
-                                                                color: player.special_badge_color || "var(--primary)",
-                                                            }}
-                                                        >
-                                                            {player.special_badge}
-                                                        </span>
-                                                    )}
+                                                    {player.badges &&
+                                                        player.badges.map((badge, badgeIndex) => (
+                                                            <span
+                                                                key={badgeIndex}
+                                                                className="text-xs px-1.5 py-0.5 rounded"
+                                                                style={{
+                                                                    backgroundColor: `${badge.color}10`,
+                                                                    color: badge.color,
+                                                                }}
+                                                            >
+                                                                {badge.name}
+                                                            </span>
+                                                        ))}
                                                 </div>
                                             </Link>
                                         </td>

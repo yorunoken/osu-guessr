@@ -22,9 +22,22 @@ CREATE TABLE IF NOT EXISTS users (
     bancho_id INT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     avatar_url TEXT NOT NULL,
-    special_badge VARCHAR(255),
-    special_badge_color VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS badges (
+    name VARCHAR(255) PRIMARY KEY,
+    color VARCHAR(7) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS user_badges (
+    user_id INT NOT NULL,
+    badge_name VARCHAR(255) NOT NULL,
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, badge_name),
+    FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE,
+    FOREIGN KEY (badge_name) REFERENCES badges (name) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS api_keys (

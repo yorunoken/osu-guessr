@@ -1,15 +1,12 @@
 "use server";
 
-import fs from "fs/promises";
-import path from "path";
+import { query } from "@/lib/database";
 import { z } from "zod";
 
 const badgeSchema = z.object({
     name: z.string().min(1),
     color: z.string().regex(/^#[0-9A-F]{6}$/i, "Must be a valid hex color"),
 });
-
-const BADGES_PATH = path.join(process.cwd(), "src/app/admin/actions/badges.json");
 
 function capitalizeWords(str: string): string {
     return str
@@ -18,25 +15,17 @@ function capitalizeWords(str: string): string {
         .join(" ");
 }
 
-export async function getBadgesFile() {
-    try {
-        const content = await fs.readFile(BADGES_PATH, "utf-8");
-        return JSON.parse(content);
-    } catch (error) {
-        throw new Error(`Failed to read badges file: ${error}`);
-    }
+export async function getBadges() {
+    return query("SELECT * FROM badges ORDER BY name");
 }
 
-export async function addBadgeToFile(name: string, color: string) {
+export async function addBadge(name: string, color: string) {
     try {
         const validated = badgeSchema.parse({ name, color });
-        const badges = await getBadgesFile();
-
         const formattedName = capitalizeWords(validated.name);
 
-        badges[formattedName] = validated.color;
+        await query("INSERT INTO badges (name, color) VALUES (?, ?)", [formattedName, validated.color]);
 
-        await fs.writeFile(BADGES_PATH, JSON.stringify(badges, null, 4));
         return `Successfully added badge "${formattedName}" with color ${validated.color}`;
     } catch (error) {
         if (error instanceof z.ZodError) {
@@ -46,19 +35,47 @@ export async function addBadgeToFile(name: string, color: string) {
     }
 }
 
-export async function removeBadgeFromFile(name: string) {
+export async function removeBadge(name: string) {
     try {
-        const badges = await getBadgesFile();
         const formattedName = capitalizeWords(name);
-
-        if (!(formattedName in badges)) {
-            throw new Error(`Badge "${name}" not found`);
-        }
-
-        delete badges[formattedName];
-        await fs.writeFile(BADGES_PATH, JSON.stringify(badges, null, 4));
-        return `Successfully removed badge "${name}"`;
+        await query("DELETE FROM badges WHERE name = ?", [formattedName]);
+        return `Successfully removed badge "${formattedName}"`;
     } catch (error) {
         throw new Error(`Failed to remove badge: ${error}`);
+    }
+}
+
+export async function assignBadgeToUser(userId: number, badgeName: string) {
+    try {
+        const formattedName = capitalizeWords(badgeName);
+        await query("INSERT INTO user_badges (user_id, badge_name) VALUES (?, ?)", [userId, formattedName]);
+        return `Successfully assigned badge "${formattedName}" to user ${userId}`;
+    } catch (error) {
+        throw new Error(`Failed to assign badge: ${error}`);
+    }
+}
+
+export async function removeBadgeFromUser(userId: number, badgeName: string) {
+    try {
+        const formattedName = capitalizeWords(badgeName);
+        await query("DELETE FROM user_badges WHERE user_id = ? AND badge_name = ?", [userId, formattedName]);
+        return `Successfully removed badge "${formattedName}" from user ${userId}`;
+    } catch (error) {
+        throw new Error(`Failed to remove badge: ${error}`);
+    }
+}
+
+export async function listBadges() {
+    try {
+        const results = await query(`
+            SELECT ub.user_id, u.username, b.name as badge_name, b.color, ub.assigned_at
+            FROM user_badges ub
+            JOIN users u ON ub.user_id = u.bancho_id
+            JOIN badges b ON ub.badge_name = b.name
+            ORDER BY ub.assigned_at DESC
+        `);
+        return results;
+    } catch (error) {
+        throw new Error(`Failed to list badges: ${error}`);
     }
 }
