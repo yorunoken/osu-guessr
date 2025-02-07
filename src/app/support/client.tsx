@@ -29,11 +29,16 @@ export function SupportPageContent() {
 
                 <div className="space-y-6">
                     <h2 className="text-2xl font-bold">{t.support.donate.title}</h2>
-                    <div className="rounded-lg border bg-card p-4 flex items-start gap-3 bg-yellow-500/10 border-yellow-500/50">
+                    <div className="rounded-lg border p-4 flex items-start gap-3 bg-yellow-500/10 border-yellow-500/50">
                         <AlertCircle className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
                         <p className="text-sm">Please include your osu!guessr username or user ID in your donation message to receive supporter benefits!</p>
                     </div>
-                    <a href="https://www.buymeacoffee.com/yorunoken" target="_blank" rel="noopener noreferrer" className="block p-6 rounded-lg border bg-card hover:bg-accent transition-colors">
+                    <a
+                        href="https://www.buymeacoffee.com/yorunoken"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block p-6 rounded-lg border bg-card transition-all duration-200 hover:shadow-md hover:border-primary/20"
+                    >
                         <div className="flex items-center gap-3 mb-4">
                             <Coffee className="h-6 w-6 text-primary" />
                             <span className="text-xl font-medium">{t.support.donate.button}</span>
