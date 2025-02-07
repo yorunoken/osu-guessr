@@ -12,6 +12,10 @@ export interface ApiKey {
     user_id: number;
 }
 
+function hashApiKey(apiKey: string): string {
+    return crypto.createHash("sha256").update(apiKey).digest("hex");
+}
+
 export async function createApiKeyAction(name: string): Promise<string> {
     return authenticatedAction(async (session) => {
         const [result] = await query(`SELECT COUNT(*) as count FROM api_keys WHERE user_id = ?`, [session.user.banchoId]);
@@ -21,7 +25,9 @@ export async function createApiKeyAction(name: string): Promise<string> {
         }
 
         const apiKey = crypto.randomBytes(32).toString("hex");
-        await query(`INSERT INTO api_keys (id, user_id, name) VALUES (?, ?, ?)`, [apiKey, session.user.banchoId, name]);
+        const hashedKey = hashApiKey(apiKey);
+
+        await query(`INSERT INTO api_keys (id, user_id, name) VALUES (?, ?, ?)`, [hashedKey, session.user.banchoId, name]);
 
         return apiKey;
     });
@@ -56,13 +62,14 @@ export async function validateApiKey(apiKey?: string | null): Promise<number> {
         throw new Error("API key was not provided.");
     }
 
-    const [key] = await query(`SELECT user_id FROM api_keys WHERE id = ?`, [apiKey]);
+    const hashedKey = hashApiKey(apiKey);
+    const [key] = await query(`SELECT user_id FROM api_keys WHERE id = ?`, [hashedKey]);
 
     if (!key) {
         throw new Error("Invalid API key");
     }
 
-    await query(`UPDATE api_keys SET last_used = CURRENT_TIMESTAMP WHERE id = ?`, [apiKey]);
+    await query(`UPDATE api_keys SET last_used = CURRENT_TIMESTAMP WHERE id = ?`, [hashedKey]);
 
     return key.user_id;
 }

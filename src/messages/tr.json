@@ -407,30 +407,54 @@
                 "points": {
                     "1": "API anahtarlarınızı güvende tutun ve asla herkese açık olarak paylaşmayın",
                     "2": "Bir anahtar açığa çıkarsa, hemen silin ve yenisini oluşturun",
-                    "3": "Her anahtar, hesabınızın API özelliklerine tam erişime sahiptir"
+                    "3": "Her anahtar, hesabınızın API özelliklerine tam erişime sahiptir",
+                    "4": "API keys are stored securely and cannot be retrieved after creation"
                 }
             },
             "actions": {
                 "create": "Yeni API Anahtarı Oluştur",
                 "delete": "Anahtarı Sil",
-                "viewDocs": "API Dokümantasyonunu Görüntüle"
+                "viewDocs": "API Dokümantasyonunu Görüntüle",
+                "copy": "Copy Key",
+                "close": "Close"
             },
             "dialog": {
                 "create": {
                     "title": "Yeni API Anahtarı Oluştur",
                     "description": "Yeni API anahtarınız için bir isim girin. Bu, daha sonra tanımlamanıza yardımcı olacaktır.",
-                    "placeholder": "Anahtar adı"
+                    "placeholder": "Anahtar adı",
+                    "warning": {
+                        "title": "Important",
+                        "description": "You will only see the API key once after creation. Make sure to copy it immediately as it cannot be recovered later."
+                    }
                 },
                 "delete": {
                     "title": "API Anahtarını Sil",
                     "description": "\"{name}\" API anahtarını silmek istediğinizden emin misiniz?",
-                    "warning": "Bu işlem geri alınamaz ve bu anahtarı kullanan tüm hizmetlerin erişimini anında iptal edecektir."
+                    "warning": "Bu işlem geri alınamaz ve bu anahtarı kullanan tüm hizmetlerin erişimini anında iptal edecektir.",
+                    "confirm": "Yes, delete this key"
+                },
+                "created": {
+                    "title": "API Key Created Successfully",
+                    "warning": {
+                        "title": "Copy Your API Key Now",
+                        "description": "This is your only chance to copy this API key. For security reasons, it will never be displayed again."
+                    },
+                    "copied": "API key copied to clipboard"
                 }
             },
             "keyInfo": {
                 "created": "Oluşturulma: {date}",
                 "lastUsed": "Son kullanım: {date}",
-                "noKeys": "Henüz API anahtarı yok"
+                "noKeys": "Henüz API anahtarı yok",
+                "maxKeys": "Maximum number of API keys reached (5)",
+                "neverUsed": "Never used"
+            },
+            "errors": {
+                "createFailed": "Failed to create API key",
+                "deleteFailed": "Failed to delete API key",
+                "loadFailed": "Failed to load API keys",
+                "maxKeysReached": "Maximum number of API keys (5) reached"
             }
         }
     },

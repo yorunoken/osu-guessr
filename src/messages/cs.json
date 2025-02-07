@@ -407,30 +407,54 @@
                 "points": {
                     "1": "Ponechte své API klíče v bezpečí a nikdy je nesdílejte",
                     "2": "Pokud je klíč odhalen, okamžitě ho smažte a vytvořte nový",
-                    "3": "Každý klíč má plný přístup k API schopnostem vašeho účtu"
+                    "3": "Každý klíč má plný přístup k API schopnostem vašeho účtu",
+                    "4": "API keys are stored securely and cannot be retrieved after creation"
                 }
             },
             "actions": {
                 "create": "Vytvořit nový API klíč",
                 "delete": "Smazat klíč",
-                "viewDocs": "Otevřít dokumentaci API"
+                "viewDocs": "Otevřít dokumentaci API",
+                "copy": "Copy Key",
+                "close": "Close"
             },
             "dialog": {
                 "create": {
                     "title": "Vytvořit nový API klíč",
                     "description": "Zadejte jméno pro váš nový API klíč. Tohle vám pomůže k pozdější identifikaci.",
-                    "placeholder": "Jméno klíče"
+                    "placeholder": "Jméno klíče",
+                    "warning": {
+                        "title": "Important",
+                        "description": "You will only see the API key once after creation. Make sure to copy it immediately as it cannot be recovered later."
+                    }
                 },
                 "delete": {
                     "title": "Smazat API klíč",
                     "description": "Jste si jisti, že chcete smazat API klíč \"{name}\"?",
-                    "warning": "Tato akce nemůže být odvolána a okamžitě zruší přístup ke všem službám, které používají tento klíč."
+                    "warning": "Tato akce nemůže být odvolána a okamžitě zruší přístup ke všem službám, které používají tento klíč.",
+                    "confirm": "Yes, delete this key"
+                },
+                "created": {
+                    "title": "API Key Created Successfully",
+                    "warning": {
+                        "title": "Copy Your API Key Now",
+                        "description": "This is your only chance to copy this API key. For security reasons, it will never be displayed again."
+                    },
+                    "copied": "API key copied to clipboard"
                 }
             },
             "keyInfo": {
                 "created": "Vytvořen: {date}",
                 "lastUsed": "Naposledy použit: {date}",
-                "noKeys": "Zatím žádné API klíče"
+                "noKeys": "Zatím žádné API klíče",
+                "maxKeys": "Maximum number of API keys reached (5)",
+                "neverUsed": "Never used"
+            },
+            "errors": {
+                "createFailed": "Failed to create API key",
+                "deleteFailed": "Failed to delete API key",
+                "loadFailed": "Failed to load API keys",
+                "maxKeysReached": "Maximum number of API keys (5) reached"
             }
         }
     },

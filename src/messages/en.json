@@ -526,30 +526,54 @@
                 "points": {
                     "1": "Keep your API keys secure and never share them publicly",
                     "2": "If a key is exposed, delete it immediately and create a new one",
-                    "3": "Each key has full access to your account's API capabilities"
+                    "3": "Each key has full access to your account's API capabilities",
+                    "4": "API keys are stored securely and cannot be retrieved after creation"
                 }
             },
             "actions": {
                 "create": "Create New API Key",
                 "delete": "Delete Key",
-                "viewDocs": "View API Documentation"
+                "viewDocs": "View API Documentation",
+                "copy": "Copy Key",
+                "close": "Close"
             },
             "dialog": {
                 "create": {
                     "title": "Create New API Key",
                     "description": "Enter a name for your new API key. This will help you identify it later.",
-                    "placeholder": "Key name"
+                    "placeholder": "Key name",
+                    "warning": {
+                        "title": "Important",
+                        "description": "You will only see the API key once after creation. Make sure to copy it immediately as it cannot be recovered later."
+                    }
+                },
+                "created": {
+                    "title": "API Key Created Successfully",
+                    "warning": {
+                        "title": "Copy Your API Key Now",
+                        "description": "This is your only chance to copy this API key. For security reasons, it will never be displayed again."
+                    },
+                    "copied": "API key copied to clipboard"
                 },
                 "delete": {
                     "title": "Delete API Key",
                     "description": "Are you sure you want to delete the API key \"{name}\"?",
-                    "warning": "This action cannot be undone and will immediately revoke access for any services using this key."
+                    "warning": "This action cannot be undone and will immediately revoke access for any services using this key.",
+                    "confirm": "Yes, delete this key"
                 }
             },
             "keyInfo": {
                 "created": "Created: {date}",
                 "lastUsed": "Last used: {date}",
-                "noKeys": "No API keys yet"
+                "noKeys": "No API keys yet",
+                "maxKeys": "Maximum number of API keys reached (5)",
+                "neverUsed": "Never used"
+            },
+            "errors": {
+                "createFailed": "Failed to create API key",
+                "deleteFailed": "Failed to delete API key",
+                "loadFailed": "Failed to load API keys",
+                "maxKeysReached": "Maximum number of API keys (5) reached"
             }
         }
     },

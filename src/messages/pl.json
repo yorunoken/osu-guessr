@@ -473,30 +473,54 @@
                 "points": {
                     "1": "Chroń swoje klucze API i nigdy nie udostępniaj ich publicznie",
                     "2": "Jeżeli klucz został ujawniony, usuń go natychmiastowo i stwórz nowy",
-                    "3": "Każdy klucz ma pełny dostęp do możliwości API Twojego konta"
+                    "3": "Każdy klucz ma pełny dostęp do możliwości API Twojego konta",
+                    "4": "API keys are stored securely and cannot be retrieved after creation"
                 }
             },
             "actions": {
                 "create": "Stwórz Nowy Klucz API",
                 "delete": "Usuń Klucz",
-                "viewDocs": "Zobacz Dokumentację API"
+                "viewDocs": "Zobacz Dokumentację API",
+                "copy": "Copy Key",
+                "close": "Close"
             },
             "dialog": {
                 "create": {
                     "title": "Stwórz Nowy Klucz API",
                     "description": "Wpisz nazwę swojego nowego klucza API. To pomoże Ci w jego późniejszej identyfikacji.",
-                    "placeholder": "Nazwa klucza"
+                    "placeholder": "Nazwa klucza",
+                    "warning": {
+                        "title": "Important",
+                        "description": "You will only see the API key once after creation. Make sure to copy it immediately as it cannot be recovered later."
+                    }
                 },
                 "delete": {
                     "title": "Usuń Klucz API",
                     "description": "Czy jesteś pewny, że chcesz usunąć klucz API \"{name}\"?",
-                    "warning": "Tej akcji nie można cofnąć i natychmiast odbierze ona dostęp wszystkim usługom korzystającym z tego klucza."
+                    "warning": "Tej akcji nie można cofnąć i natychmiast odbierze ona dostęp wszystkim usługom korzystającym z tego klucza.",
+                    "confirm": "Yes, delete this key"
+                },
+                "created": {
+                    "title": "API Key Created Successfully",
+                    "warning": {
+                        "title": "Copy Your API Key Now",
+                        "description": "This is your only chance to copy this API key. For security reasons, it will never be displayed again."
+                    },
+                    "copied": "API key copied to clipboard"
                 }
             },
             "keyInfo": {
                 "created": "Utworzono: {date}",
                 "lastUsed": "Ostatnie użycie: {date}",
-                "noKeys": "Nie masz jeszcze żadnych kluczy API"
+                "noKeys": "Nie masz jeszcze żadnych kluczy API",
+                "maxKeys": "Maximum number of API keys reached (5)",
+                "neverUsed": "Never used"
+            },
+            "errors": {
+                "createFailed": "Failed to create API key",
+                "deleteFailed": "Failed to delete API key",
+                "loadFailed": "Failed to load API keys",
+                "maxKeysReached": "Maximum number of API keys (5) reached"
             }
         }
     },
