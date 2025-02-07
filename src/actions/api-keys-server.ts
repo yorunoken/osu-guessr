@@ -4,13 +4,7 @@ import { authenticatedAction } from "./server";
 import { query } from "@/lib/database";
 import crypto from "crypto";
 
-export interface ApiKey {
-    id: string;
-    name: string;
-    created_at: Date;
-    last_used: Date | null;
-    user_id: number;
-}
+import type { ApiKey } from "./types";
 
 function hashApiKey(apiKey: string): string {
     return crypto.createHash("sha256").update(apiKey).digest("hex");

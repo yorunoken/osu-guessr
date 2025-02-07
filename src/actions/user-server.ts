@@ -4,74 +4,7 @@ import { query } from "@/lib/database";
 import { z } from "zod";
 import { authenticatedAction } from "./server";
 import { GameVariant } from "@/app/games/config";
-
-export interface UserBadge {
-    name: string;
-    color: string;
-    assigned_at: Date;
-}
-
-export interface User {
-    bancho_id: number;
-    username: string;
-    avatar_url: string;
-    badges: Array<UserBadge>;
-    created_at: Date;
-}
-
-export interface UserAchievement {
-    user_id: number;
-    game_mode: GameMode;
-    variant: GameVariant;
-    total_score: number;
-    games_played: number;
-    highest_streak: number;
-    highest_score: number;
-    last_played: Date;
-}
-
-export interface UserRanks {
-    globalRank?: {
-        classic?: number;
-        death?: number;
-    };
-    modeRanks: {
-        [key in GameMode]: {
-            classic?: number;
-            death?: number;
-        };
-    };
-}
-
-export interface UserWithStats extends User {
-    achievements?: UserAchievement[];
-    ranks?: UserRanks;
-}
-
-export interface Game {
-    user_id: number;
-    game_mode: GameMode;
-    points: number;
-    streak: number;
-    variant: GameVariant;
-    ended_at: Date;
-}
-
-export interface TopPlayer extends User {
-    total_score: number;
-    games_played: number;
-    highest_streak: number;
-    highest_score: number;
-    variant: GameVariant;
-}
-
-export interface HighestStats {
-    highest_points: number;
-    total_games: number;
-    total_users: number;
-}
-
-type GameMode = "background" | "audio" | "skin";
+import { Game, GameMode, HighestStats, TopPlayer, User, UserAchievement, UserWithStats } from "./types";
 
 // Schemas
 const gameModeSchema = z.enum(["background", "audio", "skin"]);

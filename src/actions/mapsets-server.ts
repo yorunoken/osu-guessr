@@ -5,20 +5,7 @@ import { authenticatedAction } from "./server";
 import path from "path";
 import fs from "fs/promises";
 
-interface MapsetTags {
-    mapset_id: number;
-    image_filename: string;
-    audio_filename: string;
-}
-
-interface MapsetData {
-    mapset_id: number;
-    title: string;
-    artist: string;
-    mapper: string;
-}
-
-export interface MapsetDataWithTags extends MapsetData, MapsetTags {}
+import type { MapsetTags, MapsetData, MapsetDataWithTags } from "./types";
 
 export async function getRandomAudioAction(sessionId?: string) {
     return authenticatedAction(async () => {

@@ -4,7 +4,8 @@ import { getAuthSession } from "./server";
 import { query } from "@/lib/database";
 import { z } from "zod";
 import { BASE_POINTS, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME, GameVariant } from "../app/games/config";
-import { getRandomAudioAction, getRandomBackgroundAction, MapsetDataWithTags } from "./mapsets-server";
+import { getRandomAudioAction, getRandomBackgroundAction } from "./mapsets-server";
+import type { MapsetDataWithTags, GameState } from "./types";
 import path from "path";
 import fs from "fs/promises";
 import { checkGuess, GuessDifficulty } from "@/lib/guess-checker";
@@ -20,38 +21,6 @@ const gameSchema = z.object({
 
 // const rateLimits = new Map<string, number>();
 // const RATE_LIMIT_WINDOW = 1000;
-
-export interface GameState {
-    sessionId: string;
-    currentBeatmap: {
-        imageUrl?: string;
-        audioUrl?: string;
-        revealed: boolean;
-        title?: string;
-        artist?: string;
-        mapper?: string;
-        mapsetId?: number;
-    };
-    score: {
-        total: number;
-        current: number;
-        streak: number;
-        highestStreak: number;
-    };
-    rounds: {
-        current: number;
-        total: number;
-        correctGuesses: number;
-        totalTimeUsed: number;
-    };
-    timeLeft: number;
-    gameStatus: "active" | "finished";
-    lastGuess?: {
-        correct: boolean;
-        answer?: string;
-    };
-    variant: GameVariant;
-}
 
 const activeSessions = new Map<string, boolean>();
 

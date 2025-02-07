@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { query } from "@/lib/database";
 import { authenticatedAction } from "./server";
+import { ReportType, Report } from "./types";
 
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK!;
 
@@ -11,19 +12,6 @@ const reportSchema = z.object({
     reportType: z.enum(["incorrect_title", "inappropriate_content", "wrong_audio", "wrong_background", "other"]),
     description: z.string().min(10).max(1000),
 });
-
-export type ReportType = z.infer<typeof reportSchema>["reportType"];
-
-export interface Report {
-    id: number;
-    user_id: number;
-    mapset_id: number;
-    report_type: ReportType;
-    description: string;
-    status: "pending" | "investigating" | "resolved" | "rejected";
-    created_at: Date;
-    updated_at: Date;
-}
 
 async function sendDiscordWebhook(content: string) {
     await fetch(DISCORD_WEBHOOK_URL, {
