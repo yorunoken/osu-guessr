@@ -31,6 +31,9 @@ export default function Footer() {
                     <Link href="/privacy" className="hover:text-foreground transition-colors duration-200">
                         {t.components.footer.privacy}
                     </Link>
+                    <Link href="/tos" className="hover:text-foreground transition-colors duration-200">
+                        {t.components.footer.tos}
+                    </Link>
                 </div>
             </div>
         </footer>

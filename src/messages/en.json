@@ -103,6 +103,59 @@
             }
         }
     },
+    "tos": {
+        "title": "Terms of Service",
+        "sections": {
+            "acceptance": {
+                "title": "Acceptance of Terms",
+                "description": "By accessing or using osu!guessr, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service."
+            },
+            "eligibility": {
+                "title": "User Eligibility",
+                "description": "To use osu!guessr, you must meet the following requirements:",
+                "items": {
+                    "age": "You must be at least 13 years old",
+                    "account": "You must have a valid osu! account",
+                    "rules": "You must comply with osu!'s terms of service"
+                }
+            },
+            "content": {
+                "title": "User Conduct",
+                "description": "Users of osu!guessr agree not to:",
+                "items": {
+                    "cheating": "Use cheats, automation, or other methods to gain unfair advantages",
+                    "abuse": "Abuse, harass, or threaten other users",
+                    "interference": "Interfere with or disrupt the service or servers"
+                }
+            },
+            "termination": {
+                "title": "Account Termination",
+                "description": "We reserve the right to terminate or suspend access to our service immediately, without prior notice or liability, for any reason whatsoever, including:",
+                "items": {
+                    "violation": "Violation of these Terms of Service",
+                    "deletion": "Upon osu! account deletion or suspension"
+                }
+            },
+            "disclaimer": {
+                "title": "Disclaimer",
+                "description": "osu!guessr is not affiliated with or endorsed by osu! or ppy Pty Ltd.",
+                "warranty": "The service is provided 'as is' without any warranty or guarantee of any kind."
+            },
+            "changes": {
+                "title": "Changes to Terms",
+                "description": "We reserve the right to modify or replace these terms at any time. Changes will be effective immediately upon posting to the website."
+            },
+            "contact": {
+                "title": "Contact Information",
+                "description": "For any questions about these Terms of Service, please contact us:",
+                "items": {
+                    "email": "Email: noonetr123@gmail.com",
+                    "discord": "Discord: @yorunoken",
+                    "github": "GitHub:"
+                }
+            }
+        }
+    },
     "common": {
         "loading": "Loading...",
         "viewMore": "View More",
@@ -544,7 +597,8 @@
         "footer": {
             "madeWith": "Made with ❤️ by {author}",
             "about": "About",
-            "privacy": "Privacy Policy"
+            "privacy": "Privacy Policy",
+            "tos": "Terms of Service"
         },
         "report": {
             "button": "Report Issue",
