@@ -14,7 +14,6 @@ import { addBadgeToFile, getBadgesFile, removeBadgeFromFile } from "./actions/ma
 import { processBulkMapsets } from "./actions/bulk-mapsets";
 
 import { CollapsibleSection } from "./ui";
-import { PRESET_BADGES } from "@/lib/badges";
 import { deploy } from "./actions/deploy";
 
 export default function AdminMenu() {
@@ -368,11 +367,11 @@ export default function AdminMenu() {
                                     value={badgeTitle}
                                     onChange={(e) => {
                                         setBadgeTitle(e.target.value);
-                                        setBadgeColor(PRESET_BADGES[e.target.value as keyof typeof PRESET_BADGES] || "");
+                                        setBadgeColor(availableBadges[e.target.value] || "");
                                     }}
                                 >
                                     <option value="">Select Badge Type</option>
-                                    {Object.keys(PRESET_BADGES).map((badge) => (
+                                    {Object.keys(availableBadges).map((badge) => (
                                         <option key={badge} value={badge}>
                                             {badge}
                                         </option>
