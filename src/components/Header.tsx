@@ -8,9 +8,9 @@ import Image from "next/image";
 import UserSearch from "./UserSearch";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { SupportDialogWrapper } from "./SupportDialogWrapper";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useTranslationsContext } from "@/context/translations-provider";
+import { SupportPageLink } from "./SupportDialogWrapper";
 
 const NAV_ITEMS = ["leaderboard", "about"] as const;
 
@@ -44,7 +44,7 @@ export default function Header() {
 
                 <div className="flex items-center gap-4">
                     <LanguageSwitcher />
-                    <SupportDialogWrapper />
+                    <SupportPageLink />
 
                     <Button variant="ghost" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                         <Menu className="h-6 w-6" />

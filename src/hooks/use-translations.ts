@@ -58,6 +58,15 @@ export function useTranslations() {
                     }
                     return value;
                 },
+                ownKeys() {
+                    return [...new Set([...Object.keys(obj), ...Object.keys(fallback)])];
+                },
+                getOwnPropertyDescriptor() {
+                    return {
+                        enumerable: true,
+                        configurable: true,
+                    };
+                },
             },
         );
     };

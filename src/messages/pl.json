@@ -43,7 +43,7 @@
         "sections": {
             "dataCollection": {
                 "title": "Przechowywanie Danych",
-                "description": "Gromadzimy i przechowujemy jedynie minimalną ilość informacji niezbędnych do świadczenia usług osu!guessr:",
+                "description": "Gromadzimy i przechowujemy jedynie minimalną ilość informacji niezbędnych do świadczenia usług {osu_guessr}:",
                 "items": {
                     "profile": "Informacje o Twoim profilu osu! (nazwa użytkownika, ID, awatar)",
                     "stats": "Statystyki gry i wyniki",
@@ -111,7 +111,8 @@
         "submit": "Potwierdź",
         "delete": "Usuń",
         "create": "Stwórz",
-        "save": "Zapisz"
+        "save": "Zapisz",
+        "support": "Support"
     },
     "about": {
         "title": "O Grze {osu_guessr}",
@@ -525,22 +526,27 @@
         }
     },
     "support": {
-        "dialog": {
-            "title": "Wesprzyj {osu_guessr}",
-            "description": "Jeżeli podoba Ci się {osu_guessr} i chcesz wesprzeć jego rozwój, rozważ przekazanie darowizny. Twoje wsparcie pomaga utrzymać serwery na chodzie i umożliwia wprowadzanie nowych funkcji! Wpisz swoje imię przy donacji aby zostać wyróżnionym na stronie głównej.",
-            "options": {
-                "coffee": {
-                    "title": "Postaw Mi Kawę",
-                    "description": "Wesprzyj za pomocą jednorazowej darowizny"
-                }
+        "title": "Wesprzyj {osu_guessr}",
+        "description": "Jeżeli podoba Ci się {osu_guessr} i chcesz wesprzeć jego rozwój, rozważ przekazanie darowizny. Twoje wsparcie pomaga utrzymać serwery na chodzie i umożliwia wprowadzanie nowych funkcji! Wpisz swoje imię przy donacji aby zostać wyróżnionym na stronie głównej.",
+        "benefits": {
+            "title": "Supporter Benefits",
+            "items": {
+                "badge": "Exclusive supporter badge on your profile",
+                "homepage": "Get featured on the homepage"
             }
+        },
+        "donate": {
+            "title": "Become a Supporter",
+            "button": "Buy me a Coffee",
+            "description": "Support {osu_guessr} with a one-time donation through Buy Me a Coffee. Any donation amount will grant you supporter status permanently!",
+            "reminder": "Please include your osu!guessr username or user ID in your donation message to receive supporter benefits!"
         }
     },
     "components": {
         "ads": {
             "twitter": {
                 "title": "Obserwuj na Twitterze",
-                "message": "Bądź na bierząco z najnowszymi wiadomościami osu!guessr!"
+                "message": "Bądź na bierząco z najnowszymi wiadomościami {osu_guessr}!"
             },
             "osu": {
                 "title": "Dodaj mnie w osu!",
@@ -548,11 +554,11 @@
             },
             "buymeacoffe": {
                 "title": "Wesprzyj na Ko-fi",
-                "message": "Pomóż utrzymać osu!guessr na chodzie!"
+                "message": "Pomóż utrzymać {osu_guessr} na chodzie!"
             },
             "discord": {
                 "title": "Dołącz do naszego Discorda",
-                "message": "Rozmawiaj z innymi graczami osu!guessr!"
+                "message": "Rozmawiaj z innymi graczami {osu_guessr}!"
             }
         },
         "header": {
@@ -680,11 +686,11 @@
         "sections": {
             "acceptance": {
                 "title": "Acceptance of Terms",
-                "description": "By accessing or using osu!guessr, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service."
+                "description": "By accessing or using {osu_guessr}, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service."
             },
             "eligibility": {
                 "title": "User Eligibility",
-                "description": "To use osu!guessr, you must meet the following requirements:",
+                "description": "To use {osu_guessr}, you must meet the following requirements:",
                 "items": {
                     "age": "You must be at least 13 years old",
                     "account": "You must have a valid osu! account",
@@ -693,7 +699,7 @@
             },
             "content": {
                 "title": "User Conduct",
-                "description": "Users of osu!guessr agree not to:",
+                "description": "Users of {osu_guessr} agree not to:",
                 "items": {
                     "cheating": "Use cheats, automation, or other methods to gain unfair advantages",
                     "abuse": "Abuse, harass, or threaten other users",
@@ -710,7 +716,7 @@
             },
             "disclaimer": {
                 "title": "Disclaimer",
-                "description": "osu!guessr is not affiliated with or endorsed by osu! or ppy Pty Ltd.",
+                "description": "{osu_guessr} is not affiliated with or endorsed by osu! or ppy Pty Ltd.",
                 "warranty": "The service is provided 'as is' without any warranty or guarantee of any kind."
             },
             "changes": {

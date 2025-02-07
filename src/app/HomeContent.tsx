@@ -3,9 +3,9 @@
 import { StatsCard } from "./components/StatsCard";
 import { Gamepad2, Trophy, Users2 } from "lucide-react";
 import { supporters } from "@/config/supporters";
-import { SupportDialogWrapper } from "@/components/SupportDialogWrapper";
 import { useTranslationsContext } from "@/context/translations-provider";
 import React from "react";
+import { SupportPageLink } from "@/components/SupportDialogWrapper";
 
 interface ChangelogEntry {
     description: string;
@@ -66,7 +66,7 @@ export default function HomeContent({ changelogs, highStats }: HomeContentProps)
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col items-center gap-4 mb-8">
                         <h2 className="text-3xl font-bold text-center">{t.home.supporters.title}</h2>
-                        <SupportDialogWrapper />
+                        <SupportPageLink />
                     </div>
 
                     {supporters.length > 0 ? (
