@@ -10,6 +10,8 @@ import path from "path";
 import fs from "fs/promises";
 import { checkGuess, GuessDifficulty } from "@/lib/guess-checker";
 
+const GRACE_PERIOD = 1;
+
 const gameSchema = z.object({
     sessionId: z.string().uuid(),
     guess: z
@@ -153,7 +155,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         }
 
         const timeElapsed = Math.floor((Date.now() - new Date(gameState.last_action_at).getTime()) / 1000);
-        const timeLeft = Math.max(0, gameState.time_left - timeElapsed);
+        const timeLeft = Math.max(0, gameState.time_left - timeElapsed + GRACE_PERIOD);
 
         const guessingDifficulty: GuessDifficulty = 0.5;
 
@@ -162,7 +164,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         let effectiveGuess = isSkipped ? "" : guess;
         const isGuess = !isNextRound;
 
-        if (timeLeft <= 0 && !isSkipped) {
+        if (timeLeft <= -GRACE_PERIOD && !isSkipped) {
             isSkipped = true;
             effectiveGuess = "";
         }
