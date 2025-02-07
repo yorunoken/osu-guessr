@@ -93,6 +93,7 @@ Query Parameters:
         limit: number
     }
 }
+```
 
 ### Get User's Stats
 ```http
