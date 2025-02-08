@@ -324,8 +324,15 @@
             "nextRoundTime": "Sonraki Tur ({seconds}sn)",
             "viewResults": "Sonuçları Görüntüle"
         },
-        "instructions": {
-            "title": "Nasıl oynanır:"
+        "shortcuts": {
+            "title": "Some shortcuts you should know:",
+            "items": {
+                "tab": "Tab - Cycle through suggestions",
+                "enter": "Enter - Submit guess / Next round / Select the highlighted suggestion",
+                "ctrlS": "Ctrl+S - Skip current round",
+                "arrows": "↑/↓ - Navigate suggestions",
+                "esc": "Esc - Close suggestions"
+            }
         }
     },
     "leaderboard": {
@@ -592,21 +599,6 @@
         "copied": "Panoya kopyalandı",
         "saved": "Değişiklikler başarıyla kaydedildi",
         "error": "Bir hata oluştu"
-    },
-    "gameInstructions": {
-        "classic": {
-            "1": "Beatmap arkaplan görüntüsüne bak",
-            "2": "Şarkı adını tahmin etmeye çalış",
-            "3": "Her tur için {seconds} saniyen var",
-            "4": "Bonus puanlar için seriyi devam ettir!"
-        },
-        "death": {
-            "1": "Beatmap arkaplan görüntüsüne bak",
-            "2": "Şarkı adını tahmin etmeye çalış",
-            "3": "Her tur için {seconds} saniyen var",
-            "4": "Bir yanlış tahmin veya atlama oyunu bitirir!",
-            "5": "Ne kadar süre hayatta kalabileceksin?"
-        }
     },
     "timestamps": {
         "seconds": "{count}sn",

@@ -324,8 +324,15 @@
             "nextRoundTime": "Próxima ronda ({seconds}s)",
             "viewResults": "Ver resultados"
         },
-        "instructions": {
-            "title": "Cómo se juega:"
+        "shortcuts": {
+            "title": "Some shortcuts you should know:",
+            "items": {
+                "tab": "Tab - Cycle through suggestions",
+                "enter": "Enter - Submit guess / Next round / Select the highlighted suggestion",
+                "ctrlS": "Ctrl+S - Skip current round",
+                "arrows": "↑/↓ - Navigate suggestions",
+                "esc": "Esc - Close suggestions"
+            }
         }
     },
     "leaderboard": {
@@ -592,21 +599,6 @@
         "copied": "Copiado al portapapeles",
         "saved": "Cambios guardados correctamente",
         "error": "Se ha producido un error"
-    },
-    "gameInstructions": {
-        "classic": {
-            "1": "Mira la imagen de fondo del beatmap",
-            "2": "Intenta adivinar el título de la canción",
-            "3": "Tienes {seconds} segundos por ronda",
-            "4": "Mantén tu racha para conseguir puntos extra."
-        },
-        "death": {
-            "1": "Mira la imagen de fondo del beatmap",
-            "2": "Intenta adivinar el título de la canción",
-            "3": "Tienes {seconds} segundos por ronda",
-            "4": "Si te equivocas o te saltas el juego se acaba.",
-            "5": "¿Cuánto tiempo puedes sobrevivir?"
-        }
     },
     "timestamps": {
         "seconds": "{count}s",

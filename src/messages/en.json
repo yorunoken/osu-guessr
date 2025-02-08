@@ -443,8 +443,15 @@
             "nextRoundTime": "Next Round ({seconds}s)",
             "viewResults": "View Results"
         },
-        "instructions": {
-            "title": "How to play:"
+        "shortcuts": {
+            "title": "Some shortcuts you should know:",
+            "items": {
+                "tab": "Tab - Cycle through suggestions",
+                "enter": "Enter - Submit guess / Next round / Select the highlighted suggestion",
+                "ctrlS": "Ctrl+S - Skip current round",
+                "arrows": "↑/↓ - Navigate suggestions",
+                "esc": "Esc - Close suggestions"
+            }
         }
     },
     "leaderboard": {
@@ -711,21 +718,6 @@
         "copied": "Copied to clipboard",
         "saved": "Changes saved successfully",
         "error": "An error occurred"
-    },
-    "gameInstructions": {
-        "classic": {
-            "1": "Look at the beatmap background image",
-            "2": "Try to guess the song title",
-            "3": "You have {seconds} seconds per round",
-            "4": "Maintain your streak for bonus points!"
-        },
-        "death": {
-            "1": "Look at the beatmap background image",
-            "2": "Try to guess the song title",
-            "3": "You have {seconds} seconds per round",
-            "4": "One wrong guess or skip ends the game!",
-            "5": "How long can you survive?"
-        }
     },
     "timestamps": {
         "seconds": "{count}s",

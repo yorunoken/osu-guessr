@@ -390,8 +390,15 @@
             "nextRoundTime": "Następna Runda ({seconds}s)",
             "viewResults": "Zobacz Wynik"
         },
-        "instructions": {
-            "title": "Jak grać:"
+        "shortcuts": {
+            "title": "Some shortcuts you should know:",
+            "items": {
+                "tab": "Tab - Cycle through suggestions",
+                "enter": "Enter - Submit guess / Next round / Select the highlighted suggestion",
+                "ctrlS": "Ctrl+S - Skip current round",
+                "arrows": "↑/↓ - Navigate suggestions",
+                "esc": "Esc - Close suggestions"
+            }
         }
     },
     "leaderboard": {
@@ -658,21 +665,6 @@
         "copied": "Skopiowano do schowka",
         "saved": "Zmiany zapisane pomyślnie",
         "error": "Wystąpił błąd"
-    },
-    "gameInstructions": {
-        "classic": {
-            "1": "Spójrz na obrazek z tła beatmapy",
-            "2": "Spróbuj odgadnąć tytuł piosenki",
-            "3": "Masz {seconds} sekund na rundę",
-            "4": "Utrzymaj swoją serię, aby dostać punkty bonusowe!"
-        },
-        "death": {
-            "1": "Spójrz na obrazek z tła beatmapy",
-            "2": "Spróbuj odgadnąć tytuł piosenki",
-            "3": "Masz {seconds} sekund na rundę",
-            "4": "Jeden zły strzał, lub pominięcie kończy grę!",
-            "5": "Jak długo jesteś w stanie przetrwać?"
-        }
     },
     "timestamps": {
         "seconds": "{count}s",

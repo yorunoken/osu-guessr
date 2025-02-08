@@ -324,8 +324,15 @@
             "nextRoundTime": "Další kolo ({seconds}s)",
             "viewResults": "Zobrazit výsledky"
         },
-        "instructions": {
-            "title": "Jak hrát:"
+        "shortcuts": {
+            "title": "Some shortcuts you should know:",
+            "items": {
+                "tab": "Tab - Cycle through suggestions",
+                "enter": "Enter - Submit guess / Next round / Select the highlighted suggestion",
+                "ctrlS": "Ctrl+S - Skip current round",
+                "arrows": "↑/↓ - Navigate suggestions",
+                "esc": "Esc - Close suggestions"
+            }
         }
     },
     "leaderboard": {
@@ -592,21 +599,6 @@
         "copied": "Zkopírováno do schránky",
         "saved": "Změny úspěšně uloženy",
         "error": "Nastala chyba"
-    },
-    "gameInstructions": {
-        "classic": {
-            "1": "Podívejte se na pozadí beatmapy",
-            "2": "Pokuste se uhádnout název písně",
-            "3": "Máte {seconds} sekund na kolo",
-            "4": "Udržte svoji sérii pro bonusové body!"
-        },
-        "death": {
-            "1": "Podívejte se na pozadí beatmapy",
-            "2": "Pokuste se uhádnout název písně",
-            "3": "Máte {seconds} sekund na kolo",
-            "4": "Jedno přeskočení nebo špatná odpověď ukončí hru!",
-            "5": "Jak dlouho dokážete přežít?"
-        }
     },
     "timestamps": {
         "seconds": "{count}s",
