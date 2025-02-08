@@ -4,9 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { GameClient } from "@/lib/game/GameClient";
-import { GameState } from "@/actions/game-server";
+import { GameState } from "@/actions/types";
 
-import { ROUND_TIME, AUTO_ADVANCE_DELAY_MS, GameVariant } from "../../config";
+import { AUTO_ADVANCE_DELAY_MS, GameVariant } from "../../config";
 import GameStats from "../components/GameStats";
 import GuessInput from "../components/GuessInput";
 import LoadingScreen from "../components/LoadingScreen";
@@ -105,7 +105,10 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
 
     const handleSkip = useCallback(() => {
         if (!gameClient.current || gameState?.currentBeatmap.revealed) return;
-        return handleAction(() => gameClient.current!.revealAnswer());
+
+        return handleAction(async () => {
+            await gameClient.current!.skipAnswer();
+        });
     }, [gameState?.currentBeatmap.revealed, handleAction]);
 
     const handleNextRound = useCallback(async () => {
@@ -248,24 +251,13 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                     <GuessInput guess={guess} setGuess={setGuess} isRevealed={gameState.currentBeatmap.revealed} onGuess={handleGuess} onSkip={handleSkip} gameClient={gameClient.current!} />
 
                     <div className="bg-card p-6 rounded-xl border border-border/50">
-                        <h3 className="font-semibold mb-2">{t.game.instructions.title}</h3>
+                        <h3 className="font-semibold mb-2">{t.game.shortcuts.title}</h3>
                         <ul className="list-disc list-inside space-y-1 text-foreground/70">
-                            {gameVariant === "classic" ? (
-                                <>
-                                    {t.gameInstructions.classic[1] && <li>{t.gameInstructions.classic[1]}</li>}
-                                    {t.gameInstructions.classic[2] && <li>{t.gameInstructions.classic[2]}</li>}
-                                    {t.gameInstructions.classic[3] && <li>{t.gameInstructions.classic[3].replace("{seconds}", ROUND_TIME.toString())}</li>}
-                                    {t.gameInstructions.classic[4] && <li>{t.gameInstructions.classic[4]}</li>}
-                                </>
-                            ) : (
-                                <>
-                                    {t.gameInstructions.death[1] && <li>{t.gameInstructions.death[1]}</li>}
-                                    {t.gameInstructions.death[2] && <li>{t.gameInstructions.death[2]}</li>}
-                                    {t.gameInstructions.death[3] && <li>{t.gameInstructions.death[3].replace("{seconds}", ROUND_TIME.toString())}</li>}
-                                    {t.gameInstructions.death[4] && <li>{t.gameInstructions.death[4]}</li>}
-                                    {t.gameInstructions.death[5] && <li>{t.gameInstructions.death[5]}</li>}
-                                </>
-                            )}
+                            <li>{t.game.shortcuts.items.tab}</li>
+                            <li>{t.game.shortcuts.items.enter}</li>
+                            <li>{t.game.shortcuts.items.ctrlS}</li>
+                            <li>{t.game.shortcuts.items.arrows}</li>
+                            <li>{t.game.shortcuts.items.esc}</li>
                         </ul>
                     </div>
                 </div>
