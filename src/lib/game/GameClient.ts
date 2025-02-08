@@ -1,6 +1,8 @@
-import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, getSuggestionsAction, GameState } from "@/actions/game-server";
+import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, getSuggestionsAction } from "@/actions/game-server";
+import { soundManager } from "./sounds";
 import { GameSession } from "./types";
 import { GameVariant } from "@/app/games/config";
+import { GameState } from "@/actions/types";
 
 type GameMode = "background" | "audio";
 
@@ -72,6 +74,7 @@ export class GameClient {
 
         this.stopTimer();
         try {
+            soundManager.play("timeout");
             const newState = await submitGuessAction(this.session.id, "");
             this.updateState(newState);
             console.log("[Game Client]: Round timed out");
@@ -88,6 +91,13 @@ export class GameClient {
 
         try {
             const newState = await submitGuessAction(this.session.id, guess);
+
+            if (newState.lastGuess?.correct) {
+                soundManager.play("correct");
+            } else {
+                soundManager.play("wrong");
+            }
+
             this.updateState(newState);
             console.log("[Game Client]: Submitted Guess");
         } catch (error) {
@@ -96,11 +106,12 @@ export class GameClient {
         }
     }
 
-    async revealAnswer(): Promise<void> {
+    async skipAnswer(): Promise<void> {
         if (!this.session?.isActive) return;
         this.stopTimer();
 
         try {
+            soundManager.play("skip");
             const newState = await submitGuessAction(this.session.id, null);
             this.updateState(newState);
             console.log("[Game Client]: Revealed Answer");
