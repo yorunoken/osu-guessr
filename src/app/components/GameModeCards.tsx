@@ -11,7 +11,7 @@ const gameModes = [
     },
     {
         key: "audio",
-        image: "https://assets.ppy.sh/beatmaps/867737/covers/raw.jpg",
+        image: "/audio-mode.png",
         url: "/games/audio",
     },
     {
