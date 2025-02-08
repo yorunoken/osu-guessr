@@ -44,7 +44,9 @@ export default function Header() {
 
                 <div className="flex items-center gap-4">
                     <LanguageSwitcher />
-                    <SupportPageLink />
+                    <div className="hidden md:block">
+                        <SupportPageLink />
+                    </div>
 
                     <Button variant="ghost" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                         <Menu className="h-6 w-6" />
@@ -103,6 +105,11 @@ export default function Header() {
                                 </Link>
                             </li>
                         ))}
+                        <li className="flex items-center w-full">
+                            <div className="w-full text-center px-4 py-2" onClick={() => setIsMenuOpen(false)}>
+                                <SupportPageLink />
+                            </div>
+                        </li>
                     </ul>
                 </nav>
             </div>
