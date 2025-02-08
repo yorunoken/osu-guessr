@@ -67,6 +67,14 @@ export default function GuessInput({ guess, setGuess, isRevealed, onGuess, onSki
         isSelectingRef.current = false;
     }, [isRevealed]);
 
+    useEffect(() => {
+        if (suggestions.length > 0) {
+            setSelectedIndex(0);
+        } else {
+            setSelectedIndex(-1);
+        }
+    }, [suggestions]);
+
     const handleSubmit = () => {
         soundManager.play("click");
         onGuess();
