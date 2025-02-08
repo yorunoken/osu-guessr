@@ -155,7 +155,8 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         }
 
         const timeElapsed = Math.floor((Date.now() - new Date(gameState.last_action_at).getTime()) / 1000);
-        const timeLeft = Math.max(0, gameState.time_left - timeElapsed + GRACE_PERIOD);
+        const rawTimeLeft = gameState.time_left - timeElapsed;
+        const timeLeft = Math.max(0, rawTimeLeft);
 
         const guessingDifficulty: GuessDifficulty = 0.5;
         let isSkipped = guess === null;
@@ -164,7 +165,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         let effectiveGuess = isSkipped ? "" : guess;
         const isGuess = !isNextRound && !isTimeout;
 
-        if (timeLeft <= -GRACE_PERIOD && !isSkipped) {
+        if (rawTimeLeft <= -GRACE_PERIOD && !isSkipped) {
             isSkipped = true;
             effectiveGuess = "";
         }
