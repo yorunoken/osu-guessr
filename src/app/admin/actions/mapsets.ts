@@ -6,9 +6,9 @@ import fs from "fs/promises";
 import path from "path";
 import { execSync } from "child_process";
 
-const AUDIO_DIR = path.join(process.cwd(), "../", "mapsets", "audio");
-const BG_DIR = path.join(process.cwd(), "../", "mapsets", "backgrounds");
-const TEMP_DIR = path.join(process.cwd(), "../", "tmp");
+const AUDIO_DIR = path.join(process.cwd(), "mapsets", "audio");
+const BG_DIR = path.join(process.cwd(), "mapsets", "backgrounds");
+const TEMP_DIR = path.join(process.cwd(), "tmp");
 
 const OSU_API_KEY = process.env.OSU_API_KEY;
 
