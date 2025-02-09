@@ -175,7 +175,7 @@ export default function AdminMenu() {
 
         try {
             const content = await bulkFile.text();
-            const result = await processBulkMapsets(content, appendOutput);
+            const result = await processBulkMapsets(content);
 
             appendOutput(`Bulk upload completed:
             Total mapsets: ${result.total}

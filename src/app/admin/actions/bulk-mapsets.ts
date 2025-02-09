@@ -2,7 +2,7 @@
 
 import { addMapset } from "./mapsets";
 
-export async function processBulkMapsets(fileContent: string, appendOutput: (text: string) => void) {
+export async function processBulkMapsets(fileContent: string) {
     const mapsetIds = fileContent
         .split("\n")
         .map((line) => line.trim())
@@ -13,24 +13,26 @@ export async function processBulkMapsets(fileContent: string, appendOutput: (tex
         })
         .filter((id): id is number => id !== null);
 
+    console.log(mapsetIds);
+
     const total = mapsetIds.length;
     const results: Array<{ id: number; success: boolean; error?: string }> = [];
 
-    appendOutput(`Found ${total} mapsets to process.`);
+    console.log(`Found ${total} mapsets to process.`);
 
     for (let i = 0; i < mapsetIds.length; i++) {
         const mapsetId = mapsetIds[i];
         const progress = (((i + 1) / total) * 100).toFixed(1);
 
-        appendOutput(`[${progress}%] Processing mapset ${mapsetId} (${i + 1}/${total})`);
+        console.log(`[${progress}%] Processing mapset ${mapsetId} (${i + 1}/${total})`);
 
         try {
             await addMapset(mapsetId);
             results.push({ id: mapsetId, success: true });
-            appendOutput(`✓ Mapset ${mapsetId}: Successfully added`);
+            console.log(`✓ Mapset ${mapsetId}: Successfully added`);
         } catch (error) {
             results.push({ id: mapsetId, success: false, error: String(error) });
-            appendOutput(`✗ Mapset ${mapsetId}: Failed - ${error}`);
+            console.log(`✗ Mapset ${mapsetId}: Failed - ${error}`);
         }
     }
 
