@@ -20,4 +20,10 @@ export const supporters: Array<Supporter> = [
         amount: 15,
         message: `stay silly PagBounce`,
     },
+    {
+        name: "Timur Vorobev",
+        url: "https://google.com",
+        amount: 11,
+        message: `very nice`,
+    },
 ];
