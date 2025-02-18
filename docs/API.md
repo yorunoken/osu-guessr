@@ -33,7 +33,7 @@ Retrieves information about a specific user.
             user_id: number;
             game_mode: "background" | "audio" | "skin";
             variant: "classic" | "death";
-            total_score: number;
+            total_score: bigint;
             games_played: number;
             highest_streak: number;
             highest_score: number;
@@ -113,7 +113,7 @@ Query Parameters:
         user_id: number;
         game_mode: "background" | "audio" | "skin";
         variant: "classic" | "death";
-        total_score: number;
+        total_score: bigint;
         games_played: number;
         highest_streak: number;
         highest_score: number;
@@ -171,7 +171,7 @@ Query Parameters:
         bancho_id: number;
         username: string;
         avatar_url: string;
-        total_score: number;
+        total_score: bigint;
         games_played: number;
         highest_streak: number;
         highest_score: number;

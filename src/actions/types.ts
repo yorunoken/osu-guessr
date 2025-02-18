@@ -79,7 +79,7 @@ export interface UserAchievement {
     user_id: number;
     game_mode: GameMode;
     variant: GameVariant;
-    total_score: number;
+    total_score: bigint;
     games_played: number;
     highest_streak: number;
     highest_score: number;
@@ -114,7 +114,7 @@ export interface Game {
 }
 
 export interface TopPlayer extends User {
-    total_score: number;
+    total_score: bigint;
     games_played: number;
     highest_streak: number;
     highest_score: number;

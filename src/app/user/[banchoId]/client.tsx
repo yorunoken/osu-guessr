@@ -1,6 +1,6 @@
 "use client";
 
-import { Game, UserAchievement, UserBadge } from "@/actions/user-server";
+import { Game, UserAchievement, UserBadge } from "@/actions/types";
 import Image from "next/image";
 import Link from "next/link";
 import { GameVariant } from "@/app/games/config";
@@ -10,7 +10,7 @@ type GameModes = "background" | "audio" | "skin";
 
 interface GameStats {
     game_mode: GameModes;
-    total_score: number;
+    total_score: bigint;
     games_played: number;
     highest_streak: number;
     highest_score: number;
@@ -66,7 +66,7 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
     const gameStats: Record<GameModes, GameStats> = {
         background: {
             game_mode: "background",
-            total_score: 0,
+            total_score: 0n,
             games_played: 0,
             highest_streak: 0,
             highest_score: 0,
@@ -74,7 +74,7 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
         },
         audio: {
             game_mode: "audio",
-            total_score: 0,
+            total_score: 0n,
             games_played: 0,
             highest_streak: 0,
             highest_score: 0,
@@ -82,7 +82,7 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
         },
         skin: {
             game_mode: "skin",
-            total_score: 0,
+            total_score: 0n,
             games_played: 0,
             highest_streak: 0,
             highest_score: 0,

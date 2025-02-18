@@ -6,7 +6,7 @@
         "frontend:dev": "dotenv -e .env.local -- next dev",
         "frontend:build": "next build",
         "frontend:start": "dotenv -e .env.local -- next start",
-        "frontend:lint": "next lint",
+        "lint": "next lint",
         "server:dev": "cd server && cargo run",
         "server:build": "cd server && cargo build -r",
         "server:start": "cd server && cargo run -r",

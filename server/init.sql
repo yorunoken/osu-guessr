@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS api_keys (
 CREATE TABLE IF NOT EXISTS user_achievements (
     user_id INT NOT NULL,
     game_mode ENUM ('background', 'audio', 'skin') NOT NULL,
-    total_score INT DEFAULT 0,
+    total_score BIGINT DEFAULT 0,
     games_played INT DEFAULT 0,
     highest_streak INT DEFAULT 0,
     highest_score INT DEFAULT 0,

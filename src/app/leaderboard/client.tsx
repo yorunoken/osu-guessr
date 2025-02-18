@@ -5,7 +5,8 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getTopPlayersAction, TopPlayer } from "@/actions/user-server";
+import { getTopPlayersAction } from "@/actions/user-server";
+import { TopPlayer } from "@/actions/types";
 import { GameVariant } from "@/app/games/config";
 import { useTranslationsContext } from "@/context/translations-provider";
 import { AdSlider } from "@/components/Ads";
@@ -123,7 +124,7 @@ export default function LeaderboardClient() {
                                                 </div>
                                             </Link>
                                         </td>
-                                        {selectedVariant === "classic" && <td className="px-6 py-4 text-right font-mono">{Number(player.total_score).toLocaleString()}</td>}
+                                        {selectedVariant === "classic" && <td className="px-6 py-4 text-right font-mono">{BigInt(player.total_score).toLocaleString()}</td>}
                                         <td className="px-6 py-4 text-right font-mono">{player.games_played}</td>
                                         <td className="px-6 py-4 text-right font-mono">{selectedVariant === "classic" ? player.highest_score : player.highest_streak}</td>
                                     </tr>
