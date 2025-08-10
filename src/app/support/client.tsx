@@ -31,7 +31,7 @@ export function SupportPageContent() {
                     <h2 className="text-2xl font-bold">{t.support.donate.title}</h2>
                     <div className="rounded-lg border p-4 flex items-start gap-3 bg-yellow-500/10 border-yellow-500/50">
                         <AlertCircle className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm">Please include your osu!guessr username or user ID in your donation message to receive supporter benefits!</p>
+                        <p className="text-sm">{t.support.donate.reminder}</p>
                     </div>
                     <a
                         href="https://www.buymeacoffee.com/yorunoken"

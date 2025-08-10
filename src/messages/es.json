@@ -46,7 +46,12 @@
         "delete": "Borrar",
         "create": "Crear",
         "save": "Guardar",
-        "support": "Ayuda"
+        "support": "Ayuda",
+        "sessionLoading": {
+            "title": "Loading {osu_guessr}",
+            "description": "Preparing your session...",
+            "funFact": "Did you know? I didn't either!"
+        }
     },
     "about": {
         "title": "Acerca de {osu_guessr}",
@@ -333,6 +338,24 @@
                 "arrows": "↑/↓ - Recorre las sugerencias",
                 "esc": "Esc - Cierra las sugerencias"
             }
+        },
+        "comingSoon": {
+            "title": "{mode} Guessr",
+            "subtitle": "Coming Soon!",
+            "description": "We're working hard to bring you the {mode} guessing game mode. Stay tuned for updates!",
+            "whatToExpect": "What to expect:",
+            "expectations": {
+                "audio": "Test your music knowledge by identifying osu! songs from short audio clips. How many can you recognize?",
+                "skin": "Challenge yourself to recognize popular osu! skins from gameplay screenshots. Perfect for skin enthusiasts!"
+            },
+            "actions": {
+                "backToHome": "Back to Home",
+                "tryBackground": "Try Background Guessr"
+            }
+        },
+        "audio": {
+            "instructions": "Listen to the audio and try to guess the song title!",
+            "browserNotSupported": "Your browser does not support the audio element."
         }
     },
     "leaderboard": {

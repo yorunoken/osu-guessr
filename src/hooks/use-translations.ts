@@ -67,7 +67,7 @@ export function useTranslations() {
                         configurable: true,
                     };
                 },
-            },
+            }
         );
     };
 

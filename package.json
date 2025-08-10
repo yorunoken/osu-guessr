@@ -7,13 +7,13 @@
         "frontend:build": "next build",
         "frontend:start": "dotenv -e .env.local -- next start",
         "lint": "next lint",
+        "sync": "bun sync-translations",
         "server:dev": "cd server && cargo run",
         "server:build": "cd server && cargo build -r",
         "server:start": "cd server && cargo run -r",
         "build": "bun run frontend:build && bun run server:build",
         "dev": "concurrently \"bun run server:start\" \"bun run frontend:dev\"",
-        "start": "concurrently \"bun run server:start\" \"bun run frontend:start\"",
-        "restart": "git pull && bun run build && pm2 restart 12"
+        "start": "concurrently \"bun run server:start\" \"bun run frontend:start\""
     },
     "dependencies": {
         "@radix-ui/react-dialog": "^1.1.6",

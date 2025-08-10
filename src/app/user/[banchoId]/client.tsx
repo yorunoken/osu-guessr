@@ -52,16 +52,13 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
     const { t } = useTranslationsContext();
     const { username, avatar_url, achievements, ranks } = user;
 
-    const topPlaysByMode = topPlays.reduce(
-        (acc, game) => {
-            if (!acc[game.game_mode]) {
-                acc[game.game_mode] = [];
-            }
-            acc[game.game_mode].push(game);
-            return acc;
-        },
-        {} as Record<GameModes, Array<Game>>,
-    );
+    const topPlaysByMode = topPlays.reduce((acc, game) => {
+        if (!acc[game.game_mode]) {
+            acc[game.game_mode] = [];
+        }
+        acc[game.game_mode].push(game);
+        return acc;
+    }, {} as Record<GameModes, Array<Game>>);
 
     const gameStats: Record<GameModes, GameStats> = {
         background: {
@@ -132,7 +129,7 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
                         <StatBox label={t.user.profile.stats.totalGames} value={achievements?.reduce((sum, a) => sum + a.games_played, 0).toLocaleString() ?? "0"} />
                         <StatBox
                             label={t.user.profile.stats.globalRank}
-                            value={currentVariant === "classic" ? (ranks.modeRanks[currentMode].classic?.toLocaleString() ?? "-") : (ranks.modeRanks[currentMode].death?.toLocaleString() ?? "-")}
+                            value={currentVariant === "classic" ? ranks.modeRanks[currentMode].classic?.toLocaleString() ?? "-" : ranks.modeRanks[currentMode].death?.toLocaleString() ?? "-"}
                         />
                     </div>
                 </div>
@@ -236,8 +233,8 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
                                         <span className="text-foreground/70 ml-4">{new Date(game.ended_at).toLocaleDateString()}</span>
                                     </div>
                                     <div className="space-x-4">
-                                        {currentVariant === "classic" && <span className="font-semibold">{game.points.toLocaleString()} score</span>}
-                                        <span className="font-semibold">{game.streak}x streak</span>
+                                        {currentVariant === "classic" && <span className="font-semibold">{t.user.profile.topGames.points.replace("{points}", game.points.toLocaleString())}</span>}
+                                        <span className="font-semibold">{t.user.profile.topGames.streak.replace("{count}", game.streak.toString())}</span>
                                     </div>
                                 </div>
                             ))}
