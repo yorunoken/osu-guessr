@@ -6,17 +6,17 @@ import { useTranslationsContext } from "@/context/translations-provider";
 
 const gameModes = [
     {
-        key: "background",
+        key: "background" as const,
         image: "/ghostrule.jpg",
         url: "/games/background",
     },
     {
-        key: "audio",
+        key: "audio" as const,
         image: "/audio-mode.png",
         url: "/games/audio",
     },
     {
-        key: "skin",
+        key: "skin" as const,
         image: "/skin-mode.png",
         url: "/games/skin",
     },
@@ -45,10 +45,9 @@ export default function GameModeCards() {
             y: 0,
             transition: {
                 duration: 0.5,
-                ease: "easeOut",
             },
         },
-    };
+    } as const;
 
     return (
         <section className="py-24 bg-background" id="gamemodes">

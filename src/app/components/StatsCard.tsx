@@ -24,10 +24,9 @@ export function StatsCard({ title, value, description, icon }: StatsCardProps) {
             y: 0,
             transition: {
                 duration: 0.4,
-                ease: "easeOut",
             },
         },
-    };
+    } as const;
 
     const contentVariants = {
         hidden: {

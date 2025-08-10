@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -34,18 +34,13 @@ export default function AdminMenu() {
     const [output, setOutput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        loadAvailableBadges();
-        loadAvailableLanguages();
-    }, []);
-
     const appendOutput = (text: string) => {
         setOutput((prev) => prev + "\n" + text);
     };
 
-    const loadAvailableBadges = async () => {
+    const loadAvailableBadges = useCallback(async () => {
         try {
-            const badges = await getBadges();
+            const badges = (await getBadges()) as Array<{ name: string; color: string }>;
             const badgeMap: Record<string, string> = {};
             badges.forEach((badge: { name: string; color: string }) => {
                 badgeMap[badge.name] = badge.color;
@@ -54,12 +49,17 @@ export default function AdminMenu() {
         } catch (error) {
             appendOutput(`Error loading badges: ${error}`);
         }
-    };
+    }, []);
 
-    const loadAvailableLanguages = async () => {
+    const loadAvailableLanguages = useCallback(async () => {
         const languages = await getAllLanguages();
         setAvailableLanguages(languages);
-    };
+    }, []);
+
+    useEffect(() => {
+        loadAvailableBadges();
+        loadAvailableLanguages();
+    }, [loadAvailableBadges, loadAvailableLanguages]);
 
     const handleAddBadgeType = async () => {
         if (!newBadgeName || !newBadgeColor) return;

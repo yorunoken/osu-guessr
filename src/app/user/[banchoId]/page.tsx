@@ -40,9 +40,9 @@ export default async function UserProfile({ params, searchParams }: Props) {
     const defaultRanks: UserRanks = {
         globalRank: undefined,
         modeRanks: {
-            background: { globalRank: undefined },
-            audio: { globalRank: undefined },
-            skin: { globalRank: undefined },
+            background: {},
+            audio: {},
+            skin: {},
         },
     };
 

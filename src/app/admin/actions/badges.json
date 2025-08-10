@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Developer",
+        "color": "#FFD700"
+    },
+    {
+        "name": "Contributor",
+        "color": "#87CEEB"
+    },
+    {
+        "name": "Beta Tester",
+        "color": "#FF6347"
+    }
+]

@@ -137,3 +137,32 @@ export interface Report {
     created_at: Date;
     updated_at: Date;
 }
+
+// Database types for game sessions
+export interface DatabaseGameSession {
+    id: string;
+    user_id: number;
+    game_mode: GameMode;
+    total_points: number;
+    current_streak: number;
+    highest_streak: number;
+    current_round: number;
+    current_beatmap_id: number;
+    time_left: number;
+    last_action_at: string | Date;
+    last_guess: string | null;
+    last_guess_correct: number | null;
+    last_points: number | null;
+    correct_guesses: number;
+    total_time_used: number;
+    is_active: boolean;
+    variant: GameVariant;
+    // Joined fields from mapset_data and mapset_tags
+    title: string;
+    artist: string;
+    mapper: string;
+    mapset_id: number;
+    image_filename: string;
+    audio_filename: string;
+    has_guessed_current_round: boolean;
+}

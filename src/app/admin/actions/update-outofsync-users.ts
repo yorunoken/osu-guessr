@@ -15,7 +15,7 @@ export async function syncUserAchievements() {
                 highest_score = 0
         `);
 
-        const gameStats = await query(`
+        const gameStats = (await query(`
             SELECT
                 user_id,
                 game_mode,
@@ -26,7 +26,15 @@ export async function syncUserAchievements() {
                 MAX(ended_at) as last_played
             FROM games
             GROUP BY user_id, game_mode
-        `);
+        `)) as Array<{
+            user_id: number;
+            game_mode: string;
+            games_played: number;
+            highest_streak: number;
+            highest_score: number;
+            total_score: number;
+            last_played: Date;
+        }>;
 
         await query(`
             INSERT IGNORE INTO user_achievements (user_id, game_mode)
@@ -51,7 +59,7 @@ export async function syncUserAchievements() {
                 WHERE user_id = ?
                 AND game_mode = ?
             `,
-                [stat.games_played, stat.highest_streak, stat.highest_score, stat.total_score, stat.last_played, stat.user_id, stat.game_mode],
+                [stat.games_played, stat.highest_streak, stat.highest_score, stat.total_score, stat.last_played, stat.user_id, stat.game_mode]
             );
         }
 

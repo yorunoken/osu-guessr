@@ -6,13 +6,15 @@ import crypto from "crypto";
 
 import type { ApiKey } from "./types";
 
+export type { ApiKey };
+
 function hashApiKey(apiKey: string): string {
     return crypto.createHash("sha256").update(apiKey).digest("hex");
 }
 
 export async function createApiKeyAction(name: string): Promise<string> {
     return authenticatedAction(async (session) => {
-        const [result] = await query(`SELECT COUNT(*) as count FROM api_keys WHERE user_id = ?`, [session.user.banchoId]);
+        const [result] = (await query(`SELECT COUNT(*) as count FROM api_keys WHERE user_id = ?`, [session.user.banchoId])) as [{ count: number }];
 
         if (result.count >= 5) {
             throw new Error("Maximum number of API keys (5) reached");
@@ -34,7 +36,7 @@ export async function listApiKeysAction() {
                 FROM api_keys
                 WHERE user_id = ?
                 ORDER BY created_at DESC`,
-            [session.user.banchoId],
+            [session.user.banchoId]
         );
 
         return keys;
@@ -46,7 +48,7 @@ export async function deleteApiKeyAction(keyId: string): Promise<void> {
         await query(
             `DELETE FROM api_keys
             WHERE id = ? AND user_id = ?`,
-            [keyId, session.user.banchoId],
+            [keyId, session.user.banchoId]
         );
     });
 }
@@ -57,7 +59,7 @@ export async function validateApiKey(apiKey?: string | null): Promise<number> {
     }
 
     const hashedKey = hashApiKey(apiKey);
-    const [key] = await query(`SELECT user_id FROM api_keys WHERE id = ?`, [hashedKey]);
+    const [key] = (await query(`SELECT user_id FROM api_keys WHERE id = ?`, [hashedKey])) as [{ user_id: number }];
 
     if (!key) {
         throw new Error("Invalid API key");

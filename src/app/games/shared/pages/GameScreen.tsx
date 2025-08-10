@@ -25,6 +25,7 @@ interface GameScreenProps {
         result?: {
             correct: boolean;
             answer?: string;
+            type: "guess" | "timeout" | "skip";
         };
         songInfo?: {
             title?: string;

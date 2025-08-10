@@ -27,38 +27,34 @@ export default function GameAudio({ mediaUrl, isRevealed, result, songInfo, onVo
                 }
             };
 
-            audioRef.current.addEventListener("canplay", handleCanPlay);
-            audioRef.current.load();
+            const audio = audioRef.current; // Copy ref to variable
+            audio.addEventListener("canplay", handleCanPlay);
+            audio.load();
 
             return () => {
-                if (audioRef.current) {
-                    audioRef.current.removeEventListener("canplay", handleCanPlay);
-                    audioRef.current.pause();
-                    audioRef.current.currentTime = 0;
-                }
+                audio.removeEventListener("canplay", handleCanPlay);
+                audio.pause();
+                audio.currentTime = 0;
             };
         }
     }, [mediaUrl, isRevealed]);
 
     useEffect(() => {
-        if (audioRef.current) {
+        if (audioRef.current && initialVolume !== undefined) {
             audioRef.current.volume = initialVolume;
         }
     }, [initialVolume]);
 
     useEffect(() => {
-        if (audioRef.current) {
+        if (audioRef.current && onVolumeChange) {
+            const audio = audioRef.current; // Copy ref to variable
             const handleVolumeChange = () => {
-                if (audioRef.current) {
-                    onVolumeChange(audioRef.current.volume);
-                }
+                onVolumeChange(audio.volume);
             };
-            audioRef.current.addEventListener("volumechange", handleVolumeChange);
+            audio.addEventListener("volumechange", handleVolumeChange);
 
             return () => {
-                if (audioRef.current) {
-                    audioRef.current.removeEventListener("volumechange", handleVolumeChange);
-                }
+                audio.removeEventListener("volumechange", handleVolumeChange);
             };
         }
     }, [onVolumeChange]);

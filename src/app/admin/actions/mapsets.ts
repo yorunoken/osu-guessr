@@ -146,7 +146,7 @@ export async function addMapset(mapsetId: number) {
              title = VALUES(title),
              artist = VALUES(artist),
              mapper = VALUES(mapper)`,
-            [mapsetId, beatmapData.title, beatmapData.artist, beatmapData.creator],
+            [mapsetId, beatmapData.title, beatmapData.artist, beatmapData.creator]
         );
 
         await query(
@@ -155,7 +155,7 @@ export async function addMapset(mapsetId: number) {
              ON DUPLICATE KEY UPDATE
              image_filename = VALUES(image_filename),
              audio_filename = VALUES(audio_filename)`,
-            [mapsetId, imageFilename, audioFilename],
+            [mapsetId, imageFilename, audioFilename]
         );
 
         // Cleanup
@@ -169,7 +169,7 @@ export async function addMapset(mapsetId: number) {
 
 export async function removeMapset(mapsetId: number) {
     try {
-        const files = await query("SELECT image_filename, audio_filename FROM mapset_tags WHERE mapset_id = ?", [mapsetId]);
+        const files = (await query("SELECT image_filename, audio_filename FROM mapset_tags WHERE mapset_id = ?", [mapsetId])) as [{ image_filename?: string; audio_filename?: string }];
 
         if (files[0]) {
             if (files[0].image_filename) {

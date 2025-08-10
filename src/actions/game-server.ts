@@ -5,7 +5,7 @@ import { query } from "@/lib/database";
 import { z } from "zod";
 import { BASE_POINTS, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME, GameVariant } from "../app/games/config";
 import { getRandomAudioAction, getRandomBackgroundAction } from "./mapsets-server";
-import type { MapsetDataWithTags, GameState } from "./types";
+import type { MapsetDataWithTags, GameState, DatabaseGameSession } from "./types";
 import path from "path";
 import fs from "fs/promises";
 import { checkGuess, GuessDifficulty } from "@/lib/guess-checker";
@@ -40,8 +40,8 @@ async function acquireSessionLock(sessionId: string, timeoutMs: number = 5000): 
     return true;
 }
 
-async function validateGameSession(sessionId: string, userId: number) {
-    const [session] = await query(
+async function validateGameSession(sessionId: string, userId: number): Promise<DatabaseGameSession> {
+    const [session] = (await query(
         `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename, mt.audio_filename,
             CASE
                 WHEN g.current_round = 1 AND g.last_guess IS NULL THEN FALSE
@@ -60,8 +60,8 @@ async function validateGameSession(sessionId: string, userId: number) {
             JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
             WHERE g.id = ? AND g.user_id = ? AND g.is_active = TRUE
             FOR UPDATE`,
-        [sessionId, userId],
-    );
+        [sessionId, userId]
+    )) as [DatabaseGameSession];
 
     if (!session) {
         throw new Error("Game session not found or expired");
@@ -79,7 +79,7 @@ export async function startGameAction(gameMode: "audio" | "background", variant:
             `INSERT INTO game_sessions
                 (id, user_id, game_mode, total_points, current_streak, highest_streak, variant)
                 VALUES (?, ?, ?, 0, 0, 0, ?)`,
-            [sessionId, authSession.user.banchoId, gameMode, variant],
+            [sessionId, authSession.user.banchoId, gameMode, variant]
         );
 
         const beatmap = gameMode === "audio" ? await getRandomAudioAction(sessionId) : await getRandomBackgroundAction(sessionId);
@@ -90,13 +90,13 @@ export async function startGameAction(gameMode: "audio" | "background", variant:
                 time_left = ?,
                 last_action_at = CURRENT_TIMESTAMP
             WHERE id = ?`,
-            [beatmap.data.mapset_id, ROUND_TIME, sessionId],
+            [beatmap.data.mapset_id, ROUND_TIME, sessionId]
         );
 
         await query(
             `INSERT INTO session_mapsets (session_id, mapset_id, round_number)
                 VALUES (?, ?, 1)`,
-            [sessionId, beatmap.data.mapset_id],
+            [sessionId, beatmap.data.mapset_id]
         );
 
         await query("COMMIT");
@@ -266,14 +266,14 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 isCorrect ? 1 : 0,
                 isNextRound ? ROUND_TIME - timeLeft : 0,
                 sessionId,
-            ],
+            ]
         );
 
         if (isNextRound && nextBeatmap) {
             await query(
                 `INSERT INTO session_mapsets (session_id, mapset_id, round_number)
                     VALUES (?, ?, ?)`,
-                [sessionId, nextBeatmap.data.mapset_id, gameState.current_round + 1],
+                [sessionId, nextBeatmap.data.mapset_id, gameState.current_round + 1]
             );
         }
 
@@ -282,8 +282,8 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         return {
             sessionId,
             currentBeatmap: {
-                imageUrl: gameState.game_mode === "background" ? (nextBeatmap?.backgroundData ?? currentMedia.backgroundData) : undefined,
-                audioUrl: gameState.game_mode === "audio" ? (nextBeatmap?.audioData ?? currentMedia.audioData) : undefined,
+                imageUrl: gameState.game_mode === "background" ? nextBeatmap?.backgroundData ?? currentMedia.backgroundData : undefined,
+                audioUrl: gameState.game_mode === "audio" ? nextBeatmap?.audioData ?? currentMedia.audioData : undefined,
                 revealed: !isNextRound,
                 title: !isNextRound ? beatmap.title : undefined,
                 artist: !isNextRound ? beatmap.artist : undefined,
@@ -327,15 +327,15 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
     try {
         await query("START TRANSACTION");
 
-        const [gameState] = await query(
+        const [gameState] = (await query(
             `SELECT g.*, m.title, m.artist, m.mapper, m.mapset_id, mt.image_filename, mt.audio_filename
                 FROM game_sessions g
                 JOIN mapset_data m ON g.current_beatmap_id = m.mapset_id
                 JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
                 WHERE g.id = ? AND g.user_id = ?
                 FOR UPDATE`,
-            [sessionId, authSession.user.banchoId],
-        );
+            [sessionId, authSession.user.banchoId]
+        )) as [DatabaseGameSession];
 
         if (!gameState) {
             throw new Error("Game session not found");
@@ -409,12 +409,12 @@ export async function endGameAction(sessionId: string): Promise<void> {
     try {
         await query("START TRANSACTION");
 
-        const [gameState] = await query(
+        const [gameState] = (await query(
             `SELECT * FROM game_sessions
                 WHERE id = ? AND user_id = ?
                 FOR UPDATE`,
-            [sessionId, authSession.user.banchoId],
-        );
+            [sessionId, authSession.user.banchoId]
+        )) as [DatabaseGameSession];
 
         if (!gameState) {
             throw new Error("Game session not found");
@@ -437,7 +437,7 @@ export async function endGameAction(sessionId: string): Promise<void> {
         await query(
             `INSERT INTO games (user_id, game_mode, points, streak, variant)
                 VALUES (?, ?, ?, ?, ?)`,
-            [authSession.user.banchoId, gameState.game_mode, points, gameState.highest_streak, gameState.variant],
+            [authSession.user.banchoId, gameState.game_mode, points, gameState.highest_streak, gameState.variant]
         );
 
         if (gameState.variant === "classic") {
@@ -451,7 +451,7 @@ export async function endGameAction(sessionId: string): Promise<void> {
                    highest_streak = GREATEST(highest_streak, VALUES(highest_streak)),
                    highest_score = GREATEST(highest_score, VALUES(highest_score)),
                    last_played = CURRENT_TIMESTAMP`,
-                [authSession.user.banchoId, gameState.game_mode, points, gameState.highest_streak, points],
+                [authSession.user.banchoId, gameState.game_mode, points, gameState.highest_streak, points]
             );
         } else {
             await query(
@@ -462,7 +462,7 @@ export async function endGameAction(sessionId: string): Promise<void> {
                    games_played = games_played + 1,
                    highest_streak = GREATEST(highest_streak, VALUES(highest_streak)),
                    last_played = CURRENT_TIMESTAMP`,
-                [authSession.user.banchoId, gameState.game_mode, gameState.highest_streak],
+                [authSession.user.banchoId, gameState.game_mode, gameState.highest_streak]
             );
         }
 
@@ -477,7 +477,7 @@ export async function deactivateSessionAction(sessionId: string) {
     await query(
         `UPDATE game_sessions SET is_active = FALSE
             WHERE id = ?`,
-        [sessionId],
+        [sessionId]
     );
 }
 
@@ -489,7 +489,7 @@ export async function getSuggestionsAction(str: string): Promise<string[]> {
             FROM mapset_data
             WHERE title LIKE ?
             LIMIT 5`,
-        [`%${str}%`],
+        [`%${str}%`]
     );
 
     return results.map((r) => r.title);

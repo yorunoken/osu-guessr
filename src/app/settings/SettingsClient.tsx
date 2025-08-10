@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createApiKeyAction, deleteApiKeyAction, ApiKey, listApiKeysAction } from "@/actions/api-keys-server";
@@ -27,11 +27,7 @@ export default function SettingsClient() {
     const [newKeyName, setNewKeyName] = useState("");
     const [copied, setCopied] = useState(false);
 
-    useEffect(() => {
-        loadApiKeys();
-    }, []);
-
-    async function loadApiKeys() {
+    const loadApiKeys = useCallback(async () => {
         setLoading((prev) => ({ ...prev, keys: true }));
         try {
             const keys = await listApiKeysAction();
@@ -41,7 +37,11 @@ export default function SettingsClient() {
         } finally {
             setLoading((prev) => ({ ...prev, keys: false }));
         }
-    }
+    }, [t.settings.apiKeys.errors.loadFailed]);
+
+    useEffect(() => {
+        loadApiKeys();
+    }, [loadApiKeys]);
 
     // Key management functions
     async function handleCreateKey() {

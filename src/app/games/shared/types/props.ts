@@ -12,6 +12,6 @@ export interface GameMediaProps {
         mapper?: string;
         mapsetId?: number;
     };
-    onVolumeChange(volume: number): void;
-    initialVolume: number;
+    onVolumeChange?(volume: number): void;
+    initialVolume?: number;
 }

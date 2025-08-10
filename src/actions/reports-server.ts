@@ -5,6 +5,8 @@ import { query } from "@/lib/database";
 import { authenticatedAction } from "./server";
 import { ReportType, Report } from "./types";
 
+export type { ReportType };
+
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK!;
 
 const reportSchema = z.object({
@@ -31,7 +33,7 @@ export async function createReportAction(mapsetId: number, reportType: ReportTyp
             description,
         });
 
-        const [mapset] = await query(`SELECT title, artist FROM mapset_data WHERE mapset_id = ?`, [validated.mapsetId]);
+        const [mapset] = (await query(`SELECT title, artist FROM mapset_data WHERE mapset_id = ?`, [validated.mapsetId])) as [{ title: string; artist: string }];
 
         const reportMessage = `
 **New Report**
@@ -52,7 +54,7 @@ Mapset Link: https://osu.ppy.sh/s/${mapsetId}
             `INSERT INTO reports (
                 user_id, mapset_id, report_type, description
             ) VALUES (?, ?, ?, ?)`,
-            [session.user.banchoId, validated.mapsetId, validated.reportType, validated.description],
+            [session.user.banchoId, validated.mapsetId, validated.reportType, validated.description]
         );
     });
 }

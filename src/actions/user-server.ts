@@ -4,7 +4,9 @@ import { query } from "@/lib/database";
 import { z } from "zod";
 import { authenticatedAction } from "./server";
 import { GameVariant } from "@/app/games/config";
-import { Game, GameMode, HighestStats, TopPlayer, User, UserAchievement, UserWithStats } from "./types";
+import { Game, GameMode, HighestStats, TopPlayer, User, UserAchievement, UserWithStats, UserRanks, UserBadge } from "./types";
+
+export type { UserRanks };
 
 // Schemas
 const gameModeSchema = z.enum(["background", "audio", "skin"]);
@@ -21,7 +23,7 @@ export async function createUserAction(banchoId: number, username: string, avata
          ON DUPLICATE KEY UPDATE
             username = VALUES(username),
             avatar_url = VALUES(avatar_url)`,
-        [banchoId, username, avatar_url],
+        [banchoId, username, avatar_url]
     );
 }
 
@@ -33,20 +35,20 @@ export async function deleteUserAction(banchoId: number) {
 }
 
 export async function getUserByIdAction(banchoId: number): Promise<UserWithStats | null> {
-    const userResult = await query(`SELECT * FROM users WHERE bancho_id = ?`, [banchoId]);
+    const userResult = (await query(`SELECT * FROM users WHERE bancho_id = ?`, [banchoId])) as User[];
 
     if (!userResult[0]) return null;
     const user = userResult[0];
 
-    const badges = await query(
+    const badges = (await query(
         `SELECT b.name, b.color, ub.assigned_at
          FROM user_badges ub
          JOIN badges b ON ub.badge_name = b.name
          WHERE ub.user_id = ?`,
-        [banchoId],
-    );
+        [banchoId]
+    )) as UserBadge[];
 
-    const achievements = await query(
+    const achievements = (await query(
         `SELECT g.user_id, g.game_mode, g.variant,
                 COUNT(*) as games_played,
                 MAX(CASE WHEN g.variant = 'classic' THEN g.points ELSE 0 END) as highest_score,
@@ -56,10 +58,10 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
          FROM games g
          WHERE g.user_id = ?
          GROUP BY g.user_id, g.game_mode, g.variant`,
-        [banchoId],
-    );
+        [banchoId]
+    )) as UserAchievement[];
 
-    const globalClassicRankResult = await query(
+    const globalClassicRankResult = (await query(
         `WITH RankedUsers AS (
             SELECT user_id, SUM(points) as total_score
             FROM games
@@ -74,10 +76,10 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
             FROM games
             WHERE user_id = ? AND variant = 'classic'
         )`,
-        [banchoId],
-    );
+        [banchoId]
+    )) as [{ globalRank: number }];
 
-    const globalDeathRankResult = await query(
+    const globalDeathRankResult = (await query(
         `WITH RankedUsers AS (
             SELECT user_id, MAX(streak) as highest_streak
             FROM games
@@ -92,8 +94,8 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
             FROM games
             WHERE user_id = ? AND variant = 'death'
         )`,
-        [banchoId],
-    );
+        [banchoId]
+    )) as [{ globalRank: number }];
 
     const modeRanks: { [key in GameMode]: { classic?: number; death?: number } } = {
         background: {},
@@ -102,7 +104,7 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
     };
 
     for (const mode of Object.keys(modeRanks) as GameMode[]) {
-        const classicRank = await query(
+        const classicRank = (await query(
             `WITH RankedUsers AS (
                 SELECT user_id, SUM(points) as total_score
                 FROM games
@@ -117,10 +119,10 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
                 FROM games
                 WHERE user_id = ? AND game_mode = ? AND variant = 'classic'
             )`,
-            [mode, banchoId, mode],
-        );
+            [mode, banchoId, mode]
+        )) as [{ rank: number }];
 
-        const deathRank = await query(
+        const deathRank = (await query(
             `WITH RankedUsers AS (
                 SELECT user_id, MAX(streak) as highest_streak
                 FROM games
@@ -135,8 +137,8 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
                 FROM games
                 WHERE user_id = ? AND game_mode = ? AND variant = 'death'
             )`,
-            [mode, banchoId, mode],
-        );
+            [mode, banchoId, mode]
+        )) as [{ rank: number }];
 
         modeRanks[mode] = {
             classic: classicRank[0].rank + 1,
@@ -159,13 +161,13 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
 }
 
 export async function getUserStatsAction(banchoId: number): Promise<Array<UserAchievement>> {
-    const result = await query(
+    const result = (await query(
         `SELECT user_id, game_mode, total_score, games_played,
                 highest_streak, highest_score, last_played
          FROM user_achievements
          WHERE user_id = ?`,
-        [banchoId],
-    );
+        [banchoId]
+    )) as UserAchievement[];
     return result;
 }
 
@@ -269,12 +271,12 @@ export async function searchUsersAction(searchTerm: string, limit: number = 10):
          WHERE username LIKE ?
          ORDER BY username
          LIMIT ?`,
-        [`%${validated.term}%`, validated.limit],
+        [`%${validated.term}%`, validated.limit]
     );
 }
 
 export async function getHighestStatsAction(variant: GameVariant = "classic"): Promise<HighestStats> {
-    const result = await query(
+    const result = (await query(
         `SELECT
             (SELECT COUNT(*) FROM users) as total_users,
             COUNT(*) as total_games,
@@ -284,8 +286,8 @@ export async function getHighestStatsAction(variant: GameVariant = "classic"): P
             END as highest_score
          FROM games
          WHERE variant = ?`,
-        [variant, variant],
-    );
+        [variant, variant]
+    )) as [{ total_users: number; total_games: number; highest_score: number }];
 
     return {
         total_users: Number(result[0].total_users),
