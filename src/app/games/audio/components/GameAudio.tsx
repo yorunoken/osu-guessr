@@ -4,10 +4,12 @@ import { Loader2 } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 import { GameMediaProps } from "../../shared/types/props";
 import { ResultMessage } from "../../shared/components/Result";
+import { useTranslationsContext } from "@/context/translations-provider";
 
 export default function GameAudio({ mediaUrl, isRevealed, result, songInfo, onVolumeChange, initialVolume }: GameMediaProps) {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const { t } = useTranslationsContext();
 
     useEffect(() => {
         if (audioRef.current) {
@@ -76,9 +78,9 @@ export default function GameAudio({ mediaUrl, isRevealed, result, songInfo, onVo
                 )}
                 <audio ref={audioRef} controls className={`w-full mb-4 ${isLoading ? "hidden" : "block"}`}>
                     <source src={mediaUrl} type="audio/mp3" />
-                    Your browser does not support the audio element.
+                    {t.game.audio.browserNotSupported}
                 </audio>
-                {!isRevealed && <p className="text-center text-muted-foreground">Listen to the audio and try to guess the song title!</p>}
+                {!isRevealed && <p className="text-center text-muted-foreground">{t.game.audio.instructions}</p>}
             </div>
             {isRevealed && result && songInfo && (
                 <div className="bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
