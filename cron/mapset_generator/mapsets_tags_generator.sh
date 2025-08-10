@@ -25,7 +25,6 @@ total_lines=$(wc -l <mapsets.txt)
 current_line=0
 
 while IFS= read -r line; do
-    ((current_line++))
     progress=$((current_line * 100 / total_lines))
 
     if [[ $line =~ ([0-9]+) ]]; then
@@ -100,6 +99,7 @@ while IFS= read -r line; do
     else
         echo "[$progress%] Could not extract mapset ID from line: $line"
     fi
+    ((current_line++))
 done <"mapsets.txt"
 
 sed -i '$ s/,$/;/' "$MAPSET_TAGS_SQL"
