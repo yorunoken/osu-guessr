@@ -10,7 +10,7 @@ export function SupportPageLink() {
 
     return (
         <Button variant="ghost" size="sm" className="text-pink-400 hover:text-pink-300 hover:bg-pink-400/10" asChild>
-            <Link href="/support" target="_blank">
+            <Link href="/support">
                 <Heart className="h-5 w-5 mr-2" />
                 <span className="inline">{t.common.support}</span>
             </Link>
