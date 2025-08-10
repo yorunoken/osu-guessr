@@ -1,45 +1,99 @@
 import { startGameAction, submitGuessAction, getGameStateAction, endGameAction, getSuggestionsAction } from "@/actions/game-server";
 import { soundManager } from "./sounds";
-import { GameSession } from "./types";
+import { GameSession, GameClientConfig, GameClientEvents, GameClientStatus } from "./types";
 import { GameVariant } from "@/app/games/config";
 import { GameState } from "@/actions/types";
+import { GameError, handleGameError } from "./errors";
 
 type GameMode = "background" | "audio";
 
+const DEFAULT_CONFIG: GameClientConfig = {
+    maxRetries: 3,
+    retryDelay: 1000,
+    sessionTimeout: 300000, // 5 minutes
+    recoveryMode: "auto",
+};
+
 export class GameClient {
     private session: GameSession | null = null;
-    private onStateUpdate: (state: GameState) => void;
+    private events: GameClientEvents;
     private gameMode: GameMode;
     private gameVariant: GameVariant;
     private userVolume: number = 0.25;
+    private config: GameClientConfig;
+    private status: GameClientStatus = "idle";
 
-    constructor(onStateUpdate: (state: GameState) => void, gameMode: GameMode = "background", gameVariant: GameVariant = "classic") {
-        this.onStateUpdate = onStateUpdate;
+    constructor(events: GameClientEvents, gameMode: GameMode = "background", gameVariant: GameVariant = "classic", config: Partial<GameClientConfig> = {}) {
+        this.events = events;
         this.gameMode = gameMode;
         this.gameVariant = gameVariant;
+        this.config = { ...DEFAULT_CONFIG, ...config };
+    }
+
+    getStatus(): GameClientStatus {
+        return this.status;
     }
 
     setVolume(volume: number): void {
-        this.userVolume = volume;
+        this.userVolume = Math.max(0, Math.min(1, volume));
+        soundManager.setVolume(this.userVolume);
     }
 
     getVolume(): number {
         return this.userVolume;
     }
 
+    private setStatus(status: GameClientStatus): void {
+        this.status = status;
+    }
+
+    private async executeWithRetry<T>(operation: () => Promise<T>, operationName: string): Promise<T> {
+        let lastError: Error | null = null;
+
+        for (let attempt = 1; attempt <= this.config.maxRetries; attempt++) {
+            try {
+                return await operation();
+            } catch (error) {
+                const gameError = handleGameError(error);
+                lastError = gameError;
+
+                this.events.onError?.(gameError);
+
+                if (!gameError.recoverable || attempt === this.config.maxRetries) {
+                    throw gameError;
+                }
+
+                this.events.onRetry?.(attempt, this.config.maxRetries);
+                console.warn(`${operationName} failed (attempt ${attempt}/${this.config.maxRetries}):`, gameError.message);
+
+                // Exponential backoff
+                await new Promise((resolve) => setTimeout(resolve, this.config.retryDelay * Math.pow(2, attempt - 1)));
+            }
+        }
+
+        throw lastError || new GameError(`Failed to execute ${operationName}`, "OPERATION_FAILED");
+    }
+
     async startGame(): Promise<void> {
+        this.setStatus("starting");
+
         try {
-            const initialState = await startGameAction(this.gameMode, this.gameVariant);
+            const initialState = await this.executeWithRetry(() => startGameAction(this.gameMode, this.gameVariant), "startGame");
 
             this.session = {
                 id: initialState.sessionId,
                 state: initialState,
                 timer: null,
                 isActive: true,
+                lastActivity: new Date(),
+                retryCount: 0,
             };
+
+            this.setStatus("active");
             this.startTimer();
             console.log(`[Game Client]: Started ${this.gameMode} Game (${this.gameVariant} mode)`);
         } catch (error) {
+            this.setStatus("error");
             console.error("Failed to start game:", error);
             throw error;
         }
@@ -90,7 +144,7 @@ export class GameClient {
         this.stopTimer();
 
         try {
-            const newState = await submitGuessAction(this.session.id, guess);
+            const newState = await this.executeWithRetry(() => submitGuessAction(this.session!.id, guess), "submitGuess");
 
             if (newState.lastGuess?.correct) {
                 soundManager.play("correct");
@@ -102,7 +156,10 @@ export class GameClient {
             console.log("[Game Client]: Submitted Guess");
         } catch (error) {
             console.error("Failed to submit guess:", error);
-            await this.recoverState();
+            if (this.config.recoveryMode === "auto") {
+                await this.recoverState();
+            }
+            throw error;
         }
     }
 
@@ -112,12 +169,15 @@ export class GameClient {
 
         try {
             soundManager.play("skip");
-            const newState = await submitGuessAction(this.session.id, null);
+            const newState = await this.executeWithRetry(() => submitGuessAction(this.session!.id, null), "skipAnswer");
             this.updateState(newState);
             console.log("[Game Client]: Revealed Answer");
         } catch (error) {
             console.error("Failed to reveal answer:", error);
-            await this.recoverState();
+            if (this.config.recoveryMode === "auto") {
+                await this.recoverState();
+            }
+            throw error;
         }
     }
 
@@ -125,30 +185,38 @@ export class GameClient {
         if (!this.session?.isActive) return;
 
         try {
-            const newState = await submitGuessAction(this.session.id, undefined);
+            const newState = await this.executeWithRetry(() => submitGuessAction(this.session!.id, undefined), "goNextRound");
             this.updateState(newState);
             this.startTimer();
             console.log("[Game Client]: Next Round");
         } catch (error) {
             console.error("Failed to go to next round:", error);
-            await this.recoverState();
+            if (this.config.recoveryMode === "auto") {
+                await this.recoverState();
+            }
+            throw error;
         }
     }
 
     private async recoverState(): Promise<void> {
+        if (!this.session?.id) return;
+
         try {
-            if (!this.session?.id) return;
-            const currentState = await getGameStateAction(this.session.id);
+            this.events.onRecovery?.();
+            const currentState = await this.executeWithRetry(() => getGameStateAction(this.session!.id), "recoverState");
             this.updateState(currentState);
+            console.log("[Game Client]: State recovered successfully");
         } catch (error) {
             console.error("Failed to recover state:", error);
+            this.setStatus("error");
         }
     }
 
     private updateState(newState: GameState): void {
         if (!this.session) return;
         this.session.state = newState;
-        this.onStateUpdate(newState);
+        this.session.lastActivity = new Date();
+        this.events.onStateUpdate(newState);
     }
 
     async endGame(): Promise<void> {
@@ -156,13 +224,14 @@ export class GameClient {
 
         this.stopTimer();
         this.session.isActive = false;
+        this.setStatus("ended");
 
         try {
-            await endGameAction(this.session.id);
+            await this.executeWithRetry(() => endGameAction(this.session!.id), "endGame");
             console.log("[Game Client]: Ended Game");
         } catch (error) {
             console.error("Failed to end game:", error);
-            throw error;
+            // Don't throw here as the game is ending anyway
         } finally {
             this.cleanup();
         }
@@ -185,5 +254,6 @@ export class GameClient {
     private cleanup(): void {
         this.stopTimer();
         this.session = null;
+        this.setStatus("idle");
     }
 }

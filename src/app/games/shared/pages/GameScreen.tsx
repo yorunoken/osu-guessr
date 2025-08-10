@@ -55,9 +55,33 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
             setShowStats(false);
             setGuess("");
 
-            gameClient.current = new GameClient(setGameState, gameMode, gameVariant);
-            await gameClient.current.startGame();
+            gameClient.current = new GameClient(
+                {
+                    onStateUpdate: setGameState,
+                    onError: (error) => {
+                        console.error("Game error:", error);
+                        // You could show a toast notification here
+                    },
+                    onRetry: (attempt, maxRetries) => {
+                        console.log(`Retrying... (${attempt}/${maxRetries})`);
+                        // You could show a retry indicator here
+                    },
+                    onRecovery: () => {
+                        console.log("Game state recovered");
+                        // You could show a recovery notification here
+                    },
+                },
+                gameMode,
+                gameVariant,
+                {
+                    maxRetries: 3,
+                    retryDelay: 1000,
+                    sessionTimeout: 300000,
+                    recoveryMode: "auto",
+                }
+            );
 
+            await gameClient.current.startGame();
             setCountdown(AUTO_ADVANCE_DELAY_MS / 1000);
         } catch (error) {
             console.error("Failed to restart game:", error);
@@ -88,7 +112,7 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                 setIsLoading(false);
             }
         },
-        [isLoading],
+        [isLoading]
     );
 
     const handleGameComplete = useCallback(async () => {
@@ -277,8 +301,8 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                         {gameState.rounds.current >= gameState.rounds.total
                             ? t.game.actions.viewResults
                             : isReportDialogOpen
-                              ? t.game.actions.nextRound
-                              : t.game.actions.nextRoundTime.replace("{seconds}", countdown.toString())}
+                            ? t.game.actions.nextRound
+                            : t.game.actions.nextRoundTime.replace("{seconds}", countdown.toString())}
                     </Button>
                 )}
             </div>
