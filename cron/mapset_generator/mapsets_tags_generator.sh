@@ -68,15 +68,15 @@ while IFS= read -r line; do
 
         if [ -n "$largest_audio" ]; then
             audio_ext="${largest_audio##*.}"
-            cp -f "$largest_audio" "$AUDIO_DIR/$mapset_id.$audio_ext"
+            compressed_audio="$AUDIO_DIR/$mapset_id.$audio_ext"
+            ffmpeg -i "$largest_audio" -b:a 96k "$compressed_audio" -y
             audio_filename="$mapset_id.$audio_ext"
-            echo "  Audio file copied to: $AUDIO_DIR/$mapset_id.$audio_ext"
+            echo "  Audio file compressed and saved to: $compressed_audio"
         else
             echo "  No audio file found for mapset $mapset_id"
             continue
         fi
 
-        # Download background from osu! assets
         echo "  Downloading background image..."
         wget -q "https://assets.ppy.sh/beatmaps/$mapset_id/covers/fullsize.jpg" -O "$BG_DIR/$mapset_id.jpg"
         if [ $? -eq 0 ]; then
@@ -84,6 +84,17 @@ while IFS= read -r line; do
             echo "  Background image downloaded to: $BG_DIR/$mapset_id.jpg"
         else
             echo "  Failed to download background image for mapset $mapset_id"
+            continue
+        fi
+
+        echo "  Compressing background image..."
+        compressed_image="$BG_DIR/$mapset_id.jpg"
+        convert "$BG_DIR/$mapset_id.jpg" -resize 1280x720 -quality 75 "$compressed_image"
+        if [ $? -eq 0 ]; then
+            image_filename="$mapset_id.jpg"
+            echo "  Background image compressed and saved to: $compressed_image"
+        else
+            echo "  Failed to compress background image for mapset $mapset_id"
             continue
         fi
 
