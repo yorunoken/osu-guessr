@@ -34,9 +34,9 @@ export default function RootLayout({
                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3511683752810096" crossOrigin="anonymous"></script>
             </head>
             <body className={`${publicSans.variable} antialiased`}>
-                <SessionWrapper>
-                    <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
-                        <TranslationsProvider>
+                <TranslationsProvider>
+                    <SessionWrapper>
+                        <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
                             <Header />
 
                             <div className="flex flex-col min-h-screen">
@@ -44,9 +44,9 @@ export default function RootLayout({
                             </div>
                             <Footer />
                             <Toaster />
-                        </TranslationsProvider>
-                    </ThemeProvider>
-                </SessionWrapper>
+                        </ThemeProvider>
+                    </SessionWrapper>
+                </TranslationsProvider>
             </body>
         </html>
     );

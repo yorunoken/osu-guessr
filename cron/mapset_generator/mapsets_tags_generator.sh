@@ -108,4 +108,7 @@ sed -i '$ s/,$/;/' "$MAPSET_DATA_SQL"
 echo "SET FOREIGN_KEY_CHECKS = 1;" >>"$MAPSET_TAGS_SQL"
 echo "SET FOREIGN_KEY_CHECKS = 1;" >>"$MAPSET_DATA_SQL"
 
+mariadb -p osu_guessr <mapset_data.sql
+mariadb -p osu_guessr <mapset_tags.sql
+
 echo "Processing complete!"
