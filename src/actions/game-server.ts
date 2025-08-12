@@ -473,7 +473,7 @@ export async function endGameAction(sessionId: string): Promise<void> {
     }
 }
 
-export async function deactivateSessionAction(sessionId: string) {
+async function deactivateSessionAction(sessionId: string) {
     await query(
         `UPDATE game_sessions SET is_active = FALSE
             WHERE id = ?`,

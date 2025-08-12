@@ -1,7 +1,7 @@
 export type GameMode = "background" | "audio" | "skin";
 export type GameVariant = "classic" | "death";
 export type ReportType = "incorrect_title" | "inappropriate_content" | "wrong_audio" | "wrong_background" | "other";
-export type ReportStatus = "pending" | "investigating" | "resolved" | "rejected";
+type ReportStatus = "pending" | "investigating" | "resolved" | "rejected";
 
 export interface ApiKey {
     id: string;
@@ -26,7 +26,7 @@ export interface MapsetData {
 
 export interface MapsetDataWithTags extends MapsetData, MapsetTags {}
 
-export type GuessResult = {
+type GuessResult = {
     correct: boolean;
     answer: string;
     type: "guess" | "timeout" | "skip";

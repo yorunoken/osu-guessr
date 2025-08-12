@@ -1,4 +1,4 @@
-export interface Supporter {
+interface Supporter {
     name: string;
     url?: string;
     amount: number;

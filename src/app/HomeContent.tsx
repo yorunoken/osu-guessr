@@ -7,7 +7,7 @@ import React from "react";
 import { SupportersSection } from "./components/Supporters";
 import { ChangelogsSection } from "./components/Changelogs";
 
-export interface ChangelogEntry {
+interface ChangelogEntry {
     description: string;
     commit?: string;
     pr?: string;
