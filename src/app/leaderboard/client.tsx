@@ -6,12 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getTopPlayersAction } from "@/actions/user-server";
-import { TopPlayer } from "@/actions/types";
+import { GameMode, TopPlayer } from "@/actions/types";
 import { GameVariant } from "@/app/games/config";
 import { useTranslationsContext } from "@/context/translations-provider";
 import { AdSlider } from "@/components/Ads";
-
-type GameMode = "background" | "audio" | "skin";
 
 export default function LeaderboardClient() {
     const { t } = useTranslationsContext();

@@ -5,8 +5,6 @@ import { GameVariant } from "@/app/games/config";
 import { GameState, GameMode } from "@/actions/types";
 import { GameError, handleGameError } from "./errors";
 
-type SupportedGameMode = "background" | "audio";
-
 const DEFAULT_CONFIG: GameClientConfig = {
     maxRetries: 3,
     retryDelay: 1000,
@@ -30,7 +28,7 @@ export class GameClient {
         this.config = { ...DEFAULT_CONFIG, ...config };
     }
 
-    private isSupportedGameMode(mode: GameMode): mode is SupportedGameMode {
+    private isSupportedGameMode(mode: GameMode): mode is GameMode {
         return mode === "audio" || mode === "background";
     }
 
@@ -86,7 +84,7 @@ export class GameClient {
                 throw new GameError(`Game mode "${this.gameMode}" is not yet supported`, "UNSUPPORTED_MODE");
             }
 
-            const initialState = await this.executeWithRetry(() => startGameAction(this.gameMode as SupportedGameMode, this.gameVariant), "startGame");
+            const initialState = await this.executeWithRetry(() => startGameAction(this.gameMode, this.gameVariant), "startGame");
 
             this.session = {
                 id: initialState.sessionId,

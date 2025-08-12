@@ -1,3 +1,4 @@
+import { GameMode } from "@/actions/types";
 import { useTranslationsContext } from "@/context/translations-provider";
 
 interface GameHeaderProps {
@@ -6,7 +7,7 @@ interface GameHeaderProps {
     timeLeft: number;
     currentRound: number;
     totalRounds: number;
-    mode: "Background" | "Audio";
+    mode: GameMode;
     gameVariant: "classic" | "death";
     maxStreak?: number;
     lives?: number;
@@ -34,7 +35,7 @@ export default function GameHeader({ streak, points, timeLeft, currentRound, tot
     return (
         <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-4">
-                <h1 className="text-3xl font-bold">{t.game.header.title.replace("{mode}", mode)}</h1>
+                <h1 className="text-3xl font-bold capitalize">{t.game.header.title.replace("{mode}", mode)}</h1>
 
                 {gameVariant === "classic" ? (
                     <>

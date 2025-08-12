@@ -3,8 +3,7 @@ import UserNotFound from "./NotFound";
 import { Metadata } from "next";
 import { GameVariant } from "@/app/games/config";
 import UserProfileClient from "./client";
-
-type GameModes = "background" | "audio" | "skin";
+import { GameMode } from "@/actions/types";
 
 interface Props {
     params: Promise<{ banchoId: string }>;
@@ -25,7 +24,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 export default async function UserProfile({ params, searchParams }: Props) {
     const { banchoId } = await params;
     const { mode = "background", variant = "classic" } = await searchParams;
-    const currentMode = mode as GameModes;
+    const currentMode = mode as GameMode;
     const currentVariant = variant as GameVariant;
 
     const userStats = await getUserStatsAction(Number(banchoId));

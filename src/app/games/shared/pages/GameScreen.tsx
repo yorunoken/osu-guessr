@@ -255,7 +255,7 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                 timeLeft={gameState.timeLeft}
                 currentRound={gameState.rounds.current}
                 totalRounds={gameState.rounds.total}
-                mode={gameMode === "audio" ? "Audio" : "Background"}
+                mode={gameMode}
                 gameVariant={gameVariant}
                 maxStreak={gameState.score.highestStreak}
             />

@@ -1,15 +1,13 @@
 "use client";
 
-import { Game, UserAchievement, UserBadge } from "@/actions/types";
+import { Game, GameMode, UserAchievement, UserBadge } from "@/actions/types";
 import Image from "next/image";
 import Link from "next/link";
 import { GameVariant } from "@/app/games/config";
 import { useTranslationsContext } from "@/context/translations-provider";
 
-type GameModes = "background" | "audio" | "skin";
-
 interface GameStats {
-    game_mode: GameModes;
+    game_mode: GameMode;
     total_score: bigint;
     games_played: number;
     highest_streak: number;
@@ -23,14 +21,14 @@ interface UserRanks {
         death?: number;
     };
     modeRanks: {
-        [key in GameModes]: {
+        [key in GameMode]: {
             classic?: number;
             death?: number;
         };
     };
 }
 
-const gamemodes: Array<GameModes> = ["audio", "background", "skin"];
+const gamemodes: Array<GameMode> = ["audio", "background", "skin"];
 
 interface UserProfileClientProps {
     user: {
@@ -43,7 +41,7 @@ interface UserProfileClientProps {
     userStats: UserAchievement[];
     userGames: Game[];
     topPlays: Game[];
-    currentMode: GameModes;
+    currentMode: GameMode;
     currentVariant: GameVariant;
     banchoId: string;
 }
@@ -58,9 +56,9 @@ export default function UserProfileClient({ user, userStats, userGames, topPlays
         }
         acc[game.game_mode].push(game);
         return acc;
-    }, {} as Record<GameModes, Array<Game>>);
+    }, {} as Record<GameMode, Array<Game>>);
 
-    const gameStats: Record<GameModes, GameStats> = {
+    const gameStats: Record<GameMode, GameStats> = {
         background: {
             game_mode: "background",
             total_score: 0n,

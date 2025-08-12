@@ -5,7 +5,7 @@ import { query } from "@/lib/database";
 import { z } from "zod";
 import { BASE_POINTS, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME, GameVariant } from "../app/games/config";
 import { getRandomAudioAction, getRandomBackgroundAction } from "./mapsets-server";
-import type { MapsetDataWithTags, GameState, DatabaseGameSession } from "./types";
+import type { MapsetDataWithTags, GameState, DatabaseGameSession, GameMode } from "./types";
 import path from "path";
 import fs from "fs/promises";
 import { checkGuess, GuessDifficulty } from "@/lib/guess-checker";
@@ -70,7 +70,7 @@ async function validateGameSession(sessionId: string, userId: number): Promise<D
     return session;
 }
 
-export async function startGameAction(gameMode: "audio" | "background", variant: GameVariant = "classic"): Promise<GameState> {
+export async function startGameAction(gameMode: GameMode, variant: GameVariant = "classic"): Promise<GameState> {
     const authSession = await getAuthSession();
     const sessionId = crypto.randomUUID();
 
