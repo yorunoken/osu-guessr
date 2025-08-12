@@ -5,22 +5,26 @@ import Link from "next/link";
 import { useState } from "react";
 import { ROUND_TIME, BASE_POINTS, SKIP_PENALTY, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, GameVariant } from "../../config";
 import { useTranslationsContext } from "@/context/translations-provider";
+import { GameMode } from "@/actions/types";
 
 interface PreGameMenuProps {
     onStart(variant: GameVariant): void;
-    gameType: "audio" | "background";
+    gameMode: GameMode;
 }
 
-export default function PreGameMenu({ onStart, gameType }: PreGameMenuProps) {
+export default function PreGameMenu({ onStart, gameMode }: PreGameMenuProps) {
     const { t } = useTranslationsContext();
     const [selectedMode, setSelectedMode] = useState<GameVariant>("classic");
+
+    const descriptions = t.game.preGame.description as Record<string, string>;
+    const gameDescription = descriptions[gameMode] || descriptions.background;
 
     const ClassicModeContent = () => (
         <>
             <div>
                 <h2 className="text-xl font-semibold mb-3">{t.game.preGame.howToPlay.title}</h2>
                 <ul className="space-y-2 text-foreground/70">
-                    <li>• {t.game.preGame.description[gameType]}</li>
+                    <li>• {gameDescription}</li>
                     <li>• {t.game.preGame.howToPlay.classic.rounds.replace("{count}", MAX_ROUNDS.toString())}</li>
                     <li>• {t.game.preGame.howToPlay.classic.time.replace("{seconds}", ROUND_TIME.toString())}</li>
                     <li>• {t.game.preGame.howToPlay.classic.points}</li>
@@ -45,7 +49,7 @@ export default function PreGameMenu({ onStart, gameType }: PreGameMenuProps) {
             <div>
                 <h2 className="text-xl font-semibold mb-3">{t.game.preGame.howToPlay.title}</h2>
                 <ul className="space-y-2 text-foreground/70">
-                    <li>• {t.game.preGame.description[gameType]}</li>
+                    <li>• {gameDescription}</li>
                     <li>• {t.game.preGame.howToPlay.death.continuous}</li>
                     <li>• {t.game.preGame.howToPlay.death.time.replace("{seconds}", ROUND_TIME.toString())}</li>
                     <li>• {t.game.preGame.howToPlay.death.streak}</li>
@@ -67,7 +71,7 @@ export default function PreGameMenu({ onStart, gameType }: PreGameMenuProps) {
         <div className="container mx-auto px-4 py-16">
             <div className="max-w-2xl mx-auto">
                 <div className="bg-card rounded-xl p-8 border border-border/50">
-                    <h1 className="text-3xl font-bold mb-6">{t.game.preGame.title[gameType]}</h1>
+                    <h1 className="text-3xl font-bold mb-6">{t.game.preGame.title[gameMode as keyof typeof t.game.preGame.title]}</h1>
 
                     <div className="grid grid-cols-2 gap-4 mb-8">
                         <Button onClick={() => setSelectedMode("classic")} variant={selectedMode === "classic" ? "default" : "outline"} className="flex-1 h-auto py-6 flex flex-col gap-2">

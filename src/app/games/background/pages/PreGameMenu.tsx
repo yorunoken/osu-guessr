@@ -8,5 +8,5 @@ interface PreGameMenuProps {
 }
 
 export default function BackgroundPreGameMenu({ onStart }: PreGameMenuProps) {
-    return <PreGameMenu onStart={onStart} gameType="background" />;
+    return <PreGameMenu onStart={onStart} gameMode="background" />;
 }

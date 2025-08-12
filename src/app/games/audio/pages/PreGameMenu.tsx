@@ -8,5 +8,5 @@ interface PreGameMenuProps {
 }
 
 export default function AudioPreGameMenu({ onStart }: PreGameMenuProps) {
-    return <PreGameMenu onStart={onStart} gameType="audio" />;
+    return <PreGameMenu onStart={onStart} gameMode="audio" />;
 }

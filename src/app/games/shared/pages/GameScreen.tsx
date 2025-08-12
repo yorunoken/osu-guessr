@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { GameClient } from "@/lib/game/GameClient";
-import { GameState } from "@/actions/types";
+import { GameState, GameMode } from "@/actions/types";
 
 import { AUTO_ADVANCE_DELAY_MS, GameVariant } from "../../config";
 import GameStats from "../components/GameStats";
@@ -18,7 +18,7 @@ import { useTranslationsContext } from "@/context/translations-provider";
 interface GameScreenProps {
     onExit(): void;
     gameVariant: GameVariant;
-    gameMode: "audio" | "background";
+    gameMode: GameMode;
     GameMedia: React.ComponentType<{
         mediaUrl: string;
         isRevealed: boolean;
