@@ -20,13 +20,13 @@ export default function GameHeader({ streak, points, timeLeft, currentRound, tot
         if (lives === 1) {
             return (
                 <div className="bg-primary/10 text-primary px-4 py-1 rounded-full">
-                    <span className="font-semibold">🎯 {t.game.header.death.lives.oneShot}</span>
+                    <span className="font-semibold">{t.game.header.death.lives.oneShot}</span>
                 </div>
             );
         } else {
             return (
                 <div className="bg-destructive/20 text-destructive px-4 py-1 rounded-full">
-                    <span className="font-semibold">💀 {t.game.header.death.lives.gameOver}</span>
+                    <span className="font-semibold">{t.game.header.death.lives.gameOver}</span>
                 </div>
             );
         }

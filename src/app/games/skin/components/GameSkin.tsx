@@ -9,7 +9,6 @@ export default function GameSkin({ mediaUrl, isRevealed, result, songInfo }: Gam
         <div className="relative bg-card border border-border rounded-lg overflow-hidden">
             <div className="aspect-video">
                 <Image src={mediaUrl || "/placeholder.svg"} alt="Skin screenshot" fill className="object-contain" priority />
-                {!isRevealed && <div className="absolute bottom-4 left-4 px-3 py-1 bg-background/80 backdrop-blur-sm rounded-lg text-foreground text-sm">🎨 Guess the skin name</div>}
             </div>
 
             {isRevealed && result && songInfo && (
