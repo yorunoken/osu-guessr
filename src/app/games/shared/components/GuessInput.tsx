@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
-import { GameClient } from "@/lib/game/GameClient";
+import { GameClient } from "@/lib/game/client";
 import { useTranslationsContext } from "@/context/translations-provider";
 import { motion, AnimatePresence } from "framer-motion";
 import { soundManager } from "@/lib/game/sounds";

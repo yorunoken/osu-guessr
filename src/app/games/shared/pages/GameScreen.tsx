@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-import { GameClient } from "@/lib/game/GameClient";
+import { GameClient } from "@/lib/game/client";
 import { GameState, GameMode } from "@/actions/types";
 
 import { AUTO_ADVANCE_DELAY_MS, GameVariant } from "../../config";
