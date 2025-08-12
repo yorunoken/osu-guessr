@@ -53,8 +53,12 @@ class GameRegistry {
         return this.variants.get(id);
     }
 
-    getAllModes(): GameModeConfig[] {
-        return Array.from(this.modes.values()).filter((mode) => mode.isEnabled);
+    getAllModes(shouldGetOnlyEnabled: boolean = false): GameModeConfig[] {
+        if (shouldGetOnlyEnabled) {
+            return Array.from(this.modes.values()).filter((mode) => mode.isEnabled);
+        } else {
+            return Array.from(this.modes.values());
+        }
     }
 
     getAllVariants(): GameVariantConfig[] {
