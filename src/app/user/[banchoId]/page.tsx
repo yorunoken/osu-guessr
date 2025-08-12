@@ -1,5 +1,3 @@
-import { getUserStatsAction, getUserLatestGamesAction, getUserByIdAction, getUserTopGamesAction, UserRanks } from "@/actions/user-server";
-import UserNotFound from "./NotFound";
 import { Metadata } from "next";
 import { GameVariant } from "@/app/games/config";
 import UserProfileClient from "./client";
@@ -10,14 +8,10 @@ interface Props {
     searchParams: Promise<{ mode?: string; variant?: string }>;
 }
 
-export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
-    const { banchoId } = await params;
-    const { mode = "background" } = await searchParams;
-    const user = await getUserByIdAction(Number(banchoId));
-
+export async function generateMetadata(): Promise<Metadata> {
     return {
-        title: user ? `${user.username}'s ${mode} Stats | {osu_guessr}` : "User Profile | {osu_guessr}",
-        description: user ? `Check out ${user.username}'s ${mode} mode statistics and achievements on {osu_guessr}` : "View player statistics and achievements on {osu_guessr}",
+        title: `User Profile | osu!guessr`,
+        description: `View player statistics and achievements on osu!guessr`,
     };
 }
 
@@ -27,32 +21,5 @@ export default async function UserProfile({ params, searchParams }: Props) {
     const currentMode = mode as GameMode;
     const currentVariant = variant as GameVariant;
 
-    const userStats = await getUserStatsAction(Number(banchoId));
-    const user = await getUserByIdAction(Number(banchoId));
-    let userGames = await getUserLatestGamesAction(Number(banchoId), undefined, currentVariant);
-    const topPlays = await getUserTopGamesAction(Number(banchoId), undefined, currentVariant);
-
-    if (!user) {
-        return <UserNotFound />;
-    }
-
-    const defaultRanks: UserRanks = {
-        globalRank: undefined,
-        modeRanks: {
-            background: {},
-            audio: {},
-            skin: {},
-        },
-    };
-
-    const userWithDefaults = {
-        ...user,
-        achievements: user.achievements || [],
-        ranks: user.ranks || defaultRanks,
-    };
-
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    userGames = userGames.filter((x) => new Date(x.ended_at) > twentyFourHoursAgo);
-
-    return <UserProfileClient user={userWithDefaults} userStats={userStats} userGames={userGames} topPlays={topPlays} currentMode={currentMode} currentVariant={currentVariant} banchoId={banchoId} />;
+    return <UserProfileClient currentMode={currentMode} currentVariant={currentVariant} banchoId={banchoId} />;
 }
