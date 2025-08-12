@@ -4,8 +4,8 @@ import { getAuthSession } from "./server";
 import { query } from "@/lib/database";
 import { z } from "zod";
 import { BASE_POINTS, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME, GameVariant } from "../app/games/config";
-import { getRandomAudioAction, getRandomBackgroundAction } from "./mapsets-server";
-import type { MapsetDataWithTags, GameState, DatabaseGameSession, GameMode } from "./types";
+import { getRandomAudioAction, getRandomBackgroundAction, getRandomSkinAction } from "./mapsets-server";
+import type { MapsetDataWithTags, GameState, DatabaseGameSession, GameMode, SkinData } from "./types";
 import path from "path";
 import fs from "fs/promises";
 import { checkGuess, GuessDifficulty } from "@/lib/guess-checker";
@@ -42,13 +42,33 @@ async function acquireSessionLock(sessionId: string, timeoutMs: number = 5000): 
 
 async function validateGameSession(sessionId: string, userId: number): Promise<DatabaseGameSession> {
     const [session] = (await query(
-        `SELECT g.*, m.title, m.artist, m.mapper, mt.image_filename, mt.audio_filename,
+        `SELECT g.*, 
+            CASE 
+                WHEN g.game_mode = 'skin' THEN s.name
+                ELSE m.title 
+            END as title,
+            CASE 
+                WHEN g.game_mode = 'skin' THEN s.creator
+                ELSE m.artist 
+            END as artist,
+            CASE 
+                WHEN g.game_mode = 'skin' THEN s.creator
+                ELSE m.mapper 
+            END as mapper,
+            CASE 
+                WHEN g.game_mode = 'skin' THEN s.image_filename
+                ELSE mt.image_filename 
+            END as image_filename,
+            CASE 
+                WHEN g.game_mode = 'skin' THEN NULL
+                ELSE mt.audio_filename 
+            END as audio_filename,
             CASE
                 WHEN g.current_round = 1 AND g.last_guess IS NULL THEN FALSE
                 WHEN g.last_guess IS NOT NULL
-                    AND g.current_beatmap_id = (
-                        SELECT mapset_id
-                        FROM session_mapsets
+                    AND g.current_item_id = (
+                        SELECT item_id
+                        FROM session_items
                         WHERE session_id = g.id
                         ORDER BY round_number DESC
                         LIMIT 1
@@ -56,8 +76,9 @@ async function validateGameSession(sessionId: string, userId: number): Promise<D
                 ELSE FALSE
             END as has_guessed_current_round
             FROM game_sessions g
-            JOIN mapset_data m ON g.current_beatmap_id = m.mapset_id
-            JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
+            LEFT JOIN mapset_data m ON g.current_item_id = m.mapset_id AND g.game_mode IN ('background', 'audio')
+            LEFT JOIN mapset_tags mt ON g.current_item_id = mt.mapset_id AND g.game_mode IN ('background', 'audio')
+            LEFT JOIN skins s ON g.current_item_id = s.id AND g.game_mode = 'skin'
             WHERE g.id = ? AND g.user_id = ? AND g.is_active = TRUE
             FOR UPDATE`,
         [sessionId, userId]
@@ -82,29 +103,34 @@ export async function startGameAction(gameMode: GameMode, variant: GameVariant =
             [sessionId, authSession.user.banchoId, gameMode, variant]
         );
 
-        const beatmap = gameMode === "audio" ? await getRandomAudioAction(sessionId) : await getRandomBackgroundAction(sessionId);
+        const item = gameMode === "audio" ? await getRandomAudioAction(sessionId) : gameMode === "background" ? await getRandomBackgroundAction(sessionId) : await getRandomSkinAction(sessionId);
+
+        const itemId = gameMode === "skin" ? (item.data as SkinData).id : (item.data as MapsetDataWithTags).mapset_id;
+        const itemType = gameMode === "skin" ? "skin" : "mapset";
 
         await query(
             `UPDATE game_sessions
-            SET current_beatmap_id = ?,
+            SET current_item_id = ?,
                 time_left = ?,
                 last_action_at = CURRENT_TIMESTAMP
             WHERE id = ?`,
-            [beatmap.data.mapset_id, ROUND_TIME, sessionId]
+            [itemId, ROUND_TIME, sessionId]
         );
 
         await query(
-            `INSERT INTO session_mapsets (session_id, mapset_id, round_number)
-                VALUES (?, ?, 1)`,
-            [sessionId, beatmap.data.mapset_id]
+            `INSERT INTO session_items (session_id, item_id, item_type, round_number)
+                VALUES (?, ?, ?, 1)`,
+            [sessionId, itemId, itemType]
         );
 
         await query("COMMIT");
 
         const currentBeatmap =
             gameMode === "audio"
-                ? { audioUrl: "audioData" in beatmap ? beatmap.audioData : undefined, revealed: false }
-                : { imageUrl: "backgroundData" in beatmap ? beatmap.backgroundData : undefined, revealed: false };
+                ? { audioUrl: "audioData" in item ? item.audioData : undefined, revealed: false }
+                : gameMode === "background"
+                ? { imageUrl: "backgroundData" in item ? item.backgroundData : undefined, revealed: false }
+                : { imageUrl: "skinData" in item ? item.skinData : undefined, revealed: false };
 
         return {
             sessionId,
@@ -170,34 +196,49 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
             effectiveGuess = "";
         }
 
-        const [beatmap]: Array<MapsetDataWithTags> = await query(`SELECT * FROM mapset_data WHERE mapset_id = ?`, [gameState.current_beatmap_id]);
+        // Get current item data based on game mode
+        let currentItem: MapsetDataWithTags | SkinData;
+        if (gameState.game_mode === "skin") {
+            const [skin]: Array<SkinData> = await query(`SELECT * FROM skins WHERE id = ?`, [gameState.current_item_id]);
+            currentItem = skin;
+        } else {
+            const [beatmap]: Array<MapsetDataWithTags> = await query(`SELECT * FROM mapset_data WHERE mapset_id = ?`, [gameState.current_item_id]);
+            currentItem = beatmap;
+        }
 
-        const currentMedia: { backgroundData?: string; audioData?: string } = {};
+        const currentMedia: { backgroundData?: string; audioData?: string; skinData?: string } = {};
         if (gameState.game_mode === "background") {
             const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
             const imageBuffer = await fs.readFile(imagePath);
             currentMedia.backgroundData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
-        } else {
+        } else if (gameState.game_mode === "audio" && gameState.audio_filename) {
             const audioPath = path.join(process.cwd(), "mapsets", "audio", gameState.audio_filename);
             const audioBuffer = await fs.readFile(audioPath);
             currentMedia.audioData = `data:audio/mp3;base64,${audioBuffer.toString("base64")}`;
+        } else if (gameState.game_mode === "skin") {
+            const imagePath = path.join(process.cwd(), "mapsets", "skins", gameState.image_filename);
+            const imageBuffer = await fs.readFile(imagePath);
+            currentMedia.skinData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
         }
 
-        const isCorrect = isGuess ? checkGuess(effectiveGuess || "", beatmap.title, guessingDifficulty) : false;
+        // Get the answer based on game mode
+        const currentAnswer = gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title;
+
+        const isCorrect = isGuess ? checkGuess(effectiveGuess || "", currentAnswer, guessingDifficulty) : false;
         const points = isNextRound ? 0 : calculateScore(isCorrect, timeLeft, gameState.current_streak);
 
-        if (isDeathMode && (isSkipped || (!isCorrect && isGuess))) {
+        if (isDeathMode && (isSkipped || isTimeout || (!isCorrect && isGuess))) {
             await endGameAction(sessionId);
             return {
                 sessionId,
                 currentBeatmap: {
-                    imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : undefined,
+                    imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : gameState.game_mode === "skin" ? currentMedia.skinData : undefined,
                     audioUrl: gameState.game_mode === "audio" ? currentMedia.audioData : undefined,
                     revealed: true,
-                    title: beatmap.title,
-                    artist: beatmap.artist,
-                    mapper: beatmap.mapper,
-                    mapsetId: beatmap.mapset_id,
+                    title: gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
+                    artist: gameState.game_mode === "skin" ? (currentItem as SkinData).creator : (currentItem as MapsetDataWithTags).artist,
+                    mapper: gameState.game_mode === "skin" ? (currentItem as SkinData).creator : (currentItem as MapsetDataWithTags).mapper,
+                    mapsetId: gameState.game_mode === "skin" ? (currentItem as SkinData).id : (currentItem as MapsetDataWithTags).mapset_id,
                 },
                 score: {
                     total: gameState.total_points,
@@ -217,22 +258,25 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 lastGuess: !isNextRound
                     ? {
                           correct: isCorrect,
-                          answer: beatmap.title,
+                          answer: currentAnswer,
                           type: isTimeout ? "timeout" : isSkipped ? "skip" : "guess",
                       }
                     : undefined,
             };
         }
 
-        let nextBeatmap: { data: MapsetDataWithTags; backgroundData?: string; audioData?: string } | null = null;
+        let nextBeatmap: { data: MapsetDataWithTags | SkinData; backgroundData?: string; audioData?: string; skinData?: string } | null = null;
 
         if (isNextRound) {
             if (gameState.game_mode === "audio") {
                 const audio = await getRandomAudioAction(validated.sessionId);
                 nextBeatmap = { data: audio.data, audioData: audio.audioData };
-            } else {
+            } else if (gameState.game_mode === "background") {
                 const background = await getRandomBackgroundAction(validated.sessionId);
                 nextBeatmap = { data: background.data, backgroundData: background.backgroundData };
+            } else if (gameState.game_mode === "skin") {
+                const skin = await getRandomSkinAction(validated.sessionId);
+                nextBeatmap = { data: skin.data, skinData: skin.skinData };
             }
         }
 
@@ -243,7 +287,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
             SET total_points = total_points + ?,
                 current_streak = ?,
                 highest_streak = GREATEST(highest_streak, ?),
-                current_beatmap_id = ?,
+                current_item_id = ?,
                 time_left = ?,
                 last_action_at = CURRENT_TIMESTAMP,
                 last_guess = ?,
@@ -257,7 +301,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 points,
                 newStreak,
                 isCorrect ? gameState.current_streak + 1 : gameState.highest_streak,
-                nextBeatmap ? nextBeatmap.data.mapset_id : gameState.current_beatmap_id,
+                nextBeatmap ? ("mapset_id" in nextBeatmap.data ? nextBeatmap.data.mapset_id : nextBeatmap.data.id) : gameState.current_item_id,
                 nextBeatmap ? ROUND_TIME : gameState.time_left,
                 isTimeout ? "TIMEOUT" : isSkipped ? "SKIPPED" : effectiveGuess,
                 isCorrect,
@@ -270,10 +314,13 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         );
 
         if (isNextRound && nextBeatmap) {
+            const itemId = "mapset_id" in nextBeatmap.data ? nextBeatmap.data.mapset_id : nextBeatmap.data.id;
+            const itemType = "mapset_id" in nextBeatmap.data ? "mapset" : "skin";
+
             await query(
-                `INSERT INTO session_mapsets (session_id, mapset_id, round_number)
-                    VALUES (?, ?, ?)`,
-                [sessionId, nextBeatmap.data.mapset_id, gameState.current_round + 1]
+                `INSERT INTO session_items (session_id, item_id, item_type, round_number)
+                    VALUES (?, ?, ?, ?)`,
+                [sessionId, itemId, itemType, gameState.current_round + 1]
             );
         }
 
@@ -282,13 +329,18 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         return {
             sessionId,
             currentBeatmap: {
-                imageUrl: gameState.game_mode === "background" ? nextBeatmap?.backgroundData ?? currentMedia.backgroundData : undefined,
+                imageUrl:
+                    gameState.game_mode === "background"
+                        ? nextBeatmap?.backgroundData ?? currentMedia.backgroundData
+                        : gameState.game_mode === "skin"
+                        ? nextBeatmap?.skinData ?? currentMedia.skinData
+                        : undefined,
                 audioUrl: gameState.game_mode === "audio" ? nextBeatmap?.audioData ?? currentMedia.audioData : undefined,
                 revealed: !isNextRound,
-                title: !isNextRound ? beatmap.title : undefined,
-                artist: !isNextRound ? beatmap.artist : undefined,
-                mapper: !isNextRound ? beatmap.mapper : undefined,
-                mapsetId: !isNextRound ? beatmap.mapset_id : undefined,
+                title: !isNextRound ? (gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title) : undefined,
+                artist: !isNextRound ? (gameState.game_mode === "skin" ? (currentItem as SkinData).creator : (currentItem as MapsetDataWithTags).artist) : undefined,
+                mapper: !isNextRound ? (gameState.game_mode === "skin" ? (currentItem as SkinData).creator : (currentItem as MapsetDataWithTags).mapper) : undefined,
+                mapsetId: !isNextRound ? (gameState.game_mode === "skin" ? (currentItem as SkinData).id : (currentItem as MapsetDataWithTags).mapset_id) : undefined,
             },
             score: {
                 total: gameState.total_points + points,
@@ -308,7 +360,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
             lastGuess: !isNextRound
                 ? {
                       correct: isCorrect,
-                      answer: beatmap.title,
+                      answer: currentAnswer,
                       type: isTimeout ? "timeout" : isSkipped ? "skip" : "guess",
                   }
                 : undefined,
@@ -328,10 +380,31 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
         await query("START TRANSACTION");
 
         const [gameState] = (await query(
-            `SELECT g.*, m.title, m.artist, m.mapper, m.mapset_id, mt.image_filename, mt.audio_filename
+            `SELECT g.*, 
+                CASE 
+                    WHEN g.game_mode = 'skin' THEN s.name
+                    ELSE m.title 
+                END as title,
+                CASE 
+                    WHEN g.game_mode = 'skin' THEN s.creator
+                    ELSE m.artist 
+                END as artist,
+                CASE 
+                    WHEN g.game_mode = 'skin' THEN s.creator
+                    ELSE m.mapper 
+                END as mapper,
+                CASE 
+                    WHEN g.game_mode = 'skin' THEN s.image_filename
+                    ELSE mt.image_filename 
+                END as image_filename,
+                CASE 
+                    WHEN g.game_mode = 'skin' THEN NULL
+                    ELSE mt.audio_filename 
+                END as audio_filename
                 FROM game_sessions g
-                JOIN mapset_data m ON g.current_beatmap_id = m.mapset_id
-                JOIN mapset_tags mt ON g.current_beatmap_id = mt.mapset_id
+                LEFT JOIN mapset_data m ON g.current_item_id = m.mapset_id AND g.game_mode IN ('background', 'audio')
+                LEFT JOIN mapset_tags mt ON g.current_item_id = mt.mapset_id AND g.game_mode IN ('background', 'audio')
+                LEFT JOIN skins s ON g.current_item_id = s.id AND g.game_mode = 'skin'
                 WHERE g.id = ? AND g.user_id = ?
                 FOR UPDATE`,
             [sessionId, authSession.user.banchoId]
@@ -356,22 +429,26 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
             const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
             const imageBuffer = await fs.readFile(imagePath);
             mediaData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
-        } else {
+        } else if (gameState.game_mode === "audio" && gameState.audio_filename) {
             const audioPath = path.join(process.cwd(), "mapsets", "audio", gameState.audio_filename);
             const audioBuffer = await fs.readFile(audioPath);
             mediaData = `data:audio/mp3;base64,${audioBuffer.toString("base64")}`;
+        } else if (gameState.game_mode === "skin") {
+            const imagePath = path.join(process.cwd(), "mapsets", "skins", gameState.image_filename);
+            const imageBuffer = await fs.readFile(imagePath);
+            mediaData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
         }
 
         return {
             sessionId,
             currentBeatmap: {
-                imageUrl: gameState.game_mode === "background" ? mediaData : undefined,
+                imageUrl: gameState.game_mode === "background" ? mediaData : gameState.game_mode === "skin" ? mediaData : undefined,
                 audioUrl: gameState.game_mode === "audio" ? mediaData : undefined,
                 revealed: Boolean(gameState.last_guess),
                 title: gameState.last_guess ? gameState.title : undefined,
                 artist: gameState.last_guess ? gameState.artist : undefined,
                 mapper: gameState.last_guess ? gameState.mapper : undefined,
-                mapsetId: gameState.last_guess ? gameState.mapset_id : undefined,
+                mapsetId: gameState.last_guess ? gameState.current_item_id : undefined,
             },
             score: {
                 total: gameState.total_points,

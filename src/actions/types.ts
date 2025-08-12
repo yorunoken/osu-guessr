@@ -26,7 +26,19 @@ export interface MapsetData {
 
 export interface MapsetDataWithTags extends MapsetData, MapsetTags {}
 
-type GuessResult = {
+export interface SkinData {
+    id: number;
+    name: string;
+    creator: string;
+    version?: string;
+    description?: string;
+    image_filename: string;
+    is_active: boolean;
+    created_at: Date;
+    updated_at: Date;
+}
+
+export type GuessResult = {
     correct: boolean;
     answer: string;
     type: "guess" | "timeout" | "skip";
@@ -147,7 +159,7 @@ export interface DatabaseGameSession {
     current_streak: number;
     highest_streak: number;
     current_round: number;
-    current_beatmap_id: number;
+    current_item_id: number;
     time_left: number;
     last_action_at: string | Date;
     last_guess: string | null;
@@ -157,11 +169,10 @@ export interface DatabaseGameSession {
     total_time_used: number;
     is_active: boolean;
     variant: GameVariant;
-    // Joined fields from mapset_data and mapset_tags
+    // Joined fields from mapset_data/mapset_tags or skins table
     title: string;
     artist: string;
     mapper: string;
-    mapset_id: number;
     image_filename: string;
     audio_filename: string;
     has_guessed_current_round: boolean;

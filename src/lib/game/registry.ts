@@ -116,6 +116,8 @@ gameRegistry.registerVariant({
     },
 });
 
+// modes
+
 gameRegistry.registerMode({
     id: "background",
     name: "Background Guessr",
@@ -142,6 +144,6 @@ gameRegistry.registerMode({
     description: "Test your knowledge of osu! skins by identifying them from screenshots.",
     image: "/skin-mode.png",
     url: "/games/skin",
-    isEnabled: false,
+    isEnabled: true,
     supportedVariants: ["classic", "death"],
 });

@@ -1,6 +1,12 @@
 SET
     FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS session_items;
+
+DROP TABLE IF EXISTS session_mapsets;
+
+DROP TABLE IF EXISTS session_skins;
+
 DROP TABLE IF EXISTS game_sessions;
 
 DROP TABLE IF EXISTS user_achievements;
@@ -13,10 +19,9 @@ DROP TABLE IF EXISTS api_keys;
 
 DROP TABLE IF EXISTS mapset_data;
 
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS skins;
 
-SET
-    FOREIGN_KEY_CHECKS = 1;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS users (
     bancho_id INT PRIMARY KEY,
@@ -53,12 +58,13 @@ CREATE TABLE IF NOT EXISTS api_keys (
 CREATE TABLE IF NOT EXISTS user_achievements (
     user_id INT NOT NULL,
     game_mode ENUM ('background', 'audio', 'skin') NOT NULL,
+    variant ENUM ('classic', 'death') DEFAULT 'classic',
     total_score BIGINT DEFAULT 0,
     games_played INT DEFAULT 0,
     highest_streak INT DEFAULT 0,
     highest_score INT DEFAULT 0,
     last_played TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY user_game_mode (user_id, game_mode),
+    UNIQUE KEY user_game_mode_variant (user_id, game_mode, variant),
     FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE
 );
 
@@ -90,7 +96,7 @@ CREATE TABLE game_sessions (
     user_id INT NOT NULL,
     game_mode ENUM ('background', 'audio', 'skin') NOT NULL,
     last_action_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    current_beatmap_id INT,
+    current_item_id INT,
     time_left INT DEFAULT 30,
     current_streak INT DEFAULT 0,
     highest_streak INT DEFAULT 0,
@@ -103,16 +109,15 @@ CREATE TABLE game_sessions (
     total_time_used INT DEFAULT 0,
     variant ENUM ('classic', 'death') DEFAULT 'classic',
     is_active BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE,
-    FOREIGN KEY (current_beatmap_id) REFERENCES mapset_data (mapset_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users (bancho_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS session_mapsets (
+CREATE TABLE IF NOT EXISTS session_items (
     session_id VARCHAR(36),
-    mapset_id INT,
+    item_id INT,
+    item_type ENUM('mapset', 'skin') NOT NULL,
     round_number INT,
-    FOREIGN KEY (session_id) REFERENCES game_sessions (id) ON DELETE CASCADE,
-    FOREIGN KEY (mapset_id) REFERENCES mapset_data (mapset_id) ON DELETE CASCADE
+    FOREIGN KEY (session_id) REFERENCES game_sessions (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS reports (
@@ -170,10 +175,38 @@ CREATE INDEX IF NOT EXISTS idx_api_keys_last_used ON api_keys (last_used);
 
 CREATE INDEX IF NOT EXISTS idx_achievements_user_score ON user_achievements (user_id, total_score);
 
-CREATE INDEX IF NOT EXISTS idx_achievements_mode_score ON user_achievements (game_mode, total_score);
+CREATE INDEX IF NOT EXISTS idx_achievements_mode_variant_score ON user_achievements (game_mode, variant, total_score);
 
-CREATE INDEX IF NOT EXISTS idx_session_mapsets_round ON session_mapsets (session_id, round_number);
+CREATE INDEX IF NOT EXISTS idx_session_items_round ON session_items (session_id, round_number);
+
+CREATE INDEX IF NOT EXISTS idx_session_items_type ON session_items (session_id, item_type);
 
 CREATE INDEX IF NOT EXISTS idx_sessions_user_mode_active ON game_sessions (user_id, game_mode, is_active);
 
 CREATE INDEX IF NOT EXISTS idx_games_mode_points ON games (game_mode, points);
+
+-- Skins table for skin gamemode
+CREATE TABLE IF NOT EXISTS skins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    creator VARCHAR(255) NOT NULL,
+    version VARCHAR(100) DEFAULT NULL,
+    description TEXT DEFAULT NULL,
+    image_filename VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Indexes for skins table
+CREATE INDEX IF NOT EXISTS idx_skins_active ON skins (is_active);
+CREATE INDEX IF NOT EXISTS idx_skins_creator ON skins (creator);
+
+-- Sample skins data for testing
+INSERT INTO skins (name, creator, version, image_filename) VALUES
+('Default', 'ppy', '2024', 'skin_1.jpg'),
+('Rafis HDDT', 'Rafis', 'v2.1', 'skin_2.jpg'),
+('Cookiezi', 'Cookiezi', 'v1.0', 'skin_3.jpg');
+
+-- Re-enable foreign key checks
+SET FOREIGN_KEY_CHECKS = 1;

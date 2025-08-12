@@ -61,15 +61,12 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                     onStateUpdate: setGameState,
                     onError: (error) => {
                         console.error("Game error:", error);
-                        // You could show a toast notification here
                     },
                     onRetry: (attempt, maxRetries) => {
                         console.log(`Retrying... (${attempt}/${maxRetries})`);
-                        // You could show a retry indicator here
                     },
                     onRecovery: () => {
                         console.log("Game state recovered");
-                        // You could show a recovery notification here
                     },
                 },
                 gameMode,

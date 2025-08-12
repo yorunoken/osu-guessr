@@ -10,8 +10,9 @@ MAPSET_TAGS_SQL="./mapset_tags.sql"
 MAPSET_DATA_SQL="./mapset_data.sql"
 MAPSETS_CONFIG="./mapsets.txt"
 
-# SECRET.
-OSU_API_KEY=""
+set -a
+source .env
+set +a
 
 mkdir -p "$TEMP_DIR" "$AUDIO_DIR" "$BG_DIR"
 

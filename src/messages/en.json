@@ -325,11 +325,13 @@
         "preGame": {
             "title": {
                 "audio": "Audio Guessr",
-                "background": "Background Guessr"
+                "background": "Background Guessr",
+                "skin": "Skin Guessr"
             },
             "description": {
                 "audio": "You'll hear short clips from osu! songs",
-                "background": "You'll be shown beatmap backgrounds from osu!"
+                "background": "You'll be shown beatmap backgrounds from osu!",
+                "skin": "You'll see screenshots of popular osu! skins"
             },
             "howToPlay": {
                 "title": "How to Play",

@@ -29,7 +29,7 @@ export class GameClient {
     }
 
     private isSupportedGameMode(mode: GameMode): mode is GameMode {
-        return mode === "audio" || mode === "background";
+        return mode === "audio" || mode === "background" || mode === "skin";
     }
 
     getStatus(): GameClientStatus {
