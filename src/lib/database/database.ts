@@ -6,7 +6,7 @@ import { QueryOptions, DatabaseError } from "./types";
 const DEFAULT_OPTIONS: Required<QueryOptions> = {
     timeout: 30000,
     retries: 3,
-    logQuery: true,
+    logQuery: process.env.NODE_ENV === "production" ? false : true,
 };
 
 const connection = mysql.createPool({
