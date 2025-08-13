@@ -7,7 +7,7 @@
         "build": "next build",
         "start": "dotenv -e .env.local -- next start",
         "check": "next lint && tsc --noEmit",
-        "sync": "bun sync-translations"
+        "sync": "bun scripts/sync-translations"
     },
     "dependencies": {
         "@radix-ui/react-dialog": "^1.1.6",
@@ -29,6 +29,7 @@
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-intersection-observer": "^9.16.0",
+        "redis": "^5.8.1",
         "tailwind-merge": "^2.6.0",
         "tailwindcss-animate": "^1.0.7",
         "zod": "^3.24.2"
