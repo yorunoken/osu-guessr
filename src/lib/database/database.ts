@@ -1,6 +1,6 @@
 "use server";
 
-import { API_URL } from "../index";
+import mysql from "mysql2/promise";
 import { QueryOptions, DatabaseError } from "./types";
 
 const DEFAULT_OPTIONS: Required<QueryOptions> = {
@@ -9,60 +9,42 @@ const DEFAULT_OPTIONS: Required<QueryOptions> = {
     logQuery: true,
 };
 
-export async function query<T = unknown>(sql: string, values?: Array<unknown>, options: QueryOptions = {}): Promise<T[]> {
+const connection = mysql.createPool({
+    host: process.env.DB_HOST || "localhost",
+    port: Number(process.env.DB_PORT) || 3306,
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_NAME || "osu_guessr",
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+});
+
+function sanitizeValues(values?: Array<unknown>): Array<unknown> | undefined {
+    if (!values) return values;
+    return values.map((value) => (value === undefined ? null : value));
+}
+
+export async function query<T = unknown>(sqlQuery: string, values?: Array<unknown>, options: QueryOptions = {}): Promise<T[]> {
     const opts = { ...DEFAULT_OPTIONS, ...options };
+    const sanitizedValues = sanitizeValues(values);
 
     if (opts.logQuery) {
-        console.log("Executing query:", sql);
-    }
-
-    let lastError: Error | null = null;
-
-    for (let attempt = 1; attempt <= opts.retries; attempt++) {
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), opts.timeout);
-
-            const response = await fetch(`${API_URL}/api/query`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    sql,
-                    values: values || [],
-                }),
-                signal: controller.signal,
-            });
-
-            clearTimeout(timeoutId);
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new DatabaseError(`Query failed with status ${response.status}: ${errorText}`, sql, values);
-            }
-
-            const result = await response.json();
-            return result as T[];
-        } catch (err) {
-            lastError = err instanceof Error ? err : new Error(String(err));
-
-            if (attempt === opts.retries) {
-                break;
-            }
-
-            // Wait before retry with exponential backoff
-            const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
-            await new Promise((resolve) => setTimeout(resolve, delay));
-
-            console.warn(`Query attempt ${attempt} failed, retrying in ${delay}ms...`);
+        console.log("Executing query:", sqlQuery);
+        if (sanitizedValues) {
+            console.log("With values:", sanitizedValues);
         }
     }
 
-    throw new DatabaseError(`Query failed after ${opts.retries} attempts: ${lastError?.message}`, sql, values, lastError || undefined);
+    try {
+        const [rows] = await connection.execute(sqlQuery, sanitizedValues);
+        return rows as T[];
+    } catch (err: unknown) {
+        const error = err as Error;
+        throw new DatabaseError(`Query failed: ${error.message}`, sqlQuery, sanitizedValues, error);
+    }
 }
 
-// Typed query helpers
 export async function queryOne<T>(sql: string, values?: Array<unknown>, options?: QueryOptions): Promise<T | null> {
     const results = await query<T>(sql, values, options);
     return results.length > 0 ? results[0] : null;
