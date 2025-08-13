@@ -1,4 +1,3 @@
-
 # dependencies
 /node_modules
 
@@ -14,7 +13,8 @@
 .env*
 !.env
 changelog.json
+tsconfig.tsbuildinfo
 
+# data
 mapsets/
 backgrounds/
-mapsets_secret.txt
