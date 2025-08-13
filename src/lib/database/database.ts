@@ -30,10 +30,30 @@ export async function query<T = unknown>(sqlQuery: string, values?: Array<unknow
     const sanitizedValues = sanitizeValues(values);
 
     if (opts.logQuery) {
-        console.log("Executing query:", sqlQuery);
+        console.log("\n\nExecuting query:", sqlQuery);
         if (sanitizedValues) {
             console.log("With values:", sanitizedValues);
         }
+
+        const stack = new Error().stack;
+        if (stack) {
+            const stackLines = stack.split("\n");
+            const callerLine = stackLines.find((line, index) => index > 0 && !line.includes("database.ts") && line.trim().startsWith("at "));
+
+            if (callerLine) {
+                const match = callerLine.match(/at\s+(.+?)\s+\((.+):(\d+):(\d+)\)/);
+                if (match) {
+                    const [, functionName, filePath, lineNumber] = match;
+                    const fileName = filePath.split("/").pop() || filePath;
+                    console.log(`Query called from: ${functionName} in ${fileName}:${lineNumber}`);
+                } else {
+                    console.log(`Query called from: ${callerLine.trim()}`);
+                }
+            } else {
+                console.log("Query called from: Unable to determine caller");
+            }
+        }
+        console.log("\n");
     }
 
     try {
