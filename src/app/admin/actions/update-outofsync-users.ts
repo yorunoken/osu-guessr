@@ -4,8 +4,6 @@ import { query } from "@/lib/database";
 
 export async function syncUserAchievements() {
     try {
-        await query("START TRANSACTION");
-
         await query(`
             UPDATE user_achievements
             SET
@@ -63,10 +61,8 @@ export async function syncUserAchievements() {
             );
         }
 
-        await query("COMMIT");
         console.log("Successfully synced user achievements with games data");
     } catch (error) {
-        await query("ROLLBACK");
         console.error("Error syncing user achievements:", error);
     }
 }
