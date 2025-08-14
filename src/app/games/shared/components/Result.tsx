@@ -1,4 +1,4 @@
-import { GameMediaProps } from "../types/props";
+import { GameMediaProps } from "@/lib/game/interfaces";
 import { motion } from "framer-motion";
 
 export const ResultMessage = ({ result }: { result: GameMediaProps["result"] }) => {

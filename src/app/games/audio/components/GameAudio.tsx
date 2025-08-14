@@ -2,9 +2,9 @@
 
 import { Loader2 } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
-import { GameMediaProps } from "../../shared/types/props";
 import { ResultMessage } from "../../shared/components/Result";
 import { useTranslationsContext } from "@/context/translations-provider";
+import { GameMediaProps } from "@/lib/game/interfaces";
 
 export default function GameAudio({ mediaUrl, isRevealed, result, songInfo, onVolumeChange, initialVolume }: GameMediaProps) {
     const audioRef = useRef<HTMLAudioElement>(null);

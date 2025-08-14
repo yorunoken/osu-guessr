@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { GameMediaProps } from "../../shared/types/props";
 import { ResultMessage } from "../../shared/components/Result";
+import { GameMediaProps } from "@/lib/game/interfaces";
 
 export default function GameSkin({ mediaUrl, isRevealed, result, songInfo }: GameMediaProps) {
     return (
