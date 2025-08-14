@@ -3,8 +3,13 @@
 import { query } from "@/lib/database";
 
 import fs from "fs/promises";
+import fsSync from "fs";
 import path from "path";
-import { execSync } from "child_process";
+import { pipeline } from "stream/promises";
+import unzipper from "unzipper";
+import sharp from "sharp";
+import ffmpeg from "fluent-ffmpeg";
+import ffmpegStatic from "ffmpeg-static";
 
 const AUDIO_DIR = path.join(process.cwd(), "mapsets", "audio");
 const BG_DIR = path.join(process.cwd(), "mapsets", "backgrounds");
@@ -58,19 +63,24 @@ async function downloadMapset(mapsetId: number): Promise<boolean> {
     await fs.mkdir(mapsetDir, { recursive: true });
 
     try {
-        // Download beatmap
-        execSync(`wget -q "https://beatconnect.io/b/${mapsetId}" -O "${mapsetDir}/${mapsetId}.osz"`, { stdio: "inherit" });
+        // Download beatmap .osz via fetch and stream to disk
+        const oszUrl = `https://beatconnect.io/b/${mapsetId}`;
+        const res = await fetch(oszUrl);
+        if (!res.ok) throw new Error(`Failed to download ${oszUrl}: ${res.status}`);
 
-        // Check if file exists and is not empty
-        const stats = await fs.stat(`${mapsetDir}/${mapsetId}.osz`);
+        const oszPath = path.join(mapsetDir, `${mapsetId}.osz`);
+        await pipeline(res.body as any, fsSync.createWriteStream(oszPath));
+
+        const stats = await fs.stat(oszPath);
         if (stats.size === 0) {
             throw new Error("Downloaded file is empty");
         }
 
-        // Unzip beatmap
-        execSync(`unzip -q "${mapsetDir}/${mapsetId}.osz" -d "${mapsetDir}"`, {
-            stdio: "inherit",
-        });
+        await fsSync
+            .createReadStream(oszPath)
+            .pipe(unzipper.Extract({ path: mapsetDir }))
+            .promise();
+        await fs.unlink(oszPath).catch(() => {});
 
         return true;
     } catch (error) {
@@ -82,7 +92,7 @@ async function downloadMapset(mapsetId: number): Promise<boolean> {
 async function processAudio(mapsetId: number, mapsetDir: string): Promise<string | null> {
     try {
         const files = await fs.readdir(mapsetDir);
-        let largestAudio = null;
+        let largestAudio: string | null = null;
         let largestSize = 0;
 
         for (const file of files) {
@@ -95,13 +105,26 @@ async function processAudio(mapsetId: number, mapsetDir: string): Promise<string
             }
         }
 
-        if (!largestAudio) {
-            return null;
-        }
+        if (!largestAudio) return null;
 
-        const ext = path.extname(largestAudio);
-        const audioFilename = `${mapsetId}${ext}`;
-        await fs.copyFile(path.join(mapsetDir, largestAudio), path.join(AUDIO_DIR, audioFilename));
+        const srcPath = path.join(mapsetDir, largestAudio);
+        const audioFilename = `${mapsetId}.mp3`;
+        const destPath = path.join(AUDIO_DIR, audioFilename);
+
+        await fs.mkdir(AUDIO_DIR, { recursive: true });
+
+        try {
+            if (ffmpegStatic) ffmpeg.setFfmpegPath(ffmpegStatic as string);
+        } catch {}
+
+        await new Promise<void>((resolve, reject) => {
+            ffmpeg(srcPath)
+                .audioBitrate(96)
+                .toFormat("mp3")
+                .on("end", () => resolve())
+                .on("error", (err: Error) => reject(err))
+                .save(destPath);
+        });
 
         return audioFilename;
     } catch (error) {
@@ -113,7 +136,19 @@ async function processAudio(mapsetId: number, mapsetDir: string): Promise<string
 async function downloadBackground(mapsetId: number): Promise<string | null> {
     try {
         const imageFilename = `${mapsetId}.jpg`;
-        execSync(`wget -q "https://assets.ppy.sh/beatmaps/${mapsetId}/covers/fullsize.jpg" -O "${path.join(BG_DIR, imageFilename)}"`, { stdio: "inherit" });
+        const dest = path.join(BG_DIR, imageFilename);
+
+        const imgUrl = `https://assets.ppy.sh/beatmaps/${mapsetId}/covers/fullsize.jpg`;
+        const res = await fetch(imgUrl);
+        if (!res.ok) throw new Error(`Failed to download image ${imgUrl}: ${res.status}`);
+
+        await fs.mkdir(BG_DIR, { recursive: true });
+
+        const buffer = Buffer.from(await res.arrayBuffer());
+
+        // Resize and compress
+        await sharp(buffer).resize({ width: 1280, height: 720, fit: "inside" }).jpeg({ quality: 75 }).toFile(dest);
+
         return imageFilename;
     } catch (error) {
         console.error(`Error downloading background for mapset ${mapsetId}:`, error);
