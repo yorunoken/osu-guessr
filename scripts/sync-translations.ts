@@ -45,7 +45,7 @@ function syncTranslations(): void {
     const enJson: JsonObject = JSON.parse(fs.readFileSync(enPath, "utf8"));
     const enKeys = getAllKeys(enJson);
 
-    const languages = ["tr", "cs", "es", "pl"];
+    const languages = ["tr", "cs", "es", "pl", "ru"];
 
     languages.forEach((lang) => {
         const langPath = path.join(messagesDir, `${lang}.json`);
