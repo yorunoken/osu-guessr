@@ -203,6 +203,57 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
 
         const isCorrect = isGuess ? checkGuess(effectiveGuess || "", currentAnswer, guessingDifficulty) : false;
         const points = isNextRound ? 0 : calculateScore(isCorrect, timeLeft, gameState.current_streak);
+        // In death mode, if correct guess, check for remaining beatmaps; finish game if none left
+        if (isDeathMode && isGuess && isCorrect) {
+            try {
+                if (gameState.game_mode === "audio") {
+                    await getRandomAudioAction(validated.sessionId);
+                } else if (gameState.game_mode === "background") {
+                    await getRandomBackgroundAction(validated.sessionId);
+                } else if (gameState.game_mode === "skin") {
+                    await getRandomSkinAction(validated.sessionId);
+                }
+            } catch {
+                // No more beatmaps: end game and return finished state
+                const newStreak = gameState.current_streak + 1;
+                const newHighest = Math.max(gameState.highest_streak, newStreak);
+                const newCorrects = gameState.correct_guesses + 1;
+                const newTimeUsed = gameState.total_time_used + (ROUND_TIME - timeLeft);
+                await endGameAction(sessionId);
+                return {
+                    sessionId,
+                    currentBeatmap: {
+                        imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : gameState.game_mode === "skin" ? currentMedia.skinData : undefined,
+                        audioUrl: gameState.game_mode === "audio" ? currentMedia.audioData : undefined,
+                        revealed: true,
+                        title: gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
+                        artist: gameState.game_mode === "skin" ? (currentItem as SkinData).creator : (currentItem as MapsetDataWithTags).artist,
+                        mapper: gameState.game_mode === "skin" ? (currentItem as SkinData).creator : (currentItem as MapsetDataWithTags).mapper,
+                        mapsetId: gameState.game_mode === "skin" ? (currentItem as SkinData).id : (currentItem as MapsetDataWithTags).mapset_id,
+                    },
+                    score: {
+                        total: gameState.total_points + points,
+                        current: points,
+                        streak: newStreak,
+                        highestStreak: newHighest,
+                    },
+                    rounds: {
+                        current: gameState.current_round,
+                        total: gameState.current_round,
+                        correctGuesses: newCorrects,
+                        totalTimeUsed: newTimeUsed,
+                    },
+                    timeLeft: 0,
+                    gameStatus: "finished",
+                    variant: "death",
+                    lastGuess: {
+                        correct: true,
+                        answer: currentAnswer,
+                        type: "guess",
+                    },
+                };
+            }
+        }
 
         if (isDeathMode && (isSkipped || isTimeout || (!isCorrect && isGuess))) {
             await endGameAction(sessionId);
@@ -245,15 +296,78 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         let nextBeatmap: { data: MapsetDataWithTags | SkinData; backgroundData?: string; audioData?: string; skinData?: string } | null = null;
 
         if (isNextRound) {
-            if (gameState.game_mode === "audio") {
-                const audio = await getRandomAudioAction(validated.sessionId);
-                nextBeatmap = { data: audio.data, audioData: audio.audioData };
-            } else if (gameState.game_mode === "background") {
-                const background = await getRandomBackgroundAction(validated.sessionId);
-                nextBeatmap = { data: background.data, backgroundData: background.backgroundData };
-            } else if (gameState.game_mode === "skin") {
-                const skin = await getRandomSkinAction(validated.sessionId);
-                nextBeatmap = { data: skin.data, skinData: skin.skinData };
+            try {
+                if (gameState.game_mode === "audio") {
+                    const audio = await getRandomAudioAction(validated.sessionId);
+                    nextBeatmap = { data: audio.data, audioData: audio.audioData };
+                } else if (gameState.game_mode === "background") {
+                    const background = await getRandomBackgroundAction(validated.sessionId);
+                    nextBeatmap = { data: background.data, backgroundData: background.backgroundData };
+                } else if (gameState.game_mode === "skin") {
+                    const skin = await getRandomSkinAction(validated.sessionId);
+                    nextBeatmap = { data: skin.data, skinData: skin.skinData };
+                }
+
+                if (isDeathMode && !nextBeatmap) {
+                    await endGameAction(sessionId);
+                    return {
+                        sessionId,
+                        currentBeatmap: {
+                            imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : gameState.game_mode === "skin" ? currentMedia.skinData : undefined,
+                            audioUrl: gameState.game_mode === "audio" ? currentMedia.audioData : undefined,
+                            revealed: true,
+                            title: gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
+                            artist: gameState.game_mode === "skin" ? (currentItem as SkinData).creator : (currentItem as MapsetDataWithTags).artist,
+                            mapper: gameState.game_mode === "skin" ? (currentItem as SkinData).creator : (currentItem as MapsetDataWithTags).mapper,
+                            mapsetId: gameState.current_item_id,
+                        },
+                        score: {
+                            total: gameState.total_points,
+                            current: 0,
+                            streak: gameState.current_streak,
+                            highestStreak: gameState.highest_streak,
+                        },
+                        rounds: {
+                            current: gameState.current_round,
+                            total: gameState.current_round,
+                            correctGuesses: gameState.correct_guesses,
+                            totalTimeUsed: gameState.total_time_used,
+                        },
+                        timeLeft: 0,
+                        gameStatus: "finished",
+                        variant: gameState.variant,
+                    };
+                }
+            } catch (error) {
+                if (!isDeathMode) throw error;
+                await endGameAction(sessionId);
+                return {
+                    sessionId,
+                    currentBeatmap: {
+                        imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : gameState.game_mode === "skin" ? currentMedia.skinData : undefined,
+                        audioUrl: gameState.game_mode === "audio" ? currentMedia.audioData : undefined,
+                        revealed: true,
+                        title: gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
+                        artist: gameState.game_mode === "skin" ? (currentItem as SkinData).creator : (currentItem as MapsetDataWithTags).artist,
+                        mapper: gameState.game_mode === "skin" ? (currentItem as SkinData).creator : (currentItem as MapsetDataWithTags).mapper,
+                        mapsetId: gameState.current_item_id,
+                    },
+                    score: {
+                        total: gameState.total_points,
+                        current: 0,
+                        streak: gameState.current_streak,
+                        highestStreak: gameState.highest_streak,
+                    },
+                    rounds: {
+                        current: gameState.current_round,
+                        total: gameState.current_round,
+                        correctGuesses: gameState.correct_guesses,
+                        totalTimeUsed: gameState.total_time_used,
+                    },
+                    timeLeft: 0,
+                    gameStatus: "finished",
+                    variant: gameState.variant,
+                };
             }
         }
 
