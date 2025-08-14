@@ -30,7 +30,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
-                <script defer src="https://cloud.umami.is/script.js" data-website-id="849dac77-219d-4a0e-ba65-910f76c78e6f"></script>
+                <script defer src="https://umami.yorunoken.com/script.js" data-website-id="43244628-cb56-43d3-936e-0edbc45d4790"></script>
                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3511683752810096" crossOrigin="anonymous"></script>
             </head>
             <body className={`${publicSans.variable} antialiased`}>
