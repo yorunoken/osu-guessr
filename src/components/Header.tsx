@@ -11,6 +11,7 @@ import { useState } from "react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useTranslationsContext } from "@/context/translations-provider";
 import { SupportPageLink } from "./SupportDialogWrapper";
+import { OWNER_ID } from "@/lib";
 
 const NAV_ITEMS = ["leaderboard", "about"] as const;
 
@@ -72,6 +73,11 @@ export default function Header() {
                                         </div>
                                     </Link>
                                 </DropdownMenuItem>
+                                {session.user.banchoId === OWNER_ID && (
+                                    <DropdownMenuItem className="cursor-pointer" asChild>
+                                        <Link href="/admin">Admin</Link>
+                                    </DropdownMenuItem>
+                                )}
                                 <DropdownMenuItem className="cursor-pointer" asChild>
                                     <Link href="/settings">{t.components.header.nav.settings}</Link>
                                 </DropdownMenuItem>
