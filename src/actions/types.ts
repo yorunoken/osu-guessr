@@ -29,11 +29,7 @@ export interface MapsetDataWithTags extends MapsetData, MapsetTags {}
 export interface SkinData {
     id: number;
     name: string;
-    creator: string;
-    version?: string;
-    description?: string;
     image_filename: string;
-    is_active: boolean;
     created_at: Date;
     updated_at: Date;
 }

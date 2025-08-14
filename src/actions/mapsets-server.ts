@@ -184,7 +184,7 @@ async function getRandomSkin(sessionId?: string): Promise<SkinData | null> {
     const result = await query(
         `SELECT s.* 
          FROM skins s 
-         WHERE s.is_active = TRUE ${condition}
+         ${condition}
          ORDER BY RAND() 
          LIMIT 1`,
         params

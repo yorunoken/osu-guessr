@@ -13,6 +13,7 @@ import { getBadges, addBadge, removeBadge, assignBadgeToUser, removeBadgeFromUse
 import { processBulkMapsets } from "./actions/bulk-mapsets";
 import { deploy } from "./actions/deploy";
 import { listReports, updateReportStatus } from "./actions/reports";
+import { listSkins, removeSkin, addSkinById, addSkinsFromList } from "./actions/skins";
 
 import { CollapsibleSection } from "./ui";
 
@@ -39,6 +40,9 @@ export default function AdminMenu() {
 
     const [reportId, setReportId] = useState("");
     const [reportStatus, setReportStatus] = useState("pending");
+    const [skinRemoveId, setSkinRemoveId] = useState("");
+    const [skinSingleId, setSkinSingleId] = useState("");
+    const [skinListFile, setSkinListFile] = useState<File | null>(null);
 
     const appendOutput = (text: string) => {
         setOutput((prev) => prev + "\n" + text);
@@ -354,6 +358,79 @@ export default function AdminMenu() {
         }
     };
 
+    const handleAddSkinById = async () => {
+        if (!skinSingleId) return appendOutput("Provide skin id");
+        setIsLoading(true);
+        appendOutput(`Adding skin ${skinSingleId}...`);
+        try {
+            const res = (await addSkinById(parseInt(skinSingleId))) as { success: boolean; skinId?: number; image?: string; error?: string };
+            if (res && res.success) {
+                appendOutput(`Added skin ${res.skinId} -> ${res.image}`);
+            } else {
+                appendOutput(`Add skin failed: ${res?.error || JSON.stringify(res)}`);
+            }
+        } catch (error) {
+            appendOutput(`Error: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
+    const handleAddSkinsFromFile = async () => {
+        if (!skinListFile) return appendOutput("Provide a .txt file with skin IDs (one per line)");
+        setIsLoading(true);
+        appendOutput(`Adding skins from file...`);
+        try {
+            const content = await skinListFile.text();
+            const ids = content
+                .split(/\r?\n/)
+                .map((l) => l.trim())
+                .filter(Boolean)
+                .map((v) => parseInt(v))
+                .filter((n) => !Number.isNaN(n));
+
+            if (ids.length === 0) {
+                appendOutput("No valid IDs found in file");
+                setIsLoading(false);
+                return;
+            }
+
+            const results = await addSkinsFromList(ids);
+            appendOutput(`Processed ${results.length} skins:`);
+            results.forEach((r) => appendOutput(`${r.id} -> ${r.success ? `OK (${r.image})` : `FAILED (${r.error})`}`));
+        } catch (error) {
+            appendOutput(`Error: ${error}`);
+        }
+        setIsLoading(false);
+        setSkinListFile(null);
+    };
+
+    const handleListSkins = async () => {
+        setIsLoading(true);
+        appendOutput("Listing skins...");
+        try {
+            const skins = ((await listSkins()) as Array<{ id: number; name: string; creator: string; image_filename: string }>) || [];
+            appendOutput(`Found ${skins.length} skins`);
+            skins.forEach((s) => appendOutput(`${s.id} | ${s.name} | ${s.creator} | ${s.image_filename}`));
+        } catch (error) {
+            appendOutput(`Error: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
+    const handleRemoveSkin = async () => {
+        if (!skinRemoveId) return;
+        setIsLoading(true);
+        appendOutput(`Removing skin ${skinRemoveId}...`);
+        try {
+            const res = await removeSkin(parseInt(skinRemoveId));
+            appendOutput(JSON.stringify(res));
+            await handleListSkins();
+        } catch (error) {
+            appendOutput(`Error: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
     return (
         <div className="container mx-auto px-4 py-8 space-y-4">
             <div className="flex justify-between items-center mb-8">
@@ -393,6 +470,52 @@ export default function AdminMenu() {
                             <div className="text-sm text-muted-foreground">
                                 <p>Upload a text file containing osu! beatmap URLs</p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Skins Management">
+                <div className="space-y-4">
+                    <div className="bg-secondary/20 p-6 rounded-xl">
+                        <h3 className="text-lg font-medium mb-4">Random Skin</h3>
+                        <div className="flex gap-4">
+                            <Button onClick={handleListSkins} disabled={isLoading} variant="outline">
+                                List Skins
+                            </Button>
+                        </div>
+                    </div>
+
+                    <div className="bg-secondary/20 p-6 rounded-xl">
+                        <h3 className="text-lg font-medium mb-4">Add Skin by ID or List</h3>
+                        <div className="space-y-4">
+                            <div className="flex gap-4">
+                                <Input placeholder="Skin ID" value={skinSingleId} onChange={(e) => setSkinSingleId(e.target.value)} />
+                                <Button onClick={handleAddSkinById} disabled={isLoading}>
+                                    Add Skin by ID
+                                </Button>
+                            </div>
+
+                            <div className="flex items-center gap-4">
+                                <Input type="file" accept=".txt" onChange={(e) => setSkinListFile(e.target.files?.[0] || null)} className="flex-1" />
+                                <Button onClick={handleAddSkinsFromFile} disabled={isLoading || !skinListFile}>
+                                    Upload Skin IDs
+                                </Button>
+                            </div>
+
+                            <div className="text-sm text-muted-foreground">
+                                <p>Provide a .txt file with one skin ID per line, or enter a single ID above.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-secondary/20 p-6 rounded-xl">
+                        <h3 className="text-lg font-medium mb-4">Remove Skin</h3>
+                        <div className="flex gap-4">
+                            <Input placeholder="Skin ID" value={skinRemoveId} onChange={(e) => setSkinRemoveId(e.target.value)} />
+                            <Button onClick={handleRemoveSkin} disabled={isLoading} variant="destructive">
+                                Remove Skin
+                            </Button>
                         </div>
                     </div>
                 </div>

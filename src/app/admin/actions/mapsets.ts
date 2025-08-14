@@ -1,21 +1,23 @@
 "use server";
 
 import { query } from "@/lib/database";
-
 import fs from "fs/promises";
 import fsSync from "fs";
 import path from "path";
 import { pipeline } from "stream/promises";
 import unzipper from "unzipper";
 import sharp from "sharp";
-import ffmpeg from "fluent-ffmpeg";
-import ffmpegStatic from "ffmpeg-static";
 
-const AUDIO_DIR = path.join(process.cwd(), "mapsets", "audio");
-const BG_DIR = path.join(process.cwd(), "mapsets", "backgrounds");
-const TEMP_DIR = path.join(process.cwd(), "tmp");
+const DIRECTORIES = {
+    audio: path.join(process.cwd(), "mapsets", "audio"),
+    backgrounds: path.join(process.cwd(), "mapsets", "backgrounds"),
+    temp: path.join(process.cwd(), "tmp"),
+} as const;
 
 const OSU_API_KEY = process.env.OSU_API_KEY;
+const BEATCONNECT_BASE_URL = "https://beatconnect.io/b";
+const OSU_COVERS_BASE_URL = "https://assets.ppy.sh/beatmaps";
+const OSU_API_BASE_URL = "https://osu.ppy.sh/api/get_beatmaps";
 
 export interface Mapset {
     mapset_id: number;
@@ -32,10 +34,23 @@ interface BeatmapData {
     creator: string;
 }
 
-async function ensureDirectories() {
-    await fs.mkdir(AUDIO_DIR, { recursive: true });
-    await fs.mkdir(BG_DIR, { recursive: true });
-    await fs.mkdir(TEMP_DIR, { recursive: true });
+interface OsuApiResponse {
+    title: string;
+    artist: string;
+    creator: string;
+}
+
+async function ensureDirectories(): Promise<void> {
+    const directories = Object.values(DIRECTORIES);
+    await Promise.all(directories.map((dir) => fs.mkdir(dir, { recursive: true })));
+}
+
+async function cleanupDirectory(dirPath: string): Promise<void> {
+    try {
+        await fs.rm(dirPath, { recursive: true, force: true });
+    } catch (error) {
+        console.warn(`Failed to cleanup directory ${dirPath}:`, error);
+    }
 }
 
 async function getBeatmapData(mapsetId: number): Promise<BeatmapData | null> {
@@ -43,111 +58,99 @@ async function getBeatmapData(mapsetId: number): Promise<BeatmapData | null> {
         throw new Error("OSU_API_KEY environment variable is not set");
     }
 
-    const response = await fetch(`https://osu.ppy.sh/api/get_beatmaps?k=${OSU_API_KEY}&s=${mapsetId}`);
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
-    const data = (await response.json()) as any[];
+    try {
+        const url = `${OSU_API_BASE_URL}?k=${OSU_API_KEY}&s=${mapsetId}`;
+        const response = await fetch(url);
 
-    if (!data || data.length === 0) {
+        if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+        }
+
+        const data = (await response.json()) as OsuApiResponse[];
+
+        if (!data || data.length === 0) {
+            return null;
+        }
+
+        return {
+            title: data[0].title,
+            artist: data[0].artist,
+            creator: data[0].creator,
+        };
+    } catch (error) {
+        console.error(`Failed to fetch beatmap data for ${mapsetId}:`, error);
         return null;
     }
-
-    return {
-        title: data[0].title,
-        artist: data[0].artist,
-        creator: data[0].creator,
-    };
 }
 
-async function downloadMapset(mapsetId: number): Promise<boolean> {
-    const mapsetDir = path.join(TEMP_DIR, mapsetId.toString());
+async function downloadMapset(mapsetId: number): Promise<string | null> {
+    const mapsetDir = path.join(DIRECTORIES.temp, mapsetId.toString());
     await fs.mkdir(mapsetDir, { recursive: true });
 
     try {
-        // Download beatmap .osz via fetch and stream to disk
-        const oszUrl = `https://beatconnect.io/b/${mapsetId}`;
-        const res = await fetch(oszUrl);
-        if (!res.ok) throw new Error(`Failed to download ${oszUrl}: ${res.status}`);
+        const oszUrl = `${BEATCONNECT_BASE_URL}/${mapsetId}`;
+        const response = await fetch(oszUrl);
+
+        if (!response.ok) {
+            throw new Error(`Download failed: ${response.status}`);
+        }
 
         const oszPath = path.join(mapsetDir, `${mapsetId}.osz`);
-        await pipeline(res.body as any, fsSync.createWriteStream(oszPath));
+
+        if (response.body) {
+            // @ts-expect-error idk
+            await pipeline(response.body, fsSync.createWriteStream(oszPath));
+        } else {
+            throw new Error("No response body");
+        }
 
         const stats = await fs.stat(oszPath);
         if (stats.size === 0) {
             throw new Error("Downloaded file is empty");
         }
 
-        await fsSync
-            .createReadStream(oszPath)
-            .pipe(unzipper.Extract({ path: mapsetDir }))
-            .promise();
-        await fs.unlink(oszPath).catch(() => {});
-
-        return true;
-    } catch (error) {
-        console.error(`Error downloading/extracting mapset ${mapsetId}:`, error);
-        return false;
-    }
-}
-
-async function processAudio(mapsetId: number, mapsetDir: string): Promise<string | null> {
-    try {
-        const files = await fs.readdir(mapsetDir);
-        let largestAudio: string | null = null;
-        let largestSize = 0;
-
-        for (const file of files) {
-            if (file.endsWith(".mp3") || file.endsWith(".ogg")) {
-                const stats = await fs.stat(path.join(mapsetDir, file));
-                if (stats.size > largestSize) {
-                    largestSize = stats.size;
-                    largestAudio = file;
-                }
-            }
-        }
-
-        if (!largestAudio) return null;
-
-        const srcPath = path.join(mapsetDir, largestAudio);
-        const audioFilename = `${mapsetId}.mp3`;
-        const destPath = path.join(AUDIO_DIR, audioFilename);
-
-        await fs.mkdir(AUDIO_DIR, { recursive: true });
-
-        try {
-            if (ffmpegStatic) ffmpeg.setFfmpegPath(ffmpegStatic as string);
-        } catch {}
-
         await new Promise<void>((resolve, reject) => {
-            ffmpeg(srcPath)
-                .audioBitrate(96)
-                .toFormat("mp3")
-                .on("end", () => resolve())
-                .on("error", (err: Error) => reject(err))
-                .save(destPath);
+            fsSync
+                .createReadStream(oszPath)
+                .pipe(unzipper.Extract({ path: mapsetDir }))
+                .on("close", resolve)
+                .on("error", reject);
         });
 
-        return audioFilename;
+        await fs.unlink(oszPath).catch(() => {});
+
+        return mapsetDir;
     } catch (error) {
-        console.error(`Error processing audio for mapset ${mapsetId}:`, error);
+        console.error(`Error downloading mapset ${mapsetId}:`, error);
+        await cleanupDirectory(mapsetDir);
         return null;
     }
 }
 
 async function downloadBackground(mapsetId: number): Promise<string | null> {
     try {
-        const imageFilename = `${mapsetId}.jpg`;
-        const dest = path.join(BG_DIR, imageFilename);
+        const imageFilename = `${mapsetId}.webp`;
+        const destPath = path.join(DIRECTORIES.backgrounds, imageFilename);
 
-        const imgUrl = `https://assets.ppy.sh/beatmaps/${mapsetId}/covers/fullsize.jpg`;
-        const res = await fetch(imgUrl);
-        if (!res.ok) throw new Error(`Failed to download image ${imgUrl}: ${res.status}`);
+        const imageUrl = `${OSU_COVERS_BASE_URL}/${mapsetId}/covers/fullsize.jpg`;
+        const response = await fetch(imageUrl);
 
-        await fs.mkdir(BG_DIR, { recursive: true });
+        if (!response.ok) {
+            throw new Error(`Failed to download image: ${response.status}`);
+        }
 
-        const buffer = Buffer.from(await res.arrayBuffer());
+        const buffer = Buffer.from(await response.arrayBuffer());
 
-        // Resize and compress
-        await sharp(buffer).resize({ width: 1280, height: 720, fit: "inside" }).jpeg({ quality: 75 }).toFile(dest);
+        // Process and compress the image
+        await sharp(buffer)
+            .resize({
+                width: 1920,
+                height: 1080,
+                fit: "inside",
+                withoutEnlargement: true,
+            })
+            .webp({ quality: 80 })
+            .toFile(destPath);
 
         return imageFilename;
     } catch (error) {
@@ -156,100 +159,166 @@ async function downloadBackground(mapsetId: number): Promise<string | null> {
     }
 }
 
-export async function addMapset(mapsetId: number) {
+// Audio Processing
+async function findLargestAudioFile(mapsetDir: string): Promise<string | null> {
+    try {
+        const files = await fs.readdir(mapsetDir);
+        const audioExtensions = [".mp3", ".ogg", ".wav"];
+
+        let largestAudio: string | null = null;
+        let largestSize = 0;
+
+        for (const file of files) {
+            const hasAudioExtension = audioExtensions.some((ext) => file.toLowerCase().endsWith(ext));
+
+            if (hasAudioExtension) {
+                const filePath = path.join(mapsetDir, file);
+                const stats = await fs.stat(filePath);
+
+                if (stats.size > largestSize) {
+                    largestSize = stats.size;
+                    largestAudio = file;
+                }
+            }
+        }
+
+        return largestAudio;
+    } catch (error) {
+        console.error("Error finding audio files:", error);
+        return null;
+    }
+}
+
+async function processAudio(mapsetId: number, mapsetDir: string): Promise<string | null> {
+    try {
+        const largestAudio = await findLargestAudioFile(mapsetDir);
+        if (!largestAudio) {
+            throw new Error("No audio files found");
+        }
+
+        const srcPath = path.join(mapsetDir, largestAudio);
+        const audioFilename = `${mapsetId}.mp3`;
+        const destPath = path.join(DIRECTORIES.audio, audioFilename);
+
+        // For now, just copy the file - you can add ffmpeg processing later
+        await fs.copyFile(srcPath, destPath);
+
+        return audioFilename;
+    } catch (error) {
+        console.error(`Error processing audio for mapset ${mapsetId}:`, error);
+        return null;
+    }
+}
+
+async function saveMapsetToDatabase(mapsetId: number, beatmapData: BeatmapData, imageFilename: string, audioFilename: string): Promise<void> {
+    await query(
+        `INSERT INTO mapset_data (mapset_id, title, artist, mapper)
+     VALUES (?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       title = VALUES(title),
+       artist = VALUES(artist),
+       mapper = VALUES(mapper)`,
+        [mapsetId, beatmapData.title, beatmapData.artist, beatmapData.creator]
+    );
+
+    await query(
+        `INSERT INTO mapset_tags (mapset_id, image_filename, audio_filename)
+     VALUES (?, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       image_filename = VALUES(image_filename),
+       audio_filename = VALUES(audio_filename)`,
+        [mapsetId, imageFilename, audioFilename]
+    );
+}
+
+async function removeMapsetFromDatabase(mapsetId: number): Promise<void> {
+    await query("DELETE FROM mapset_tags WHERE mapset_id = ?", [mapsetId]);
+    await query("DELETE FROM mapset_data WHERE mapset_id = ?", [mapsetId]);
+}
+
+export async function addMapset(mapsetId: number): Promise<void> {
+    console.log(`Processing mapset ID: ${mapsetId}`);
+
     try {
         await ensureDirectories();
 
-        console.log(`Processing mapset ID: ${mapsetId}`);
-
         const beatmapData = await getBeatmapData(mapsetId);
         if (!beatmapData) {
-            throw new Error("Could not fetch beatmap data");
+            throw new Error("Could not fetch beatmap data from osu! API");
         }
 
-        const success = await downloadMapset(mapsetId);
-        if (!success) {
-            throw new Error("Failed to download mapset");
+        const mapsetDir = await downloadMapset(mapsetId);
+        if (!mapsetDir) {
+            throw new Error("Failed to download and extract mapset");
         }
 
-        const mapsetDir = path.join(TEMP_DIR, mapsetId.toString());
-        const audioFilename = await processAudio(mapsetId, mapsetDir);
+        const [audioFilename, imageFilename] = await Promise.all([processAudio(mapsetId, mapsetDir), downloadBackground(mapsetId)]);
+
         if (!audioFilename) {
-            throw new Error("Failed to process audio");
+            throw new Error("Failed to process audio file");
         }
 
-        const imageFilename = await downloadBackground(mapsetId);
         if (!imageFilename) {
-            throw new Error("Failed to download background");
+            throw new Error("Failed to download background image");
         }
 
-        await query(
-            `INSERT INTO mapset_data (mapset_id, title, artist, mapper)
-             VALUES (?, ?, ?, ?)
-             ON DUPLICATE KEY UPDATE
-             title = VALUES(title),
-             artist = VALUES(artist),
-             mapper = VALUES(mapper)`,
-            [mapsetId, beatmapData.title, beatmapData.artist, beatmapData.creator]
-        );
+        await saveMapsetToDatabase(mapsetId, beatmapData, imageFilename, audioFilename);
 
-        await query(
-            `INSERT INTO mapset_tags (mapset_id, image_filename, audio_filename)
-             VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE
-             image_filename = VALUES(image_filename),
-             audio_filename = VALUES(audio_filename)`,
-            [mapsetId, imageFilename, audioFilename]
-        );
-
-        // Cleanup
-        await fs.rm(mapsetDir, { recursive: true, force: true });
+        await cleanupDirectory(mapsetDir);
 
         console.log(`Successfully added mapset ${mapsetId}`);
     } catch (error) {
         console.error(`Error adding mapset ${mapsetId}:`, error);
+        throw error;
     }
 }
 
-export async function removeMapset(mapsetId: number) {
+export async function removeMapset(mapsetId: number): Promise<void> {
     try {
-        const files = (await query("SELECT image_filename, audio_filename FROM mapset_tags WHERE mapset_id = ?", [mapsetId])) as [{ image_filename?: string; audio_filename?: string }];
+        const files = (await query("SELECT image_filename, audio_filename FROM mapset_tags WHERE mapset_id = ?", [mapsetId])) as Array<{ image_filename?: string; audio_filename?: string }>;
 
-        if (files[0]) {
-            if (files[0].image_filename) {
-                await fs.unlink(path.join(BG_DIR, files[0].image_filename)).catch(() => console.log(`Background file for mapset ${mapsetId} not found`));
+        if (files.length > 0 && files[0]) {
+            const { image_filename, audio_filename } = files[0];
+
+            const fileRemovalPromises = [];
+
+            if (image_filename) {
+                const imagePath = path.join(DIRECTORIES.backgrounds, image_filename);
+                fileRemovalPromises.push(fs.unlink(imagePath).catch(() => console.warn(`Background file ${image_filename} not found`)));
             }
-            if (files[0].audio_filename) {
-                await fs.unlink(path.join(AUDIO_DIR, files[0].audio_filename)).catch(() => console.log(`Audio file for mapset ${mapsetId} not found`));
+
+            if (audio_filename) {
+                const audioPath = path.join(DIRECTORIES.audio, audio_filename);
+                fileRemovalPromises.push(fs.unlink(audioPath).catch(() => console.warn(`Audio file ${audio_filename} not found`)));
             }
+
+            await Promise.all(fileRemovalPromises);
         }
 
-        // Remove database entries
-        await query("DELETE FROM mapset_tags WHERE mapset_id = ?", [mapsetId]);
-        await query("DELETE FROM mapset_data WHERE mapset_id = ?", [mapsetId]);
+        await removeMapsetFromDatabase(mapsetId);
 
         console.log(`Successfully removed mapset ${mapsetId}`);
     } catch (error) {
         console.error(`Error removing mapset ${mapsetId}:`, error);
+        throw error;
     }
 }
 
 export async function listMapsets(): Promise<Mapset[]> {
     try {
-        const mapsets = await query(
-            `
-                SELECT
-                    md.mapset_id,
-                    md.title,
-                    md.artist,
-                    md.mapper,
-                    mt.image_filename,
-                    mt.audio_filename
-                FROM mapset_data md
-                JOIN mapset_tags mt ON md.mapset_id = mt.mapset_id
-            `
-        );
-        console.table(mapsets);
+        const mapsets = await query(`
+      SELECT
+        md.mapset_id,
+        md.title,
+        md.artist,
+        md.mapper,
+        mt.image_filename,
+        mt.audio_filename
+      FROM mapset_data md
+      JOIN mapset_tags mt ON md.mapset_id = mt.mapset_id
+      ORDER BY md.mapset_id DESC
+    `);
+
         return mapsets as Mapset[];
     } catch (error) {
         console.error("Error listing mapsets:", error);

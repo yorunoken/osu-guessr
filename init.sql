@@ -86,11 +86,7 @@ CREATE TABLE IF NOT EXISTS mapset_data (
 CREATE TABLE IF NOT EXISTS skins (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    creator VARCHAR(255) NOT NULL,
-    version VARCHAR(100) DEFAULT NULL,
-    description TEXT DEFAULT NULL,
     image_filename VARCHAR(255) NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -147,10 +143,6 @@ CREATE INDEX IF NOT EXISTS idx_achievements_user_score ON user_achievements (use
 CREATE INDEX IF NOT EXISTS idx_achievements_mode_variant_score ON user_achievements (game_mode, variant, total_score);
 
 CREATE INDEX IF NOT EXISTS idx_games_mode_points ON games (game_mode, points);
-
-CREATE INDEX IF NOT EXISTS idx_skins_active ON skins (is_active);
-
-CREATE INDEX IF NOT EXISTS idx_skins_creator ON skins (creator);
 
 SET
     FOREIGN_KEY_CHECKS = 1;
