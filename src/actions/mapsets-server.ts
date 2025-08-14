@@ -178,14 +178,14 @@ async function getRandomSkin(sessionId?: string): Promise<SkinData | null> {
             excludedIds = cached.map((id) => Number(id)).filter(Boolean);
         }
     }
-    const condition = excludedIds.length ? `AND s.id NOT IN (${excludedIds.map(() => "?").join(",")})` : "";
+    const condition = excludedIds.length > 0 ? `WHERE id NOT IN (${excludedIds.map(() => "?").join(",")})` : "";
     const params = excludedIds;
 
     const result = await query(
-        `SELECT s.* 
-         FROM skins s 
+        `SELECT * 
+         FROM skins
          ${condition}
-         ORDER BY RAND() 
+         ORDER BY RAND()
          LIMIT 1`,
         params
     );

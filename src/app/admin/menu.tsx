@@ -408,9 +408,9 @@ export default function AdminMenu() {
         setIsLoading(true);
         appendOutput("Listing skins...");
         try {
-            const skins = ((await listSkins()) as Array<{ id: number; name: string; creator: string; image_filename: string }>) || [];
+            const skins = await listSkins();
             appendOutput(`Found ${skins.length} skins`);
-            skins.forEach((s) => appendOutput(`${s.id} | ${s.name} | ${s.creator} | ${s.image_filename}`));
+            skins.forEach((s) => appendOutput(`${s.id} | ${s.name} | ${s.image_filename}`));
         } catch (error) {
             appendOutput(`Error: ${error}`);
         }
