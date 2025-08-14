@@ -272,11 +272,13 @@
         "preGame": {
             "title": {
                 "audio": "Audio Guessr",
-                "background": "Background Guessr"
+                "background": "Background Guessr",
+                "skin": "Skin Guessr"
             },
             "description": {
                 "audio": "Usłyszysz krótkie wycinki piosenek z osu!",
-                "background": "Zostaną Ci pokazane tła beatmap z osu!"
+                "background": "Zostaną Ci pokazane tła beatmap z osu!",
+                "skin": "You'll see screenshots of popular osu! skins"
             },
             "howToPlay": {
                 "title": "Jak Grać",

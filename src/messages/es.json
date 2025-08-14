@@ -206,11 +206,13 @@
         "preGame": {
             "title": {
                 "audio": "Adivina el audio",
-                "background": "Adivina el fondo"
+                "background": "Adivina el fondo",
+                "skin": "Skin Guessr"
             },
             "description": {
                 "audio": "Escucharás breves fragmentos de canciones de osu!",
-                "background": "Se te mostrarán fondos de beatmaps de osu!"
+                "background": "Se te mostrarán fondos de beatmaps de osu!",
+                "skin": "You'll see screenshots of popular osu! skins"
             },
             "howToPlay": {
                 "title": "Cómo jugar",

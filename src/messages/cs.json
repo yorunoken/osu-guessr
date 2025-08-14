@@ -206,11 +206,13 @@
         "preGame": {
             "title": {
                 "audio": "Hádání hudby",
-                "background": "Hádání pozadí"
+                "background": "Hádání pozadí",
+                "skin": "Skin Guessr"
             },
             "description": {
                 "audio": "Uslyšíte krátké klipy z osu! písní",
-                "background": "Budou vám představena pozadí z osu! beatmap"
+                "background": "Budou vám představena pozadí z osu! beatmap",
+                "skin": "You'll see screenshots of popular osu! skins"
             },
             "howToPlay": {
                 "title": "Jak hrát",

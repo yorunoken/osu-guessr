@@ -40,7 +40,7 @@ function setValueByPath(obj: JsonObject, path: string, value: JsonValue): void {
 }
 
 function syncTranslations(): void {
-    const messagesDir = path.join(__dirname, "src/messages");
+    const messagesDir = path.join(__dirname, "../src/messages");
     const enPath = path.join(messagesDir, "en.json");
     const enJson: JsonObject = JSON.parse(fs.readFileSync(enPath, "utf8"));
     const enKeys = getAllKeys(enJson);

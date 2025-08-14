@@ -206,11 +206,13 @@
         "preGame": {
             "title": {
                 "audio": "Ses Tahmin",
-                "background": "Arkaplan Tahmin"
+                "background": "Arkaplan Tahmin",
+                "skin": "Skin Guessr"
             },
             "description": {
                 "audio": "osu! şarkılarından kısa klipler duyacaksınız",
-                "background": "osu! beatmap arkaplanlarını göreceksiniz"
+                "background": "osu! beatmap arkaplanlarını göreceksiniz",
+                "skin": "You'll see screenshots of popular osu! skins"
             },
             "howToPlay": {
                 "title": "Nasıl Oynanır",
