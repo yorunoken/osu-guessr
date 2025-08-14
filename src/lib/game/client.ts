@@ -249,7 +249,7 @@ export class GameClient {
         }
 
         try {
-            const suggestions = await getSuggestionsAction(query);
+            const suggestions = await getSuggestionsAction(query, this.gameMode);
             return suggestions;
         } catch (error) {
             console.error("Failed to get suggestions:", error);

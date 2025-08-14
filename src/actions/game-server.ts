@@ -593,16 +593,11 @@ export async function endGameAction(sessionId: string): Promise<void> {
     }
 }
 
-export async function getSuggestionsAction(str: string): Promise<string[]> {
+export async function getSuggestionsAction(str: string, gamemode: GameMode): Promise<string[]> {
     if (!str || str.length < 2) return [];
 
-    const results: Array<{ title: string }> = await query(
-        `SELECT DISTINCT title
-            FROM mapset_data
-            WHERE title LIKE ?
-            LIMIT 5`,
-        [`%${str}%`]
-    );
+    const queryStr = gamemode === "skin" ? "SELECT DISTINCT name title FROM skins WHERE name LIKE ? LIMIT 5;" : "SELECT DISTINCT title FROM mapset_data WHERE title LIKE ? LIMIT 5;";
+    const results: Array<{ title: string }> = await query(queryStr, [`%${str}%`]);
 
     return results.map((r) => r.title);
 }
