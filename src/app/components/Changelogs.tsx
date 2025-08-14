@@ -17,7 +17,7 @@ export function ChangelogsSection({ changelogs }: ChangelogsProps) {
             transition: {
                 duration: 0.4,
                 when: "beforeChildren",
-                staggerChildren: 0.05, // Reduced stagger time
+                staggerChildren: 0.05,
             },
         },
     };
@@ -25,7 +25,7 @@ export function ChangelogsSection({ changelogs }: ChangelogsProps) {
     const changelogVariants = {
         hidden: {
             opacity: 0,
-            y: 5, // Reduced y offset
+            y: 5, 
         },
         visible: {
             opacity: 1,
@@ -41,7 +41,7 @@ export function ChangelogsSection({ changelogs }: ChangelogsProps) {
             <motion.div
                 className="bg-card rounded-xl p-6 border border-border/50"
                 initial="hidden"
-                animate="visible" // Changed from whileInView to animate
+                animate="visible"
                 variants={containerVariants}
             >
                 <motion.h2 className="text-2xl font-bold mb-6 text-center" variants={changelogVariants}>
