@@ -337,13 +337,13 @@
                 "title": "How to Play",
                 "classic": {
                     "rounds": "Complete {count} rounds of guessing",
-                    "time": "Try to guess the song title within {seconds} seconds per round",
+                    "time": "Try to guess the title within {seconds} seconds per round",
                     "points": "Earn points based on speed and accuracy",
                     "streak": "Build a streak for bonus points"
                 },
                 "death": {
                     "continuous": "Keep playing until you make a mistake",
-                    "time": "Try to guess the song title within {seconds} seconds per round",
+                    "time": "Try to guess the title within {seconds} seconds per round",
                     "streak": "Build the longest streak possible"
                 }
             },
