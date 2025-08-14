@@ -15,12 +15,10 @@ export default function GameSkin({ mediaUrl, isRevealed, result, songInfo }: Gam
                 <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
                     <ResultMessage result={result} />
                     <div className="space-y-2">
-                        <p className="text-xl font-semibold">{songInfo.title}</p>
-                        <p className="text-foreground/70">by {songInfo.artist}</p>
-                        <p className="text-sm text-foreground/50">Created by {songInfo.mapper}</p>
+                        <p className="text-xl font-semibold">Skin Name: {songInfo.title}</p>
                         {songInfo.mapsetId && (
                             <a
-                                href={`https://osu.ppy.sh/beatmapsets/${songInfo.mapsetId}`}
+                                href={`https://skins.osuck.net/skins/${songInfo.mapsetId}`}
                                 className="inline-block mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
                                 target="_blank"
                                 rel="noopener noreferrer"

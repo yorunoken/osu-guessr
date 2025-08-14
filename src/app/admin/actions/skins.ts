@@ -13,14 +13,14 @@ const DIRECTORIES = {
 } as const;
 
 const OSUCK_API_KEY = process.env.OSUCK_API_KEY;
-const OSUCK_API_BASE_URL = "https://osuck.link/api/skins/get";
+const OSUCK_API_BASE_URL = "https://osuck.link/api/skins/random";
 
 interface SkinData {
     _nsfw: boolean;
     id: number;
     name: string;
     gamemodes: number[];
-    screenshots: {
+    screenshots: Array<{
         // 2 = song select
         // 6 = gameplay
         // 10 = pause screen
@@ -30,7 +30,7 @@ interface SkinData {
         large: string;
         medium: string;
         small: string;
-    }[];
+    }>;
     link_to_skin: string;
 }
 
@@ -72,8 +72,15 @@ async function fetchSkinMetadata(skinId: number): Promise<SkinData | null> {
     }
 
     try {
-        const url = `${OSUCK_API_BASE_URL}?id=${skinId}&key=${OSUCK_API_KEY}`;
-        const response = await fetch(url);
+        const url = `${OSUCK_API_BASE_URL}?key=${OSUCK_API_KEY}`;
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ skins: [skinId] }),
+        });
 
         if (!response.ok) {
             throw new Error(`API request failed: ${response.status}`);
@@ -86,9 +93,10 @@ async function fetchSkinMetadata(skinId: number): Promise<SkinData | null> {
             throw new Error(`API error: ${errorMessage}`);
         }
 
-        return data.message as SkinData;
+        const msg = data.message as SkinData;
+        return msg;
     } catch (error) {
-        console.error(`Failed to fetch skin metadata for ${skinId}:`, error);
+        console.error(`Failed to fetch skin metadata for ${skinId} :`, error);
         return null;
     }
 }
@@ -103,7 +111,7 @@ async function downloadSkin(skinData: SkinData): Promise<string | null> {
     const imagePath = path.join(DIRECTORIES.skins, fileName);
 
     try {
-        const response = await fetch(gameplayCategory.small);
+        const response = await fetch(gameplayCategory.large);
 
         if (!response.ok) {
             throw new Error(`Failed to download screenshot: ${response.status}`);
@@ -126,9 +134,9 @@ async function downloadSkin(skinData: SkinData): Promise<string | null> {
 
 async function saveSkinToDatabase(skinData: SkinData, imageFilename: string): Promise<void> {
     await query(
-        `INSERT INTO skins (name, creator, version, description, image_filename, is_active)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-        [skinData.name || `skin_${skinData.id}`, "osuck", null, JSON.stringify(skinData), imageFilename, 1]
+        `INSERT INTO skins (id, name, image_filename)
+     VALUES (?, ?, ?)`,
+        [skinData.id, skinData.name, imageFilename]
     );
 }
 
@@ -141,7 +149,6 @@ export async function addSkinById(skinId: number): Promise<SkinProcessResult> {
 
     try {
         await ensureDirectories();
-
         const skinData = await fetchSkinMetadata(skinId);
         if (!skinData) {
             throw new Error("Could not fetch skin metadata from API");
@@ -163,7 +170,7 @@ export async function addSkinById(skinId: number): Promise<SkinProcessResult> {
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
-        console.error(`❌ Error adding skin ${skinId}:`, errorMessage);
+        console.error(`Error adding skin ${skinId}:`, errorMessage);
 
         return {
             success: false,
@@ -175,36 +182,29 @@ export async function addSkinById(skinId: number): Promise<SkinProcessResult> {
 export async function addSkinsFromList(ids: number[]): Promise<Array<{ id: number; success: boolean; error?: string; image?: string }>> {
     const results: Array<{ id: number; success: boolean; error?: string; image?: string }> = [];
 
-    console.log(`Processing ${ids.length} skins...`);
-
     for (const [index, id] of ids.entries()) {
         console.log(`Processing skin ${index + 1}/${ids.length}: ${id}`);
 
         try {
-            const result = await addSkinById(id);
-
-            if (result.success) {
-                results.push({
-                    id,
-                    success: true,
-                    image: result.image,
-                });
-            } else {
-                results.push({
-                    id,
-                    success: false,
-                    error: result.error || "Unknown error",
-                });
+            const skinData = await fetchSkinMetadata(id);
+            if (!skinData) {
+                throw new Error("Could not fetch skin metadata from API");
             }
+
+            const image = await downloadSkin(skinData);
+            if (!image) {
+                throw new Error("Failed to download image");
+            }
+
+            await saveSkinToDatabase(skinData, image);
+
+            results.push({ id, success: true, image });
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Unknown error";
-            results.push({
-                id,
-                success: false,
-                error: errorMessage,
-            });
+            results.push({ id, success: false, error: errorMessage });
         }
 
+        // small delay between downloads to be polite to ck :)
         if (index < ids.length - 1) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
         }
