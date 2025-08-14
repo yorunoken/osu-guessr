@@ -3,6 +3,14 @@
 import { query } from "@/lib/database";
 import { z } from "zod";
 
+export interface UserBadge {
+    user_id: number;
+    username: string;
+    badge_name: string;
+    color: string;
+    assigned_at: string;
+}
+
 const badgeSchema = z.object({
     name: z.string().min(1),
     color: z.string().regex(/^#[0-9A-F]{6}$/i, "Must be a valid hex color"),
@@ -65,7 +73,7 @@ export async function removeBadgeFromUser(userId: number, badgeName: string) {
     }
 }
 
-export async function listBadges() {
+export async function listBadges(): Promise<UserBadge[]> {
     try {
         const results = await query(`
             SELECT ub.user_id, u.username, b.name as badge_name, b.color, ub.assigned_at
@@ -74,7 +82,7 @@ export async function listBadges() {
             JOIN badges b ON ub.badge_name = b.name
             ORDER BY ub.assigned_at DESC
         `);
-        return results;
+        return results as UserBadge[];
     } catch (error) {
         throw new Error(`Failed to list badges: ${error}`);
     }

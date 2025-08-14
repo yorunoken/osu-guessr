@@ -12,6 +12,15 @@ const TEMP_DIR = path.join(process.cwd(), "tmp");
 
 const OSU_API_KEY = process.env.OSU_API_KEY;
 
+export interface Mapset {
+    mapset_id: number;
+    title: string;
+    artist: string;
+    mapper: string;
+    image_filename: string;
+    audio_filename: string;
+}
+
 interface BeatmapData {
     title: string;
     artist: string;
@@ -190,21 +199,25 @@ export async function removeMapset(mapsetId: number) {
     }
 }
 
-export async function listMapsets() {
+export async function listMapsets(): Promise<Mapset[]> {
     try {
-        const mapsets = await query(`
-            SELECT
-                md.mapset_id,
-                md.title,
-                md.artist,
-                md.mapper,
-                mt.image_filename,
-                mt.audio_filename
-            FROM mapset_data md
-            JOIN mapset_tags mt ON md.mapset_id = mt.mapset_id
-        `);
+        const mapsets = await query(
+            `
+                SELECT
+                    md.mapset_id,
+                    md.title,
+                    md.artist,
+                    md.mapper,
+                    mt.image_filename,
+                    mt.audio_filename
+                FROM mapset_data md
+                JOIN mapset_tags mt ON md.mapset_id = mt.mapset_id
+            `
+        );
         console.table(mapsets);
+        return mapsets as Mapset[];
     } catch (error) {
         console.error("Error listing mapsets:", error);
+        return [];
     }
 }

@@ -1,21 +1,24 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
-import { addMapset, removeMapset, listMapsets } from "./actions/mapsets";
+import { addMapset, removeMapset, listMapsets, Mapset } from "./actions/mapsets";
 import { syncUserAchievements } from "./actions/update-outofsync-users";
 import { checkTranslation, fillMissingTranslations, removeExtraTranslations, getAllLanguages } from "./actions/check-translations";
-import { getBadges, addBadge, removeBadge, assignBadgeToUser, removeBadgeFromUser, listBadges } from "./actions/manage-badges";
+import { getBadges, addBadge, removeBadge, assignBadgeToUser, removeBadgeFromUser, listBadges, UserBadge } from "./actions/manage-badges";
 import { processBulkMapsets } from "./actions/bulk-mapsets";
+import { deploy } from "./actions/deploy";
+import { listReports, updateReportStatus } from "./actions/reports";
 
 import { CollapsibleSection } from "./ui";
-import { deploy } from "./actions/deploy";
 
 export default function AdminMenu() {
+    const consoleDivRef = useRef<HTMLDivElement>(null);
+
     const [mapsetId, setMapsetId] = useState("");
     const [bulkFile, setBulkFile] = useState<File | null>(null);
 
@@ -33,6 +36,9 @@ export default function AdminMenu() {
 
     const [output, setOutput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+
+    const [reportId, setReportId] = useState("");
+    const [reportStatus, setReportStatus] = useState("pending");
 
     const appendOutput = (text: string) => {
         setOutput((prev) => prev + "\n" + text);
@@ -121,8 +127,14 @@ export default function AdminMenu() {
         appendOutput("Listing badges...");
         try {
             const badges = await listBadges();
-            console.table(badges);
-            appendOutput("Badges listed in console");
+            if (badges.length > 0) {
+                appendOutput("Badges:");
+                badges.forEach((b: UserBadge) => {
+                    appendOutput(`${b.user_id} | ${b.username} | ${b.badge_name} | ${b.color} | ${b.assigned_at}`);
+                });
+            } else {
+                appendOutput("No badges found");
+            }
         } catch (error) {
             appendOutput(`Error: ${error}`);
         }
@@ -156,11 +168,22 @@ export default function AdminMenu() {
     };
 
     const handleListMapsets = async () => {
+        consoleDivRef.current?.scrollIntoView({
+            behavior: "smooth",
+        });
+
         setIsLoading(true);
         appendOutput("Listing mapsets...");
         try {
-            await listMapsets();
-            appendOutput("Mapsets listed in console");
+            const mapsets = await listMapsets();
+            if (mapsets.length > 0) {
+                appendOutput("Mapsets:");
+                mapsets.forEach((m: Mapset) => {
+                    appendOutput(`${m.mapset_id} | ${m.title} | ${m.artist} | ${m.mapper} | ${m.image_filename} | ${m.audio_filename}`);
+                });
+            } else {
+                appendOutput("No mapsets found");
+            }
         } catch (error) {
             appendOutput(`Error: ${error}`);
         }
@@ -168,6 +191,10 @@ export default function AdminMenu() {
     };
 
     const handleBulkUpload = async () => {
+        consoleDivRef.current?.scrollIntoView({
+            behavior: "smooth",
+        });
+
         if (!bulkFile) return;
 
         setIsLoading(true);
@@ -190,6 +217,10 @@ export default function AdminMenu() {
     };
 
     const handleSyncUsers = async () => {
+        consoleDivRef.current?.scrollIntoView({
+            behavior: "smooth",
+        });
+
         setIsLoading(true);
         appendOutput("Syncing user achievements...");
         try {
@@ -202,6 +233,10 @@ export default function AdminMenu() {
     };
 
     const handleCheckTranslation = async () => {
+        consoleDivRef.current?.scrollIntoView({
+            behavior: "smooth",
+        });
+
         if (!languageCode) return;
         setIsLoading(true);
         appendOutput(`Checking translations for language: ${languageCode}`);
@@ -248,6 +283,10 @@ export default function AdminMenu() {
     };
 
     const handleCheckAllLanguages = async () => {
+        consoleDivRef.current?.scrollIntoView({
+            behavior: "smooth",
+        });
+
         setIsLoading(true);
         appendOutput("Checking all translations...");
 
@@ -473,7 +512,67 @@ export default function AdminMenu() {
                 </div>
             </CollapsibleSection>
 
-            <div className="bg-card p-6 rounded-lg border border-border">
+            <CollapsibleSection title="Report Management">
+                <div className="space-y-4">
+                    <div className="bg-secondary/20 p-6 rounded-xl">
+                        <h3 className="text-lg font-medium mb-4">View and Manage Reports</h3>
+                        <Button
+                            onClick={async () => {
+                                setIsLoading(true);
+                                appendOutput("Listing reports...");
+                                try {
+                                    const reports = await listReports();
+                                    if (reports.length > 0) {
+                                        appendOutput("Reports:");
+                                        reports.forEach((r) => {
+                                            appendOutput(`${r.id} | ${r.user_id} | ${r.mapset_id} | ${r.report_type} | ${r.status} | ${new Date(r.created_at).toLocaleString()}`);
+                                        });
+                                    } else {
+                                        appendOutput("No reports found");
+                                    }
+                                } catch (error) {
+                                    appendOutput(`Error: ${error}`);
+                                }
+                                setIsLoading(false);
+                            }}
+                            disabled={isLoading}
+                            variant="outline"
+                        >
+                            List Reports
+                        </Button>
+                    </div>
+                    <div className="bg-secondary/20 p-6 rounded-xl">
+                        <h3 className="text-lg font-medium mb-4">Update Report Status</h3>
+                        <div className="flex gap-4">
+                            <Input type="number" placeholder="Report ID" onChange={(e) => setReportId(e.target.value)} className="w-1/4" />
+                            <select className="rounded-md border border-input bg-transparent px-3 py-1 w-1/4" onChange={(e) => setReportStatus(e.target.value)}>
+                                <option value="pending">pending</option>
+                                <option value="investigating">investigating</option>
+                                <option value="resolved">resolved</option>
+                                <option value="rejected">rejected</option>
+                            </select>
+                            <Button
+                                onClick={async () => {
+                                    setIsLoading(true);
+                                    appendOutput(`Updating report ${reportId} to ${reportStatus}...`);
+                                    try {
+                                        await updateReportStatus(parseInt(reportId), reportStatus);
+                                        appendOutput(`Report ${reportId} updated successfully`);
+                                    } catch (error) {
+                                        appendOutput(`Error: ${error}`);
+                                    }
+                                    setIsLoading(false);
+                                }}
+                                disabled={isLoading}
+                            >
+                                Update Status
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </CollapsibleSection>
+
+            <div className="bg-card p-6 rounded-lg border border-border" ref={consoleDivRef}>
                 <h2 className="text-xl font-semibold mb-4">Console Output</h2>
                 <pre className="bg-background p-4 rounded-md h-64 overflow-y-auto whitespace-pre-wrap">{output}</pre>
                 <Button onClick={() => setOutput("")} variant="outline" className="mt-2">
