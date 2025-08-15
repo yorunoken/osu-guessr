@@ -25,7 +25,7 @@ export default function Hero() {
 
     return (
         <section className="relative min-h-[80vh] flex items-center">
-            <div className="absolute inset-0 bg-[url('/main_bg.jpg')] bg-cover bg-center opacity-20 blur-sm"></div>
+            <div className="absolute inset-0 bg-[url('/main_bg.webp')] bg-cover bg-center opacity-20 blur-sm"></div>
             <div className="absolute bottom-0 w-full p-4 bg-black/30 backdrop-blur-sm">
                 <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
                     <Link href={"https://twitter.com/Akariimia"} target="_blank" className="text-foreground/90 hover:text-primary transition-colors">
