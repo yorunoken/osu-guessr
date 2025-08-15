@@ -43,6 +43,7 @@ interface OsuApiResponse {
 async function ensureDirectories(): Promise<void> {
     const directories = Object.values(DIRECTORIES);
     await Promise.all(directories.map((dir) => fs.mkdir(dir, { recursive: true })));
+    console.log("Directories exist");
 }
 
 async function cleanupDirectory(dirPath: string): Promise<void> {
@@ -84,8 +85,7 @@ async function getBeatmapData(mapsetId: number): Promise<BeatmapData | null> {
 }
 
 async function downloadMapset(mapsetId: number): Promise<string | null> {
-    const mapsetDir = path.join(DIRECTORIES.temp, mapsetId.toString());
-    await fs.mkdir(mapsetDir, { recursive: true });
+    const tempDir = path.join(DIRECTORIES.temp, mapsetId.toString());
 
     try {
         const oszUrl = `${BEATCONNECT_BASE_URL}/${mapsetId}`;
@@ -95,10 +95,10 @@ async function downloadMapset(mapsetId: number): Promise<string | null> {
             throw new Error(`Download failed: ${response.status}`);
         }
 
-        const oszPath = path.join(mapsetDir, `${mapsetId}.osz`);
+        const oszPath = path.join(tempDir, `${mapsetId}.osz`);
 
         if (response.body) {
-            // @ts-expect-error idk
+            // @ts-expect-error response.body is a stream.Readable
             await pipeline(response.body, fsSync.createWriteStream(oszPath));
         } else {
             throw new Error("No response body");
@@ -109,25 +109,36 @@ async function downloadMapset(mapsetId: number): Promise<string | null> {
             throw new Error("Downloaded file is empty");
         }
 
-        await new Promise<void>((resolve, reject) => {
-            fsSync
-                .createReadStream(oszPath)
-                .pipe(unzipper.Extract({ path: mapsetDir }))
-                .on("close", resolve)
-                .on("error", reject);
-        });
+        const directory = await unzipper.Open.file(oszPath);
 
+        await Promise.all(
+            directory.files.map(async (entry) => {
+                const dest = path.join(tempDir, entry.path);
+
+                if (entry.type === "Directory") {
+                    await fs.mkdir(dest, { recursive: true });
+                    return;
+                }
+
+                await fs.mkdir(path.dirname(dest), { recursive: true });
+                const read = entry.stream();
+                // pipe each entry to a write stream
+                await pipeline(read, fsSync.createWriteStream(dest));
+            })
+        );
+
+        // remove the downloaded archive
         await fs.unlink(oszPath).catch(() => {});
 
-        return mapsetDir;
+        return tempDir;
     } catch (error) {
         console.error(`Error downloading mapset ${mapsetId}:`, error);
-        await cleanupDirectory(mapsetDir);
+        await cleanupDirectory(tempDir);
         return null;
     }
 }
 
-async function downloadBackground(mapsetId: number): Promise<string | null> {
+async function extractBackground(mapsetId: number): Promise<string | null> {
     try {
         const imageFilename = `${mapsetId}.webp`;
         const destPath = path.join(DIRECTORIES.backgrounds, imageFilename);
@@ -189,7 +200,7 @@ async function findLargestAudioFile(mapsetDir: string): Promise<string | null> {
     }
 }
 
-async function processAudio(mapsetId: number, mapsetDir: string): Promise<string | null> {
+async function extractAudio(mapsetId: number, mapsetDir: string): Promise<string | null> {
     try {
         const largestAudio = await findLargestAudioFile(mapsetDir);
         if (!largestAudio) {
@@ -252,7 +263,7 @@ export async function addMapset(mapsetId: number): Promise<void> {
             throw new Error("Failed to download and extract mapset");
         }
 
-        const [audioFilename, imageFilename] = await Promise.all([processAudio(mapsetId, mapsetDir), downloadBackground(mapsetId)]);
+        const [audioFilename, imageFilename] = await Promise.all([extractAudio(mapsetId, mapsetDir), extractBackground(mapsetId)]);
 
         if (!audioFilename) {
             throw new Error("Failed to process audio file");
@@ -271,6 +282,48 @@ export async function addMapset(mapsetId: number): Promise<void> {
         console.error(`Error adding mapset ${mapsetId}:`, error);
         throw error;
     }
+}
+
+export async function addMapsetFromList(fileContent: string) {
+    const mapsetIds = fileContent
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+            const match = line.match(/beatmapsets\/(\d+)/);
+            return match ? parseInt(match[1]) : null;
+        })
+        .filter((id): id is number => id !== null);
+
+    console.log(mapsetIds);
+
+    const total = mapsetIds.length;
+    const results: Array<{ id: number; success: boolean; error?: string }> = [];
+
+    console.log(`Found ${total} mapsets to process.`);
+
+    for (let i = 0; i < mapsetIds.length; i++) {
+        const mapsetId = mapsetIds[i];
+        const progress = (((i + 1) / total) * 100).toFixed(1);
+
+        console.log(`[${progress}%] Processing mapset ${mapsetId} (${i + 1}/${total})`);
+
+        try {
+            await addMapset(mapsetId);
+            results.push({ id: mapsetId, success: true });
+            console.log(`✓ Mapset ${mapsetId}: Successfully added`);
+        } catch (error) {
+            results.push({ id: mapsetId, success: false, error: String(error) });
+            console.log(`✗ Mapset ${mapsetId}: Failed - ${error}`);
+        }
+    }
+
+    return {
+        total,
+        successful: results.filter((r) => r.success).length,
+        failed: results.filter((r) => !r.success).length,
+        results,
+    };
 }
 
 export async function removeMapset(mapsetId: number): Promise<void> {

@@ -6,11 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
-import { addMapset, removeMapset, listMapsets, Mapset } from "./actions/mapsets";
+import { addMapset, removeMapset, listMapsets, Mapset, addMapsetFromList } from "./actions/mapsets";
 import { syncUserAchievements } from "./actions/update-outofsync-users";
 import { checkTranslation, fillMissingTranslations, removeExtraTranslations, getAllLanguages } from "./actions/check-translations";
 import { getBadges, addBadge, removeBadge, assignBadgeToUser, removeBadgeFromUser, listBadges, UserBadge } from "./actions/manage-badges";
-import { processBulkMapsets } from "./actions/bulk-mapsets";
 import { deploy } from "./actions/deploy";
 import { listReports, updateReportStatus } from "./actions/reports";
 import { listSkins, removeSkin, addSkinById, addSkinsFromList } from "./actions/skins";
@@ -209,7 +208,7 @@ export default function AdminMenu() {
 
         try {
             const content = await bulkFile.text();
-            const result = await processBulkMapsets(content);
+            const result = await addMapsetFromList(content);
 
             appendOutput(`Bulk upload completed:
             Total mapsets: ${result.total}
