@@ -50,7 +50,7 @@ export default function GuessInput({ guess, setGuess, isRevealed, onGuess, onSki
                 setSuggestions(newSuggestions);
                 setShowSuggestions(true);
                 setSelectedIndex(newSuggestions.length > 0 ? 0 : -1);
-            }, 300);
+            }, 100);
         }
 
         return () => {
@@ -135,6 +135,16 @@ export default function GuessInput({ guess, setGuess, isRevealed, onGuess, onSki
         }
     };
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const v = e.target.value;
+        setGuess(v);
+        if (!isSelectingRef.current) {
+            setSuggestions([]);
+            setShowSuggestions(false);
+            setSelectedIndex(-1);
+        }
+    };
+
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card p-6 rounded-xl border border-border/50">
             <h2 className="text-xl font-semibold mb-4">{t.game.input.title}</h2>
@@ -143,7 +153,7 @@ export default function GuessInput({ guess, setGuess, isRevealed, onGuess, onSki
                     type="text"
                     ref={inputRef}
                     value={guess}
-                    onChange={(e) => setGuess(e.target.value)}
+                    onChange={handleChange}
                     onKeyDown={handleKeyDown}
                     onFocus={() => setShowSuggestions(!!guess)}
                     onBlur={() => {
