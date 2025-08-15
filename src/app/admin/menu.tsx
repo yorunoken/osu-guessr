@@ -153,8 +153,14 @@ export default function AdminMenu() {
         setIsLoading(true);
         appendOutput(`Adding mapset ${mapsetId}...`);
         try {
-            await addMapset(parseInt(mapsetId));
-            appendOutput("Mapset added successfully");
+            const res = await addMapset(parseInt(mapsetId));
+            if (res?.success && res?.note === "already_exists") {
+                appendOutput(`Mapset ${mapsetId}: already exists — skipped`);
+            } else if (res?.success) {
+                appendOutput("Mapset added successfully");
+            } else {
+                appendOutput(`Mapset add returned unexpected response: ${JSON.stringify(res)}`);
+            }
         } catch (error) {
             appendOutput(`Error: ${error}`);
         }
@@ -211,10 +217,20 @@ export default function AdminMenu() {
             const content = await bulkFile.text();
             const result = await addMapsetFromList(content);
 
-            appendOutput(`Bulk upload completed:
-            Total mapsets: ${result.total}
-            Successful: ${result.successful}
-            Failed: ${result.failed}`);
+            appendOutput(`Bulk upload completed: Total ${result.total}, Successful ${result.successful}, Failed ${result.failed}`);
+
+            if (result.results && result.results.length > 0) {
+                appendOutput("Details:");
+                result.results.forEach((r: { id: number; success: boolean; error?: string; note?: string }) => {
+                    if (r.success && r.note === "already_exists") {
+                        appendOutput(`Mapset ${r.id}: already exists — skipped`);
+                    } else if (r.success) {
+                        appendOutput(`Mapset ${r.id}: added`);
+                    } else {
+                        appendOutput(`Mapset ${r.id}: failed — ${r.error}`);
+                    }
+                });
+            }
         } catch (error) {
             appendOutput(`Error during bulk upload: ${error}`);
         } finally {

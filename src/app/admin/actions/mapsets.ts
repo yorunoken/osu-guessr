@@ -243,15 +243,34 @@ async function saveMapsetToDatabase(mapsetId: number, beatmapData: BeatmapData, 
     );
 }
 
+async function mapsetExists(mapsetId: number): Promise<boolean> {
+    try {
+        const rows = await query("SELECT 1 FROM mapset_data WHERE mapset_id = ? LIMIT 1", [mapsetId]);
+        if (Array.isArray(rows)) {
+            return rows.length > 0;
+        }
+        return Boolean(rows && Object.keys(rows).length > 0);
+    } catch (error) {
+        console.error(`Error checking mapset existence for ${mapsetId}:`, error);
+        return false;
+    }
+}
+
 async function removeMapsetFromDatabase(mapsetId: number): Promise<void> {
     await query("DELETE FROM mapset_tags WHERE mapset_id = ?", [mapsetId]);
     await query("DELETE FROM mapset_data WHERE mapset_id = ?", [mapsetId]);
 }
 
-export async function addMapset(mapsetId: number): Promise<void> {
+export async function addMapset(mapsetId: number): Promise<{ success: boolean; note?: string }> {
     console.log(`Processing mapset ID: ${mapsetId}`);
 
     try {
+        const existing = await mapsetExists(mapsetId);
+        if (existing) {
+            console.log(`Mapset ${mapsetId} already exists in the database. Skipping download.`);
+            return { success: true, note: "already_exists" };
+        }
+
         await ensureDirectories();
 
         const beatmapData = await getBeatmapData(mapsetId);
@@ -279,6 +298,7 @@ export async function addMapset(mapsetId: number): Promise<void> {
         await cleanupDirectory(mapsetDir);
 
         console.log(`Successfully added mapset ${mapsetId}`);
+        return { success: true };
     } catch (error) {
         console.error(`Error adding mapset ${mapsetId}:`, error);
         throw error;
@@ -299,7 +319,7 @@ export async function addMapsetFromList(fileContent: string) {
     console.log(mapsetIds);
 
     const total = mapsetIds.length;
-    const results: Array<{ id: number; success: boolean; error?: string }> = [];
+    const results: Array<{ id: number; success: boolean; error?: string; note?: string }> = [];
 
     console.log(`Found ${total} mapsets to process.`);
 
@@ -310,9 +330,15 @@ export async function addMapsetFromList(fileContent: string) {
         console.log(`[${progress}%] Processing mapset ${mapsetId} (${i + 1}/${total})`);
 
         try {
-            await addMapset(mapsetId);
-            results.push({ id: mapsetId, success: true });
-            console.log(`✓ Mapset ${mapsetId}: Successfully added`);
+            const exists = await mapsetExists(mapsetId);
+            if (exists) {
+                results.push({ id: mapsetId, success: true, note: "already_exists" });
+                console.log(`→ Mapset ${mapsetId}: Already exists in database. Skipping.`);
+            } else {
+                await addMapset(mapsetId);
+                results.push({ id: mapsetId, success: true });
+                console.log(`✓ Mapset ${mapsetId}: Successfully added`);
+            }
         } catch (error) {
             results.push({ id: mapsetId, success: false, error: String(error) });
             console.log(`✗ Mapset ${mapsetId}: Failed - ${error}`);
