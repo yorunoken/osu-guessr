@@ -86,6 +86,7 @@ async function getBeatmapData(mapsetId: number): Promise<BeatmapData | null> {
 
 async function downloadMapset(mapsetId: number): Promise<string | null> {
     const tempDir = path.join(DIRECTORIES.temp, mapsetId.toString());
+    await fs.mkdir(tempDir, { recursive: true });
 
     try {
         const oszUrl = `${BEATCONNECT_BASE_URL}/${mapsetId}`;

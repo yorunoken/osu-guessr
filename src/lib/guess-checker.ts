@@ -38,13 +38,10 @@ export function checkGuess(guess: string, actual: string, difficulty: GuessDiffi
     actual = normalizeString(actual);
 
     if (guess === actual) {
-        console.log("normalized equals");
         return true;
     }
 
     if (levenshteinSimilarity(guess, actual) > difficulty || gestaltPattern(guess, actual) > difficulty + 0.1) {
-        console.log("Levenshtein ", levenshteinSimilarity(guess, actual));
-        console.log("gestaltPattern ", gestaltPattern(guess, actual));
         return true;
     }
 
