@@ -13,7 +13,7 @@ const DIRECTORIES = {
 } as const;
 
 const OSUCK_API_KEY = process.env.OSUCK_API_KEY;
-const OSUCK_API_BASE_URL = "https://osuck.link/api/skins/random";
+const OSUCK_API_BASE_URL = process.env.OSUCK_API_BASE;
 
 interface SkinData {
     _nsfw: boolean;
