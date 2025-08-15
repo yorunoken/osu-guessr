@@ -17,7 +17,7 @@ const createPromos = (t: Translations): Array<Promo> => [
         id: "twitter",
         title: t.components.ads.twitter.title,
         message: t.components.ads.twitter.message,
-        link: "https://twitter.com/yorunoken727",
+        link: "https://twitter.com/_yorunoken",
         icon: "🐦",
     },
     {

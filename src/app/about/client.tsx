@@ -223,7 +223,7 @@ export default function AboutClient() {
                                 </p>
                                 <p className="text-foreground/80">
                                     • Twitter:{" "}
-                                    <a href="https://twitter.com/yorunoken727" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                                    <a href="https://twitter.com/_yorunoken" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
                                         @_yorunoken
                                     </a>
                                 </p>
