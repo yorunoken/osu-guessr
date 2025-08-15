@@ -29,6 +29,12 @@
                 "description": "Current highest score in one game"
             }
         },
+        "announcements": {
+            "title": "Latest announcements",
+            "latestLabel": "Latest Announcement",
+            "previous": "Previous announcements:",
+            "viewAll": "View all announcements"
+        },
         "supporters": {
             "title": "Supporters",
             "beFirst": "Be the first to support {osu_guessr}!"

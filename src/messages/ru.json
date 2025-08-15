@@ -10,7 +10,9 @@
             "startPlaying": "Начать игру",
             "signIn": "Войти с {osu_base}",
             "learnMore": "Узнать больше",
-            "artCredit": "Арт создан {artist_name}"
+            "artCredit": "Арт создан {artist_name}",
+            "developerCredit": "Created by yorunoken",
+            "discordInvite": "Join our Discord"
         },
         "statistics": {
             "title": "Игровые статистики",
@@ -33,6 +35,12 @@
         },
         "updates": {
             "title": "Последние обновления"
+        },
+        "announcements": {
+            "title": "Latest announcements",
+            "latestLabel": "Latest Announcement",
+            "previous": "Previous announcements:",
+            "viewAll": "View all announcements"
         }
     },
     "common": {
@@ -43,7 +51,13 @@
         "submit": "Отправить",
         "delete": "Удалить",
         "create": "Создать",
-        "save": "Сохранить"
+        "save": "Сохранить",
+        "support": "Support",
+        "sessionLoading": {
+            "title": "Loading {osu_guessr}",
+            "description": "Preparing your session...",
+            "funFact": "Did you know? I didn't either!"
+        }
     },
     "about": {
         "title": "Об игре {osu_guessr}",
@@ -175,20 +189,6 @@
                     "docs": "• Помочь улучшить документацию"
                 }
             }
-        },
-        "privacy": {
-            "title": "Конфиденциальность и юридические аспекты",
-            "dataUsage": {
-                "title": "Использование данных",
-                "description": "Мы храним только необходимые игровые данные и информацию вашего профиля osu!. Ваша конфиденциальность важна для нас!"
-            },
-            "contentUsage": {
-                "title": "Использование контента",
-                "description": "Все содержимое карт, включая фоновые изображения и аудио, принадлежит их соответствующим создателям и используется на условиях добросовестного использования в образовательных целях."
-            },
-            "disclaimer": {
-                "title": "Дискламация"
-            }
         }
     },
     "gameModes": {
@@ -212,11 +212,13 @@
         "preGame": {
             "title": {
                 "audio": "Audio Guessr",
-                "background": "Background Guessr"
+                "background": "Background Guessr",
+                "skin": "Skin Guessr"
             },
             "description": {
                 "audio": "Вы услышите короткие отрывки песен из osu!",
-                "background": "Вам будут показаны фоны карт из osu!"
+                "background": "Вам будут показаны фоны карт из osu!",
+                "skin": "You'll see screenshots of popular osu! skins"
             },
             "howToPlay": {
                 "title": "Как играть",
@@ -335,8 +337,33 @@
             "nextRoundTime": "Следующий раунд ({seconds}с)",
             "viewResults": "Посмотреть результаты"
         },
-        "instructions": {
-            "title": "Как играть:"
+        "shortcuts": {
+            "title": "Some shortcuts you should know:",
+            "items": {
+                "tab": "Tab - Cycle through suggestions",
+                "enter": "Enter - Submit guess / Next round / Select the highlighted suggestion",
+                "ctrlS": "Ctrl+S - Skip current round",
+                "arrows": "↑/↓ - Navigate suggestions",
+                "esc": "Esc - Close suggestions"
+            }
+        },
+        "comingSoon": {
+            "title": "{mode} Guessr",
+            "subtitle": "Coming Soon!",
+            "description": "We're working hard to bring you the {mode} guessing game mode. Stay tuned for updates!",
+            "whatToExpect": "What to expect:",
+            "expectations": {
+                "audio": "Test your music knowledge by identifying osu! songs from short audio clips. How many can you recognize?",
+                "skin": "Challenge yourself to recognize popular osu! skins from gameplay screenshots. Perfect for skin enthusiasts!"
+            },
+            "actions": {
+                "backToHome": "Back to Home",
+                "tryBackground": "Try Background Guessr"
+            }
+        },
+        "audio": {
+            "instructions": "Listen to the audio and try to guess the song title!",
+            "browserNotSupported": "Your browser does not support the audio element."
         }
     },
     "leaderboard": {
@@ -377,7 +404,8 @@
                 "gamesPlayed": "Игр сыграно",
                 "highestScore": "Высший балл",
                 "bestStreak": "Лучшее комбо",
-                "lastPlayed": "В последний раз сыграно"
+                "lastPlayed": "В последний раз сыграно",
+                "modeRank": "Mode Rank"
             },
             "topGames": {
                 "title": "Лучшие игры",
@@ -418,47 +446,72 @@
                 "points": {
                     "1": "Храните свои API-ключи в безопасности и никогда не публикуйте их публично",
                     "2": "Если ключ украден, немедленно удилате его и создайте новый",
-                    "3": "Каждый ключ имеет полный доступ к возможностям API вашей учетной записи"
+                    "3": "Каждый ключ имеет полный доступ к возможностям API вашей учетной записи",
+                    "4": "API keys are stored securely and cannot be retrieved after creation"
                 }
             },
             "actions": {
                 "create": "Создать новый ключ API",
                 "delete": "Удалить ключ",
-                "viewDocs": "Посетить документацию по API"
+                "viewDocs": "Посетить документацию по API",
+                "copy": "Copy Key",
+                "close": "Close"
             },
             "dialog": {
                 "create": {
                     "title": "Создать новый ключ API",
                     "description": "Введите имя для вашего нового API-ключа. Это поможет вам идентифицировать его в будущем.",
-                    "placeholder": "Название ключа"
+                    "placeholder": "Название ключа",
+                    "warning": {
+                        "title": "Important",
+                        "description": "You will only see the API key once after creation. Make sure to copy it immediately as it cannot be recovered later."
+                    }
                 },
                 "delete": {
                     "title": "Удалить ключ API",
                     "description": "Вы действительно хотите удалить ключ API \"{name}\"?",
-                    "warning": "Это действие невозможно отменить, и оно немедленно приведет к аннулированию доступа к любым сервисам, использующим этот ключ."
+                    "warning": "Это действие невозможно отменить, и оно немедленно приведет к аннулированию доступа к любым сервисам, использующим этот ключ.",
+                    "confirm": "Yes, delete this key"
+                },
+                "created": {
+                    "title": "API Key Created Successfully",
+                    "warning": {
+                        "title": "Copy Your API Key Now",
+                        "description": "This is your only chance to copy this API key. For security reasons, it will never be displayed again."
+                    },
+                    "copied": "API key copied to clipboard"
                 }
             },
             "keyInfo": {
                 "created": "Создан: {date}",
                 "lastUsed": "В последний раз использован: {date}",
-                "noKeys": "Ключей API пока нет"
+                "noKeys": "Ключей API пока нет",
+                "maxKeys": "Maximum number of API keys reached (5)",
+                "neverUsed": "Never used"
+            },
+            "errors": {
+                "createFailed": "Failed to create API key",
+                "deleteFailed": "Failed to delete API key",
+                "loadFailed": "Failed to load API keys",
+                "maxKeysReached": "Maximum number of API keys (5) reached"
             }
         }
     },
     "support": {
-        "dialog": {
-            "title": "Поддержать {osu_guessr}",
-            "description": "Если вам нравится использовать {osu_guessr} и хотите поддержать его разработку, подумайте о том, чтобы сделать пожертвование. Ваша поддержка помогает поддерживать работоспособность серверов и открывает новые возможности! Укажите свое имя рядом с пожертвованием, чтобы оно появилось на главной странице.",
-            "options": {
-                "coffee": {
-                    "title": "Buy me a Coffee",
-                    "description": "Поддержать единоразовым пожертвованием"
-                },
-                "kofi": {
-                    "title": "Ko-fi",
-                    "description": "Поддержите через Ko-fi"
-                }
+        "title": "Support {osu_guessr}",
+        "description": "Help support the development and maintenance of {osu_guessr} by becoming a supporter!",
+        "benefits": {
+            "title": "Supporter Benefits",
+            "items": {
+                "badge": "Exclusive supporter badge on your profile",
+                "homepage": "Get featured on the homepage"
             }
+        },
+        "donate": {
+            "title": "Become a Supporter",
+            "button": "Buy me a Coffee",
+            "description": "Support {osu_guessr} with a one-time donation through Buy Me a Coffee. Any donation amount will grant you supporter status permanently!",
+            "reminder": "Please include your osu!guessr username or user ID in your donation message to receive supporter benefits!"
         }
     },
     "components": {
@@ -474,7 +527,9 @@
         },
         "footer": {
             "madeWith": "Сделано с ❤️ - {author}",
-            "notAffiliated": "Не связано с {osu_base}"
+            "about": "About",
+            "privacy": "Privacy Policy",
+            "tos": "Terms of Service"
         },
         "report": {
             "button": "Сообщить о проблеме",
@@ -523,6 +578,24 @@
         "adPlaceholder": {
             "title": "Реклама",
             "description": "Скоро появится реклама, чтобы помочь поддержать {osu_guessr}"
+        },
+        "ads": {
+            "twitter": {
+                "title": "Follow on Twitter",
+                "message": "Stay updated with the latest {osu_guessr} news!"
+            },
+            "osu": {
+                "title": "Add me on osu!",
+                "message": "Let's be friends in-game!"
+            },
+            "buymeacoffe": {
+                "title": "Support on Ko-fi",
+                "message": "Help keep {osu_guessr} running!"
+            },
+            "discord": {
+                "title": "Join our Discord",
+                "message": "Chat with other {osu_guessr} players!"
+            }
         }
     },
     "errors": {
@@ -558,26 +631,130 @@
         "saved": "Изменения успешно сохранены",
         "error": "Произошла ошибка"
     },
-    "gameInstructions": {
-        "classic": {
-            "1": "Посмотрите на фоновое изображение карты",
-            "2": "Попробуйте угадать название песни",
-            "3": "У вас есть {seconds} секунд на раунд",
-            "4": "Поддерживайте свое комбо и получайте бонусные очки!"
-        },
-        "death": {
-            "1": "Посмотрите на фоновое изображение карты",
-            "2": "Попробуйте угадать название песни",
-            "3": "У вас есть {seconds} секунд на раунд",
-            "4": "Одна неверная догадка или пропуск заканчивает вашу игру!",
-            "5": "Как долго вы сможете прожить?"
-        }
-    },
     "timestamps": {
         "seconds": "{count}с",
         "minutes": "{count}м",
         "hours": "{count}ч",
         "days": "{count}д",
         "ago": "{time} назад"
+    },
+    "privacy": {
+        "title": "Privacy Policy",
+        "notAffiliated": "Not affiliated with {osu_base}",
+        "sections": {
+            "dataCollection": {
+                "title": "Data Collection",
+                "description": "We collect and store only the minimum amount of information necessary to provide {osu_guessr} services:",
+                "items": {
+                    "profile": "Your osu! profile information (username, ID, avatar)",
+                    "stats": "Game statistics and scores",
+                    "session": "Game session data"
+                }
+            },
+            "dataUsage": {
+                "title": "Data Usage",
+                "description": "Your data is used for:",
+                "items": {
+                    "progress": "Maintaining your game progress and statistics",
+                    "leaderboards": "Displaying leaderboards and rankings",
+                    "improvement": "Improving game performance and user experience"
+                }
+            },
+            "dataProtection": {
+                "title": "Data Protection",
+                "description": "We take the following measures to protect your data:",
+                "items": {
+                    "encryption": "Secure data transmission using HTTPS",
+                    "updates": "Regular security updates and monitoring",
+                    "access": "Limited access to user data by administrators"
+                }
+            },
+            "thirdParty": {
+                "title": "Third-Party Services",
+                "description": "We use the following third-party services:",
+                "items": {
+                    "osu": "osu! API for authentication and beatmap data",
+                    "analytics": "Analytics services to improve user experience",
+                    "cdn": "Content delivery networks for improved performance"
+                }
+            },
+            "dataRetention": {
+                "title": "Data Retention",
+                "description": "We retain your data for as long as your account is active. You can request data deletion by contacting us.",
+                "gameStats": "Game statistics and scores are retained indefinitely for historical and competitive purposes."
+            },
+            "rights": {
+                "title": "Your Rights",
+                "description": "You have the right to:",
+                "items": {
+                    "access": "Access your personal data",
+                    "correction": "Request data correction or deletion",
+                    "objection": "Object to data processing",
+                    "export": "Export your data"
+                }
+            },
+            "contact": {
+                "title": "Contact Information",
+                "description": "For any privacy-related questions or requests, contact us:",
+                "items": {
+                    "email": "Email: me@yorunoken.com",
+                    "discord": "Discord: @yorunoken",
+                    "github": "GitHub:"
+                }
+            }
+        }
+    },
+    "tos": {
+        "title": "Terms of Service",
+        "sections": {
+            "acceptance": {
+                "title": "Acceptance of Terms",
+                "description": "By accessing or using {osu_guessr}, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service."
+            },
+            "eligibility": {
+                "title": "User Eligibility",
+                "description": "To use {osu_guessr}, you must meet the following requirements:",
+                "items": {
+                    "age": "You must be at least 13 years old",
+                    "account": "You must have a valid osu! account",
+                    "rules": "You must comply with osu!'s terms of service"
+                }
+            },
+            "content": {
+                "title": "User Conduct",
+                "description": "Users of {osu_guessr} agree not to:",
+                "items": {
+                    "cheating": "Use cheats, automation, or other methods to gain unfair advantages",
+                    "abuse": "Abuse, harass, or threaten other users",
+                    "interference": "Interfere with or disrupt the service or servers"
+                }
+            },
+            "termination": {
+                "title": "Account Termination",
+                "description": "We reserve the right to terminate or suspend access to our service immediately, without prior notice or liability, for any reason whatsoever, including:",
+                "items": {
+                    "violation": "Violation of these Terms of Service",
+                    "deletion": "Upon osu! account deletion or suspension"
+                }
+            },
+            "disclaimer": {
+                "title": "Disclaimer",
+                "description": "{osu_guessr} is not affiliated with or endorsed by osu! or ppy Pty Ltd.",
+                "warranty": "The service is provided 'as is' without any warranty or guarantee of any kind."
+            },
+            "changes": {
+                "title": "Changes to Terms",
+                "description": "We reserve the right to modify or replace these terms at any time. Changes will be effective immediately upon posting to the website."
+            },
+            "contact": {
+                "title": "Contact Information",
+                "description": "For any questions about these Terms of Service, please contact us:",
+                "items": {
+                    "email": "Email: me@yorunoken.com",
+                    "discord": "Discord: @yorunoken",
+                    "github": "GitHub:"
+                }
+            }
+        }
     }
 }

@@ -120,6 +120,13 @@ CREATE TABLE IF NOT EXISTS reports (
     INDEX idx_reports_mapset (mapset_id)
 );
 
+CREATE TABLE IF NOT EXISTS announcements (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX IF NOT EXISTS idx_username ON users (username);
 
 CREATE INDEX IF NOT EXISTS idx_games_user_mode ON games (user_id, game_mode);

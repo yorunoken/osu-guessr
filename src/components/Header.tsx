@@ -13,12 +13,22 @@ import { useTranslationsContext } from "@/context/translations-provider";
 import { SupportPageLink } from "./SupportDialogWrapper";
 import { OWNER_ID } from "@/lib";
 
-const NAV_ITEMS = ["leaderboard", "about"] as const;
+const NAV_ITEMS = ["leaderboard", "about", "announcements"] as const;
 
 export default function Header() {
     const { data: session } = useSession();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { t } = useTranslationsContext();
+
+    const getNavLabel = (key: string) => {
+        try {
+            const val = (t.components.header.nav as Record<string, string>)[key];
+            if (val) return val;
+        } catch {
+            /* noop */
+        }
+        return key.charAt(0).toUpperCase() + key.slice(1);
+    };
 
     return (
         <header className="bg-background/95 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">
@@ -32,7 +42,7 @@ export default function Header() {
                             {NAV_ITEMS.map((item) => (
                                 <li key={item}>
                                     <Link href={`/${item}`} className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium">
-                                        {t.components.header.nav[item]}
+                                        {getNavLabel(item)}
                                     </Link>
                                 </li>
                             ))}
@@ -107,7 +117,7 @@ export default function Header() {
                                     className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium w-full text-center px-4 py-2"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
-                                    {t.components.header.nav[item]}
+                                    {getNavLabel(item)}
                                 </Link>
                             </li>
                         ))}

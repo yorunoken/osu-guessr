@@ -146,6 +146,13 @@ export interface Report {
     updated_at: Date;
 }
 
+export interface Announcement {
+    id: number;
+    title: string;
+    content: string;
+    created_at: string;
+}
+
 // Database types for game sessions
 export interface DatabaseGameSession {
     id: string;

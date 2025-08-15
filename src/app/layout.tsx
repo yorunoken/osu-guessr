@@ -42,7 +42,7 @@ export default async function RootLayout({
                 <body className={`${publicSans.variable} antialiased`}>
                     <div className="flex items-center justify-center min-h-screen bg-background">
                         <div className="max-w-xl mx-auto p-8 bg-card rounded-lg border border-border">
-                            <h1 className="text-2xl font-bold mb-4">Server Locked</h1>
+                            <h1 className="text-2xl font-bold mb-4">Website Locked</h1>
                             <p className="mb-4">The site is temporarily locked until {new Date(lock.until).toLocaleString()}.</p>
                             <p className="text-sm text-muted-foreground">Access is restricted. Only the owner can access the site while it&apos;s locked. Sorry for the inconvenience.</p>
                         </div>

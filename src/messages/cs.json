@@ -35,6 +35,12 @@
         },
         "updates": {
             "title": "Novinky"
+        },
+        "announcements": {
+            "title": "Latest announcements",
+            "latestLabel": "Latest Announcement",
+            "previous": "Previous announcements:",
+            "viewAll": "View all announcements"
         }
     },
     "common": {

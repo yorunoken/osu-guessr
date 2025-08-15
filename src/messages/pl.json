@@ -35,6 +35,12 @@
         },
         "updates": {
             "title": "Najnowsze Aktualizacje"
+        },
+        "announcements": {
+            "title": "Latest announcements",
+            "latestLabel": "Latest Announcement",
+            "previous": "Previous announcements:",
+            "viewAll": "View all announcements"
         }
     },
     "privacy": {

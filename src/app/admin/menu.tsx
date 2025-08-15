@@ -12,6 +12,7 @@ import { checkTranslation, fillMissingTranslations, removeExtraTranslations, get
 import { getBadges, addBadge, removeBadge, assignBadgeToUser, removeBadgeFromUser, listBadges, UserBadge } from "./actions/manage-badges";
 import { deploy } from "./actions/deploy";
 import { listReports, updateReportStatus } from "./actions/reports";
+import { listAnnouncements, addAnnouncement, removeAnnouncement } from "@/actions/announcements";
 import { listSkins, removeSkin, addSkinById, addSkinsFromList } from "./actions/skins";
 import { adminSetLock, adminUnlock, adminGetLock } from "./actions/lockdown";
 
@@ -43,6 +44,9 @@ export default function AdminMenu() {
     const [reportId, setReportId] = useState("");
     const [reportStatus, setReportStatus] = useState("pending");
     const [skinRemoveId, setSkinRemoveId] = useState("");
+    const [announcementTitle, setAnnouncementTitle] = useState("");
+    const [announcementContent, setAnnouncementContent] = useState("");
+    const [announcementsList, setAnnouncementsList] = useState<Array<{ id: number; title: string; created_at: string }>>([]);
     const [skinSingleId, setSkinSingleId] = useState("");
     const [skinListFile, setSkinListFile] = useState<File | null>(null);
 
@@ -68,10 +72,7 @@ export default function AdminMenu() {
         setAvailableLanguages(languages);
     }, []);
 
-    useEffect(() => {
-        loadAvailableBadges();
-        loadAvailableLanguages();
-    }, [loadAvailableBadges, loadAvailableLanguages]);
+    // initial loaders executed after callbacks are declared
 
     const handleAddBadgeType = async () => {
         if (!newBadgeName || !newBadgeColor) return;
@@ -477,6 +478,54 @@ export default function AdminMenu() {
         setIsLoading(false);
     };
 
+    const loadAnnouncements = useCallback(async () => {
+        setIsLoading(true);
+        appendOutput("Loading announcements...");
+        try {
+            const res = (await listAnnouncements()) as Array<{ id: number; title: string; created_at: string }>;
+            setAnnouncementsList(res);
+            appendOutput(`Found ${res.length} announcements`);
+        } catch (error) {
+            appendOutput(`Error: ${error}`);
+        }
+        setIsLoading(false);
+    }, []);
+
+    useEffect(() => {
+        loadAvailableBadges();
+        loadAvailableLanguages();
+        loadAnnouncements();
+    }, [loadAvailableBadges, loadAvailableLanguages, loadAnnouncements]);
+
+    const handleAddAnnouncement = async () => {
+        if (!announcementTitle || !announcementContent) return;
+        setIsLoading(true);
+        appendOutput(`Adding announcement \"${announcementTitle}\"...`);
+        try {
+            await addAnnouncement(announcementTitle, announcementContent);
+            appendOutput("Announcement added");
+            setAnnouncementTitle("");
+            setAnnouncementContent("");
+            await loadAnnouncements();
+        } catch (error) {
+            appendOutput(`Error: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
+    const handleRemoveAnnouncement = async (id: number) => {
+        setIsLoading(true);
+        appendOutput(`Removing announcement ${id}...`);
+        try {
+            await removeAnnouncement(id);
+            appendOutput("Announcement removed");
+            await loadAnnouncements();
+        } catch (error) {
+            appendOutput(`Error: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
     return (
         <div className="container mx-auto px-4 py-8 space-y-4">
             <div className="flex justify-between items-center mb-8">
@@ -736,6 +785,55 @@ export default function AdminMenu() {
                             >
                                 Update Status
                             </Button>
+                        </div>
+                    </div>
+                </div>
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Announcements">
+                <div className="space-y-4">
+                    <div className="bg-secondary/20 p-6 rounded-xl">
+                        <h3 className="text-lg font-medium mb-4">Create Announcement</h3>
+                        <div className="space-y-4">
+                            <Input placeholder="Title" value={announcementTitle} onChange={(e) => setAnnouncementTitle(e.target.value)} />
+                            <textarea
+                                placeholder="Content"
+                                value={announcementContent}
+                                onChange={(e) => setAnnouncementContent(e.target.value)}
+                                className="w-full rounded-md border border-input bg-transparent px-3 py-2"
+                                rows={4}
+                            />
+                            <div className="flex gap-4">
+                                <Button onClick={handleAddAnnouncement} disabled={isLoading || !announcementTitle || !announcementContent}>
+                                    Add Announcement
+                                </Button>
+                                <Button onClick={loadAnnouncements} disabled={isLoading} variant="outline">
+                                    Refresh
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-secondary/20 p-6 rounded-xl">
+                        <h3 className="text-lg font-medium mb-4">Existing Announcements</h3>
+                        <div className="space-y-2">
+                            {announcementsList.length === 0 ? (
+                                <p className="text-sm text-muted-foreground">No announcements</p>
+                            ) : (
+                                announcementsList.map((a) => (
+                                    <div key={a.id} className="flex items-center justify-between p-2 bg-background/50 rounded-md">
+                                        <div>
+                                            <div className="font-medium">{a.title}</div>
+                                            <div className="text-xs text-muted-foreground">{new Date(a.created_at).toLocaleString()}</div>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Button variant="destructive" size="sm" onClick={() => handleRemoveAnnouncement(a.id)} disabled={isLoading}>
+                                                Remove
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>
