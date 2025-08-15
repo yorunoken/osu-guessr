@@ -129,7 +129,7 @@ export default function LeaderboardClient() {
                                 leaderboardData.map((player, index) => (
                                     <tr key={index} className={`hover:bg-secondary/20 transition-colors ${session?.user?.name === player.username ? "bg-primary/10" : ""}`}>
                                         <td className="px-6 py-4">
-                                            {index + 1 <= 3 ? (
+                                            {(index + 1 <= 3) && page > 1 ? (
                                                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-white font-bold text-sm">
                                                     {(page - 1) * pageSize + index + 1}
                                                 </div>
