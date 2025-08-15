@@ -22,7 +22,7 @@ export default function LeaderboardClient() {
     const [leaderboardData, setLeaderboardData] = useState<Array<TopPlayer>>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [orderMetric, setOrderMetric] = useState<"total" | "highest">("total");
+    const [orderMetric, setOrderMetric] = useState<"total" | "highest">("highest");
     const [page, setPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(10);
 

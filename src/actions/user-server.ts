@@ -209,7 +209,7 @@ export async function getUserTopGamesAction(banchoId: number, gameMode?: GameMod
     return query(query_string, params);
 }
 
-export async function getTopPlayersAction(gamemode: GameMode, variant: GameVariant = "classic", limit: number = 10, orderMetric: "total" | "highest" = "total", offset: number = 0): Promise<Array<TopPlayer>> {
+export async function getTopPlayersAction(gamemode: GameMode, variant: GameVariant = "classic", limit: number = 10, orderMetric: "total" | "highest" = "highest", offset: number = 0): Promise<Array<TopPlayer>> {
     const validatedMode = gameModeSchema.parse(gamemode);
 
     let query_string: string;
