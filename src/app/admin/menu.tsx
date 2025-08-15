@@ -14,6 +14,7 @@ import { processBulkMapsets } from "./actions/bulk-mapsets";
 import { deploy } from "./actions/deploy";
 import { listReports, updateReportStatus } from "./actions/reports";
 import { listSkins, removeSkin, addSkinById, addSkinsFromList } from "./actions/skins";
+import { adminSetLock, adminUnlock, adminGetLock } from "./actions/lockdown";
 
 import { CollapsibleSection } from "./ui";
 
@@ -37,6 +38,8 @@ export default function AdminMenu() {
 
     const [output, setOutput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [lockMinutes, setLockMinutes] = useState(5);
+    const [lockInfo, setLockInfo] = useState<string | null>(null);
 
     const [reportId, setReportId] = useState("");
     const [reportStatus, setReportStatus] = useState("pending");
@@ -417,6 +420,50 @@ export default function AdminMenu() {
         setIsLoading(false);
     };
 
+    const handleSetLock = async () => {
+        setIsLoading(true);
+        appendOutput(`Setting lockdown for ${lockMinutes} minute(s)...`);
+        try {
+            const info = await adminSetLock(Number(lockMinutes));
+            appendOutput(`Lock set until ${new Date(info.until).toLocaleString()}`);
+            setLockInfo(`Locked until ${new Date(info.until).toLocaleString()}`);
+        } catch (error) {
+            appendOutput(`Error setting lock: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
+    const handleUnlock = async () => {
+        setIsLoading(true);
+        appendOutput(`Unlocking server...`);
+        try {
+            await adminUnlock();
+            appendOutput(`Unlocked`);
+            setLockInfo(null);
+        } catch (error) {
+            appendOutput(`Error unlocking: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
+    const handleGetLock = async () => {
+        setIsLoading(true);
+        appendOutput(`Querying lock state...`);
+        try {
+            const info = await adminGetLock();
+            if (info) {
+                appendOutput(`Locked until ${new Date(info.until).toLocaleString()} by ${info.ownerId}`);
+                setLockInfo(`Locked until ${new Date(info.until).toLocaleString()} by ${info.ownerId}`);
+            } else {
+                appendOutput(`Not locked`);
+                setLockInfo(null);
+            }
+        } catch (error) {
+            appendOutput(`Error querying lock: ${error}`);
+        }
+        setIsLoading(false);
+    };
+
     const handleRemoveSkin = async () => {
         if (!skinRemoveId) return;
         setIsLoading(true);
@@ -692,6 +739,25 @@ export default function AdminMenu() {
                             </Button>
                         </div>
                     </div>
+                </div>
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Server Lockdown">
+                <div className="bg-secondary/20 p-6 rounded-xl">
+                    <h3 className="text-lg font-medium mb-4">Temporarily lock the server</h3>
+                    <div className="flex items-center gap-4">
+                        <Input type="number" className="w-24" value={String(lockMinutes)} onChange={(e) => setLockMinutes(Number(e.target.value))} />
+                        <Button onClick={handleSetLock} disabled={isLoading} className="bg-red-600 hover:bg-red-700">
+                            Lock Server (minutes)
+                        </Button>
+                        <Button onClick={handleUnlock} disabled={isLoading} variant="destructive">
+                            Unlock Server
+                        </Button>
+                        <Button onClick={handleGetLock} disabled={isLoading} variant="outline">
+                            Get Lock State
+                        </Button>
+                    </div>
+                    {lockInfo && <p className="mt-4 text-sm text-muted-foreground">{lockInfo}</p>}
                 </div>
             </CollapsibleSection>
 
