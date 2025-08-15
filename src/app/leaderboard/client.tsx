@@ -131,10 +131,10 @@ export default function LeaderboardClient() {
                                         <td className="px-6 py-4">
                                             {index + 1 <= 3 ? (
                                                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-white font-bold text-sm">
-                                                    {index + 1}
+                                                    {(page - 1) * pageSize + index + 1}
                                                 </div>
                                             ) : (
-                                                <span className="text-muted-foreground font-mono">{index + 1}</span>
+                                                <span className="text-muted-foreground font-mono">{(page - 1) * pageSize + index + 1}</span>
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
