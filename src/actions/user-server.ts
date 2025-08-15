@@ -209,26 +209,13 @@ export async function getUserTopGamesAction(banchoId: number, gameMode?: GameMod
     return query(query_string, params);
 }
 
-export async function getTopPlayersAction(gamemode: GameMode, variant: GameVariant = "classic", limit: number = 10): Promise<Array<TopPlayer>> {
+export async function getTopPlayersAction(gamemode: GameMode, variant: GameVariant = "classic", limit: number = 10, orderMetric: "total" | "highest" = "total", offset: number = 0): Promise<Array<TopPlayer>> {
     const validatedMode = gameModeSchema.parse(gamemode);
 
-    const query_string =
-        variant === "classic"
-            ? `SELECT u.*,
-                COUNT(*) as games_played,
-                MAX(g.streak) as highest_streak,
-                MAX(g.points) as highest_score,
-                SUM(g.points) as total_score,
-                GROUP_CONCAT(DISTINCT CONCAT(b.name, ':', b.color)) as badges
-         FROM games g
-         JOIN users u ON g.user_id = u.bancho_id
-         LEFT JOIN user_badges ub ON u.bancho_id = ub.user_id
-         LEFT JOIN badges b ON ub.badge_name = b.name
-         WHERE g.game_mode = ? AND g.variant = 'classic'
-         GROUP BY g.user_id
-         ORDER BY total_score DESC
-         LIMIT ?`
-            : `SELECT u.*,
+    let query_string: string;
+
+    if (variant === "death") {
+        query_string = `SELECT u.*,
                 COUNT(*) as games_played,
                 MAX(g.streak) as highest_streak,
                 0 as highest_score,
@@ -241,9 +228,26 @@ export async function getTopPlayersAction(gamemode: GameMode, variant: GameVaria
          WHERE g.game_mode = ? AND g.variant = 'death'
          GROUP BY g.user_id
          ORDER BY highest_streak DESC
-         LIMIT ?`;
+         LIMIT ? OFFSET ?`;
+    } else {
+        const orderColumn = orderMetric === "highest" ? "highest_score" : "total_score";
+        query_string = `SELECT u.*,
+                COUNT(*) as games_played,
+                MAX(g.streak) as highest_streak,
+                MAX(g.points) as highest_score,
+                SUM(g.points) as total_score,
+                GROUP_CONCAT(DISTINCT CONCAT(b.name, ':', b.color)) as badges
+         FROM games g
+         JOIN users u ON g.user_id = u.bancho_id
+         LEFT JOIN user_badges ub ON u.bancho_id = ub.user_id
+         LEFT JOIN badges b ON ub.badge_name = b.name
+         WHERE g.game_mode = ? AND g.variant = 'classic'
+         GROUP BY g.user_id
+         ORDER BY ${orderColumn} DESC
+         LIMIT ? OFFSET ?`;
+    }
 
-    const results = await query(query_string, [validatedMode, limit]);
+    const results = await query(query_string, [validatedMode, limit, offset]);
 
     /* eslint-disable  @typescript-eslint/no-explicit-any */
     return results.map((player: any) => {
