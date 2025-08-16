@@ -17,6 +17,7 @@ import { listSkins, removeSkin, addSkinById, addSkinsFromList } from "./actions/
 import { adminSetLock, adminUnlock, adminGetLock } from "./actions/lockdown";
 
 import { CollapsibleSection } from "./ui";
+import Link from "next/link";
 
 export default function AdminMenu() {
     const consoleDivRef = useRef<HTMLDivElement>(null);
@@ -546,9 +547,14 @@ export default function AdminMenu() {
         <div className="container mx-auto px-4 py-8 space-y-4">
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">Admin Panel</h1>
-                <Button onClick={handleDeploy} disabled={isLoading} className="bg-green-600 hover:bg-green-700">
-                    Deploy Latest Changes
-                </Button>
+                <div>
+                    <Button className="bg-green-600 hover:bg-green-700 mr-2">
+                        <Link href={"/admin/beatmaps"}>Go to Beatmapsets</Link>
+                    </Button>
+                    <Button onClick={handleDeploy} disabled={isLoading} className="bg-green-600 hover:bg-green-700">
+                        Deploy Latest Changes
+                    </Button>
+                </div>
             </div>
 
             <CollapsibleSection title="Mapset Management">

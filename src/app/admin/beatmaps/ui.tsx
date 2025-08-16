@@ -1,0 +1,137 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+import { listMapsets, removeMapset, fetchBackgroundImage, Mapset } from "../actions/mapsets";
+
+export default function BeatmapsAdmin() {
+    const [mapsets, setMapsets] = useState<Mapset[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [output, setOutput] = useState("");
+    const [images, setImages] = useState<Record<number, string | null>>({});
+    const [page, setPage] = useState(1);
+    const limit = 50;
+
+    const fetchMapsets = async (p = 1) => {
+        setIsLoading(true);
+        setOutput("Loading mapsets...");
+        try {
+            setImages({});
+            const list = await listMapsets(p, limit);
+            setMapsets(list || []);
+            setOutput(`Loaded ${list.length} mapsets`);
+
+            const imgs: Record<number, string | null> = {};
+            await Promise.all(
+                (list || []).map(async (m: Mapset) => {
+                    if (m.image_filename) {
+                        try {
+                            const data = await fetchBackgroundImage(m.image_filename);
+                            imgs[m.mapset_id] = data;
+                        } catch {
+                            imgs[m.mapset_id] = null;
+                        }
+                    } else {
+                        imgs[m.mapset_id] = null;
+                    }
+                })
+            );
+            setImages(imgs);
+        } catch (err) {
+            setOutput(`Error loading mapsets: ${String(err)}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchMapsets(page);
+    }, [page]);
+
+    const handleDelete = async (id: number) => {
+        if (!confirm(`Delete mapset ${id}? This will remove audio/image and db records.`)) return;
+        setIsLoading(true);
+        setOutput(`Removing ${id}...`);
+        try {
+            await removeMapset(id);
+            setOutput(`Removed ${id}`);
+            await fetchMapsets(page);
+        } catch (err) {
+            setOutput(`Failed to remove ${id}: ${String(err)}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const prevPage = () => setPage((p) => Math.max(1, p - 1));
+    const nextPage = () => setPage((p) => p + 1);
+
+    return (
+        <div className="space-y-6 p-6">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <Link href="/admin">
+                        <Button variant="ghost" size="sm">
+                            Back
+                        </Button>
+                    </Link>
+                    <h1 className="text-2xl font-bold">Beatmaps</h1>
+                </div>
+
+                <div className="text-sm text-muted-foreground">{output}</div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {mapsets.map((m) => (
+                    <div key={m.mapset_id} className="bg-card rounded-lg border border-border p-4 flex flex-col">
+                        <div className="flex items-center gap-4">
+                            <div className="w-28 h-16 relative rounded overflow-hidden bg-muted">
+                                {images[m.mapset_id] ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={images[m.mapset_id] as string} alt={m.title} className="w-full h-full object-cover" />
+                                ) : m.image_filename ? (
+                                    <div className="w-full h-full flex items-center justify-center text-sm text-muted-foreground">Loading image...</div>
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-sm text-muted-foreground">No image</div>
+                                )}
+                            </div>
+
+                            <div className="flex-1">
+                                <div className="font-semibold">{m.title}</div>
+                                <div className="text-sm text-muted-foreground">
+                                    {m.artist} — {m.mapper}
+                                </div>
+                                <div className="text-xs text-muted-foreground mt-1">ID: {m.mapset_id}</div>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 flex gap-2">
+                            <Button variant="destructive" size="sm" onClick={() => handleDelete(m.mapset_id)}>
+                                Delete
+                            </Button>
+                            <a className="btn" href={`https://osu.ppy.sh/beatmapsets/${m.mapset_id}`} target="_blank" rel="noreferrer">
+                                <Button size="sm">Open osu!</Button>
+                            </a>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <div className="flex justify-center">
+                <div className="flex items-center gap-2">
+                    <Button size="sm" onClick={prevPage} disabled={page === 1}>
+                        Prev
+                    </Button>
+                    <div className="text-sm">Page {page}</div>
+                    <Button size="sm" onClick={nextPage}>
+                        Next
+                    </Button>
+                </div>
+            </div>
+
+            {mapsets.length === 0 && !isLoading && <div className="text-muted-foreground">No mapsets found.</div>}
+        </div>
+    );
+}

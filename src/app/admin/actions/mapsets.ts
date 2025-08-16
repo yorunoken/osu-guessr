@@ -384,9 +384,15 @@ export async function removeMapset(mapsetId: number): Promise<void> {
     }
 }
 
-export async function listMapsets(): Promise<Mapset[]> {
+export async function listMapsets(page = 1, limit = 50): Promise<Mapset[]> {
     try {
-        const mapsets = await query(`
+        const pageNum = Math.max(1, Math.trunc(Number(page) || 1));
+        const maxLimit = 50;
+        const lim = Math.min(maxLimit, Math.max(1, Math.trunc(Number(limit) || maxLimit)));
+        const offset = (pageNum - 1) * lim;
+
+        const mapsets = await query(
+            `
       SELECT
         md.mapset_id,
         md.title,
@@ -397,11 +403,34 @@ export async function listMapsets(): Promise<Mapset[]> {
       FROM mapset_data md
       JOIN mapset_tags mt ON md.mapset_id = mt.mapset_id
       ORDER BY md.mapset_id DESC
-    `);
+      LIMIT ? OFFSET ?
+    `,
+            [lim, offset]
+        );
 
-        return mapsets as Mapset[];
+        return (mapsets as Mapset[]) || [];
     } catch (error) {
         console.error("Error listing mapsets:", error);
         return [];
+    }
+}
+
+export async function fetchBackgroundImage(filename?: string | null): Promise<string | null> {
+    if (!filename) return null;
+
+    try {
+        const filePath = path.join(DIRECTORIES.backgrounds, filename);
+        const stats = await fs.stat(filePath).catch(() => null);
+        if (!stats || !stats.isFile()) return null;
+
+        const buffer = await fs.readFile(filePath);
+        const ext = path.extname(filename).toLowerCase();
+        const mime = ext === ".webp" ? "image/webp" : ext === ".png" ? "image/png" : ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "application/octet-stream";
+
+        const base64 = Buffer.from(buffer).toString("base64");
+        return `data:${mime};base64,${base64}`;
+    } catch (error) {
+        console.error(`Error reading background ${filename}:`, error);
+        return null;
     }
 }
