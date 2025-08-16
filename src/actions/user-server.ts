@@ -198,11 +198,11 @@ export async function getUserTopGamesAction(banchoId: number, gameMode?: GameMod
         ? `SELECT user_id, game_mode, points, streak, variant, ended_at
            FROM games
            WHERE user_id = ? AND game_mode = ? AND variant = ?
-           ORDER BY ${orderBy} DESC`
+           ORDER BY ${orderBy} DESC, ended_at ASC`
         : `SELECT user_id, game_mode, points, streak, variant, ended_at
            FROM games
            WHERE user_id = ? AND variant = ?
-           ORDER BY ${orderBy} DESC`;
+           ORDER BY ${orderBy} DESC, ended_at ASC`;
 
     const params = validatedMode ? [banchoId, validatedMode, variant] : [banchoId, variant];
 
@@ -220,6 +220,7 @@ export async function getTopPlayersAction(gamemode: GameMode, variant: GameVaria
                 MAX(g.streak) as highest_streak,
                 0 as highest_score,
                 0 as total_score,
+                MIN(g.ended_at) as earliest_ended_at,
                 GROUP_CONCAT(DISTINCT CONCAT(b.name, ':', b.color)) as badges
          FROM games g
          JOIN users u ON g.user_id = u.bancho_id
@@ -227,7 +228,7 @@ export async function getTopPlayersAction(gamemode: GameMode, variant: GameVaria
          LEFT JOIN badges b ON ub.badge_name = b.name
          WHERE g.game_mode = ? AND g.variant = 'death'
          GROUP BY g.user_id
-         ORDER BY highest_streak DESC
+      ORDER BY highest_streak DESC, earliest_ended_at ASC
          LIMIT ? OFFSET ?`;
     } else {
         const orderColumn = orderMetric === "highest" ? "highest_score" : "total_score";
@@ -236,14 +237,15 @@ export async function getTopPlayersAction(gamemode: GameMode, variant: GameVaria
                 MAX(g.streak) as highest_streak,
                 MAX(g.points) as highest_score,
                 SUM(g.points) as total_score,
-                GROUP_CONCAT(DISTINCT CONCAT(b.name, ':', b.color)) as badges
+          MIN(g.ended_at) as earliest_ended_at,
+          GROUP_CONCAT(DISTINCT CONCAT(b.name, ':', b.color)) as badges
          FROM games g
          JOIN users u ON g.user_id = u.bancho_id
          LEFT JOIN user_badges ub ON u.bancho_id = ub.user_id
          LEFT JOIN badges b ON ub.badge_name = b.name
          WHERE g.game_mode = ? AND g.variant = 'classic'
          GROUP BY g.user_id
-         ORDER BY ${orderColumn} DESC
+         ORDER BY ${orderColumn} DESC, earliest_ended_at ASC
          LIMIT ? OFFSET ?`;
     }
 
