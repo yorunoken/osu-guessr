@@ -384,29 +384,37 @@ export async function removeMapset(mapsetId: number): Promise<void> {
     }
 }
 
-export async function listMapsets(page = 1, limit = 50): Promise<Mapset[]> {
+export async function listMapsets(page = 1, limit = 50, q?: string): Promise<Mapset[]> {
     try {
         const pageNum = Math.max(1, Math.trunc(Number(page) || 1));
         const maxLimit = 50;
         const lim = Math.min(maxLimit, Math.max(1, Math.trunc(Number(limit) || maxLimit)));
         const offset = (pageNum - 1) * lim;
 
-        const mapsets = await query(
-            `
-      SELECT
-        md.mapset_id,
-        md.title,
-        md.artist,
-        md.mapper,
-        mt.image_filename,
-        mt.audio_filename
-      FROM mapset_data md
-      JOIN mapset_tags mt ON md.mapset_id = mt.mapset_id
-      ORDER BY md.artist DESC
-      LIMIT ? OFFSET ?
-    `,
-            [lim, offset]
-        );
+        let sql = `
+            SELECT
+                md.mapset_id,
+                md.title,
+                md.artist,
+                md.mapper,
+                mt.image_filename,
+                mt.audio_filename
+            FROM mapset_data md
+            JOIN mapset_tags mt ON md.mapset_id = mt.mapset_id
+        `;
+
+        const params: (string | number)[] = [];
+
+        if (q && String(q).trim().length > 0) {
+            sql += ` WHERE LOWER(md.artist) LIKE ? OR LOWER(md.title) LIKE ? `;
+            const like = `%${String(q).toLowerCase().trim()}%`;
+            params.push(like, like);
+        }
+
+        sql += ` ORDER BY md.artist DESC LIMIT ? OFFSET ? `;
+        params.push(lim, offset);
+
+        const mapsets = await query(sql, params);
 
         return (mapsets as Mapset[]) || [];
     } catch (error) {

@@ -8,18 +8,20 @@ import { listMapsets, removeMapset, fetchBackgroundImage, Mapset } from "../acti
 
 export default function BeatmapsAdmin() {
     const [mapsets, setMapsets] = useState<Mapset[]>([]);
+    const [selected, setSelected] = useState<Record<number, boolean>>({});
+    const [search, setSearch] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [output, setOutput] = useState("");
     const [images, setImages] = useState<Record<number, string | null>>({});
     const [page, setPage] = useState(1);
     const limit = 50;
 
-    const fetchMapsets = async (p = 1) => {
+    const fetchMapsets = async (p = 1, q = "") => {
         setIsLoading(true);
         setOutput("Loading mapsets...");
         try {
             setImages({});
-            const list = await listMapsets(p, limit);
+            const list = await listMapsets(p, limit, q);
             setMapsets(list || []);
             setOutput(`Loaded ${list.length} mapsets`);
 
@@ -47,8 +49,8 @@ export default function BeatmapsAdmin() {
     };
 
     useEffect(() => {
-        fetchMapsets(page);
-    }, [page]);
+        fetchMapsets(page, search);
+    }, [page, search]);
 
     const handleDelete = async (id: number) => {
         if (!confirm(`Delete mapset ${id}? This will remove audio/image and db records.`)) return;
@@ -60,6 +62,43 @@ export default function BeatmapsAdmin() {
             await fetchMapsets(page);
         } catch (err) {
             setOutput(`Failed to remove ${id}: ${String(err)}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleToggle = (id: number) => {
+        setSelected((s) => ({ ...s, [id]: !s[id] }));
+    };
+
+    const handleSelectAll = () => {
+        const allOn = mapsets.every((m) => selected[m.mapset_id]);
+        if (allOn) {
+            setSelected({});
+        } else {
+            const next: Record<number, boolean> = {};
+            mapsets.forEach((m) => (next[m.mapset_id] = true));
+            setSelected(next);
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        const ids = Object.keys(selected)
+            .filter((k) => selected[Number(k)])
+            .map((k) => Number(k));
+        if (ids.length === 0) return;
+        if (!confirm(`Delete ${ids.length} selected mapset(s)? This will remove audio/image and db records.`)) return;
+        setIsLoading(true);
+        try {
+            for (const id of ids) {
+                setOutput(`Removing ${id}...`);
+                await removeMapset(id);
+            }
+            setOutput(`Removed ${ids.length} mapsets`);
+            setSelected({});
+            await fetchMapsets(page, search);
+        } catch (err) {
+            setOutput(`Bulk delete failed: ${String(err)}`);
         } finally {
             setIsLoading(false);
         }
@@ -83,10 +122,26 @@ export default function BeatmapsAdmin() {
                 <div className="text-sm text-muted-foreground">{output}</div>
             </div>
 
+            <div className="flex items-center gap-4">
+                <input className="input" placeholder="Search artist or title" value={search} onChange={(e) => setSearch(e.target.value)} />
+                <Button size="sm" onClick={() => fetchMapsets(1, search)}>
+                    Search
+                </Button>
+                <Button size="sm" onClick={handleSelectAll}>
+                    {mapsets.every((m) => selected[m.mapset_id]) ? "Unselect all" : "Select all"}
+                </Button>
+                <Button size="sm" variant="destructive" onClick={handleBulkDelete}>
+                    Delete selected
+                </Button>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {mapsets.map((m) => (
                     <div key={m.mapset_id} className="bg-card rounded-lg border border-border p-4 flex flex-col">
                         <div className="flex items-center gap-4">
+                            <div>
+                                <input type="checkbox" checked={!!selected[m.mapset_id]} onChange={() => handleToggle(m.mapset_id)} />
+                            </div>
                             <div className="w-28 h-16 relative rounded overflow-hidden bg-muted">
                                 {images[m.mapset_id] ? (
                                     // eslint-disable-next-line @next/next/no-img-element
