@@ -402,7 +402,7 @@ export async function listMapsets(page = 1, limit = 50): Promise<Mapset[]> {
         mt.audio_filename
       FROM mapset_data md
       JOIN mapset_tags mt ON md.mapset_id = mt.mapset_id
-      ORDER BY md.mapset_id DESC
+      ORDER BY md.artist DESC
       LIMIT ? OFFSET ?
     `,
             [lim, offset]
