@@ -31,8 +31,8 @@ Want to add your language? Follow the guide and submit a PR!
 ## Features
 
 -   **Background Guessr**: Identify songs from their beatmap backgrounds
--   **Audio Guessr** _(Coming Soon)_: Test your music recognition skills
--   **Skin Guessr** _(Coming Soon)_: Challenge yourself to recognize popular osu! skins
+-   **Audio Guessr**: Test your music recognition skills
+-   **Skin Guessr**: Challenge yourself to recognize popular osu! skins
 
 ## Getting Started
 

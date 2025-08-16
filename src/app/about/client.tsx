@@ -48,10 +48,7 @@ export default function AboutClient() {
                             <p className="text-foreground/80">{t.about.gameModes.audio.description}</p>
                         </div>
                         <div className="bg-background/50 p-6 rounded-lg">
-                            <h3 className="text-xl font-medium mb-2 text-primary">
-                                {t.about.gameModes.skin.title}
-                                <span className="text-xs bg-primary/20 px-2 py-1 rounded ml-2">{t.about.gameModes.skin.comingSoon}</span>
-                            </h3>
+                            <h3 className="text-xl font-medium mb-2 text-primary">{t.about.gameModes.skin.title}</h3>
                             <p className="text-foreground/80">{t.about.gameModes.skin.description}</p>
                         </div>
                         <div className="bg-background/50 p-6 rounded-lg">
