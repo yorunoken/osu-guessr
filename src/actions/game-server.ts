@@ -596,10 +596,23 @@ export async function endGameAction(sessionId: string): Promise<void> {
 export async function getSuggestionsAction(str: string, gamemode: GameMode): Promise<string[]> {
     if (!str || str.length < 2) return [];
 
-    const queryStr = gamemode === "skin" ? "SELECT DISTINCT name title FROM skins WHERE name LIKE ? LIMIT 5;" : "SELECT DISTINCT title FROM mapset_data WHERE title LIKE ? LIMIT 5;";
-    const results: Array<{ title: string }> = await query(queryStr, [`%${str}%`]);
-
-    return results.map((r) => r.title);
+    if (gamemode === "skin") {
+        const queryStr = `SELECT DISTINCT name AS title
+                          FROM skins
+                          WHERE LOWER(name) LIKE CONCAT('%', LOWER(?), '%')
+                          ORDER BY (LOWER(name) LIKE CONCAT(LOWER(?), '%')) DESC, LOCATE(LOWER(?), LOWER(name)) ASC
+                          LIMIT 5;`;
+        const results: Array<{ title: string }> = await query(queryStr, [str, str, str]);
+        return results.map((r) => r.title);
+    } else {
+        const queryStr = `SELECT DISTINCT title
+                          FROM mapset_data
+                          WHERE LOWER(title) LIKE CONCAT('%', LOWER(?), '%')
+                          ORDER BY (LOWER(title) LIKE CONCAT(LOWER(?), '%')) DESC, LOCATE(LOWER(?), LOWER(title)) ASC
+                          LIMIT 5;`;
+        const results: Array<{ title: string }> = await query(queryStr, [str, str, str]);
+        return results.map((r) => r.title);
+    }
 }
 
 function calculateScore(isCorrect: boolean, timeLeft: number, streak: number): number {
