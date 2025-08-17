@@ -3,6 +3,7 @@
 import { useTranslationsContext } from "@/context/translations-provider";
 import Link from "next/link";
 import React from "react";
+import AdSlot from "./AdSlot";
 
 export default function Footer() {
     const { t } = useTranslationsContext();
@@ -24,6 +25,7 @@ export default function Footer() {
                         </React.Fragment>
                     ))}
                 </p>
+                <AdSlot />
                 <div className="mt-2 sm:mt-3 text-xs sm:text-sm text-foreground/50 flex justify-center gap-4">
                     <Link href="/about" className="hover:text-foreground transition-colors duration-200">
                         {t.components.footer.about}

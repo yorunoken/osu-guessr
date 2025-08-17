@@ -17,8 +17,11 @@ const publicSans = Public_Sans({
 });
 
 export const metadata: Metadata = {
-    title: "osu!guessr",
-    description: "Test your osu! knowledge!",
+    title: {
+        default: "osu!guessr",
+        template: "%s | osu!guessr",
+    },
+    description: "Test your osu! knowledge! Guess beatmaps by audio or background.",
     icons: {
         icon: "/favicon.png",
     },
@@ -26,6 +29,14 @@ export const metadata: Metadata = {
     robots: {
         index: true,
         follow: true,
+    },
+    openGraph: {
+        title: "osu!guessr",
+        description: "Guess osu! beatmaps from audio clips and screenshots. Free web game for osu! fans.",
+        url: "https://osuguessr.com",
+        siteName: "osu!guessr",
+        images: [{ url: "https://osuguessr.com/main_bg.webp", width: 1200, height: 630 }],
+        type: "website",
     },
 };
 
@@ -62,6 +73,22 @@ export default async function RootLayout({
             <head>
                 <script defer src="https://umami.yorunoken.com/script.js" data-website-id="43244628-cb56-43d3-936e-0edbc45d4790"></script>
                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3511683752810096" crossOrigin="anonymous"></script>
+                {/* JSON-LD structured data for Site */}
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "WebSite",
+                            name: "osu!guessr",
+                            url: "https://osuguessr.com",
+                            potentialAction: {
+                                "@type": "SearchAction",
+                                target: "https://osuguessr.com/search?q={search_term_string}",
+                                "query-input": "required name=search_term_string",
+                            },
+                        }),
+                    }}
+                />
             </head>
             <body className={`${publicSans.variable} antialiased`}>
                 <TranslationsProvider>
