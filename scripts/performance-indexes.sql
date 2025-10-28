@@ -39,12 +39,20 @@ CREATE INDEX IF NOT EXISTS idx_user_badges_user ON user_badges(user_id, badge_na
 -- Supports title search/autocomplete
 CREATE INDEX IF NOT EXISTS idx_mapset_data_title ON mapset_data(title);
 
+-- Fulltext index for better LIKE query performance on title searches
+-- Note: Requires InnoDB engine with MySQL 5.6+
+-- This significantly improves autocomplete suggestions performance
+CREATE FULLTEXT INDEX IF NOT EXISTS ft_idx_mapset_data_title ON mapset_data(title);
+
 -- Supports mapset lookup
 CREATE INDEX IF NOT EXISTS idx_mapset_data_mapset_id ON mapset_data(mapset_id);
 
 -- Index for skins table  
 -- Supports skin name search/autocomplete
 CREATE INDEX IF NOT EXISTS idx_skins_name ON skins(name);
+
+-- Fulltext index for better LIKE query performance on skin name searches
+CREATE FULLTEXT INDEX IF NOT EXISTS ft_idx_skins_name ON skins(name);
 
 -- Performance monitoring query
 -- Run this to check index usage after adding indexes:
