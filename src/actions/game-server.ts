@@ -7,9 +7,8 @@ import { z } from "zod";
 import { BASE_POINTS, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME, GameVariant } from "../app/games/config";
 import { getRandomAudioAction, getRandomBackgroundAction, getRandomSkinAction } from "./mapsets-server";
 import type { MapsetDataWithTags, GameState, DatabaseGameSession, GameMode, SkinData } from "./types";
-import path from "path";
-import fs from "fs/promises";
 import { checkGuess, GuessDifficulty } from "@/lib/guess-checker";
+import { getCachedMediaFile } from "@/lib/media-cache";
 
 const GRACE_PERIOD = 1;
 
@@ -185,17 +184,11 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
 
         const currentMedia: { backgroundData?: string; audioData?: string; skinData?: string } = {};
         if (gameState.game_mode === "background") {
-            const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
-            const imageBuffer = await fs.readFile(imagePath);
-            currentMedia.backgroundData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+            currentMedia.backgroundData = await getCachedMediaFile("backgrounds", gameState.image_filename);
         } else if (gameState.game_mode === "audio" && gameState.audio_filename) {
-            const audioPath = path.join(process.cwd(), "mapsets", "audio", gameState.audio_filename);
-            const audioBuffer = await fs.readFile(audioPath);
-            currentMedia.audioData = `data:audio/mp3;base64,${audioBuffer.toString("base64")}`;
+            currentMedia.audioData = await getCachedMediaFile("audio", gameState.audio_filename);
         } else if (gameState.game_mode === "skin") {
-            const imagePath = path.join(process.cwd(), "mapsets", "skins", gameState.image_filename);
-            const imageBuffer = await fs.readFile(imagePath);
-            currentMedia.skinData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+            currentMedia.skinData = await getCachedMediaFile("skins", gameState.image_filename);
         }
 
         // Get the answer based on game mode
@@ -473,17 +466,11 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
         let mediaData: string | undefined;
 
         if (gameState.game_mode === "background") {
-            const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
-            const imageBuffer = await fs.readFile(imagePath);
-            mediaData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+            mediaData = await getCachedMediaFile("backgrounds", gameState.image_filename);
         } else if (gameState.game_mode === "audio" && gameState.audio_filename) {
-            const audioPath = path.join(process.cwd(), "mapsets", "audio", gameState.audio_filename);
-            const audioBuffer = await fs.readFile(audioPath);
-            mediaData = `data:audio/mp3;base64,${audioBuffer.toString("base64")}`;
+            mediaData = await getCachedMediaFile("audio", gameState.audio_filename);
         } else if (gameState.game_mode === "skin") {
-            const imagePath = path.join(process.cwd(), "mapsets", "skins", gameState.image_filename);
-            const imageBuffer = await fs.readFile(imagePath);
-            mediaData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+            mediaData = await getCachedMediaFile("skins", gameState.image_filename);
         }
 
         return {

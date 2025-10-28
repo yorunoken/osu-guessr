@@ -3,8 +3,7 @@
 import { query } from "@/lib/database";
 import redisClient from "@/lib/redis";
 import { authenticatedAction } from "./server";
-import path from "path";
-import fs from "fs/promises";
+import { getCachedMediaFile } from "@/lib/media-cache";
 
 import type { MapsetTags, MapsetData, MapsetDataWithTags, SkinData } from "./types";
 
@@ -15,13 +14,7 @@ export async function getRandomAudioAction(sessionId?: string) {
             throw new Error("No audio found");
         }
 
-        const audioPath = path.join(process.cwd(), "mapsets", "audio", audio.audio_filename);
-        const audioBuffer = await fs.readFile(audioPath);
-
-        const fileExtension = path.extname(audio.audio_filename).toLowerCase();
-        const mimeType = fileExtension === ".ogg" ? "audio/ogg" : "audio/mp3";
-
-        const audioData = `data:${mimeType};base64,${audioBuffer.toString("base64")}`;
+        const audioData = await getCachedMediaFile("audio", audio.audio_filename);
 
         return {
             data: audio,
@@ -100,9 +93,7 @@ export async function getRandomBackgroundAction(sessionId?: string) {
             throw new Error("No background found");
         }
 
-        const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", background.image_filename);
-        const imageBuffer = await fs.readFile(imagePath);
-        const backgroundImageData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        const backgroundImageData = await getCachedMediaFile("backgrounds", background.image_filename);
 
         return {
             data: background,
@@ -187,9 +178,7 @@ export async function getRandomSkinAction(sessionId?: string) {
             throw new Error("No skin found");
         }
 
-        const imagePath = path.join(process.cwd(), "mapsets", "skins", skin.image_filename);
-        const imageBuffer = await fs.readFile(imagePath);
-        const skinData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        const skinData = await getCachedMediaFile("skins", skin.image_filename);
 
         return {
             data: skin,
