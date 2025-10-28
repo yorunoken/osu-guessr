@@ -7,15 +7,18 @@ export enum GuessDifficulty {
 }
 
 function normalizeString(str: string): string {
-    let normalized = str.toLowerCase().replace(/[^a-z0-9\s]/g, "");
+    // First, convert to lowercase once
+    let normalized = str.toLowerCase();
 
-    const openParenIndex = str.indexOf("(");
-    const closeParenIndex = str.lastIndexOf(")");
+    // Remove parentheses content before character filtering
+    const openParenIndex = normalized.indexOf("(");
+    const closeParenIndex = normalized.lastIndexOf(")");
 
     if (openParenIndex !== -1 && closeParenIndex !== -1) {
-        normalized = str.slice(0, openParenIndex) + str.slice(closeParenIndex + 1);
+        normalized = normalized.slice(0, openParenIndex) + normalized.slice(closeParenIndex + 1);
     }
 
+    // Remove featuring information
     const featIndex = normalized.indexOf("feat");
     const ftIndex = normalized.indexOf("ft");
 
@@ -25,12 +28,8 @@ function normalizeString(str: string): string {
         normalized = normalized.slice(0, ftIndex);
     }
 
-    normalized = normalized
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, "")
-        .trim();
-
-    return normalized;
+    // Apply character filtering and trim only once at the end
+    return normalized.replace(/[^a-z0-9\s]/g, "").trim();
 }
 
 export function checkGuess(guess: string, actual: string, difficulty: GuessDifficulty = 0.5): boolean {
