@@ -4,6 +4,8 @@ import { OWNER_ID } from "@/lib";
 import NotFound from "../not-found";
 import AdminMenu from "./menu";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
     const session = await auth();
 

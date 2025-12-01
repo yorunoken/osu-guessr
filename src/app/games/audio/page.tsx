@@ -6,6 +6,8 @@ import MenuManager from "../shared/MenuManager";
 
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "Audio Guessr | osu!guessr",
     description: "Challenge yourself by identifying songs from short audio clips.",

@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import AboutClient from "./client";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "About | osu!guessr",
     description: "Learn more about osu!guessr, how to play, and game mechanics.",

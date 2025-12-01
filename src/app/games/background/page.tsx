@@ -7,6 +7,8 @@ import GameScreen from "./pages/GameScreen";
 
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "Background Guessr | osu!guessr",
     description: "Test your knowledge by guessing songs from their beatmap backgrounds.",

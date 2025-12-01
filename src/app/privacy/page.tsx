@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import PrivacyPolicy from "./client";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "Privacy Policy | osu!guessr",
     description: "Learn about how we handle your data and privacy on osu!guessr.",

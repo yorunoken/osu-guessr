@@ -6,6 +6,8 @@ import MenuManager from "../shared/MenuManager";
 
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "Skin Guessr | osu!guessr",
     description: "Test your knowledge of osu! skins by identifying them from screenshots.",

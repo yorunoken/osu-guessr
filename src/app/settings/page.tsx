@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import SignInPrompt from "../games/shared/SignInPrompt";
 import SettingsClient from "./SettingsClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "Settings | osu!guessr",
     description: "Manage your API keys and account settings",

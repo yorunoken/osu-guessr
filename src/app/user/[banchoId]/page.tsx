@@ -3,6 +3,8 @@ import { GameVariant } from "@/app/games/config";
 import UserProfileClient from "./client";
 import { GameMode } from "@/actions/types";
 
+export const dynamic = "force-dynamic";
+
 interface Props {
     params: Promise<{ banchoId: string }>;
     searchParams: Promise<{ mode?: string; variant?: string }>;
