@@ -5,8 +5,8 @@ export function levenshteinSimilarity(wordA: string, wordB: string): number {
 }
 
 function levenshteinDistance(wordA: string, wordB: string): [number, number] {
-    let m = [...wordA].length;
-    let n = [...wordB].length;
+    let m = wordA.length;
+    let n = wordB.length;
 
     if (m > n) {
         [wordA, wordB] = [wordB, wordA];
@@ -15,10 +15,10 @@ function levenshteinDistance(wordA: string, wordB: string): [number, number] {
 
     const costs = Array.from({ length: n + 1 }, (_, i) => i);
 
-    for (let i = 0; i < wordA.length; i++) {
+    for (let i = 0; i < m; i++) {
         let lastVal = i + 1;
 
-        for (let j = 0; j < wordB.length; j++) {
+        for (let j = 0; j < n; j++) {
             const newVal = wordA[i] === wordB[j] ? costs[j] : Math.min(costs[j], lastVal, costs[j + 1]) + 1;
 
             costs[j] = lastVal;
@@ -32,8 +32,8 @@ function levenshteinDistance(wordA: string, wordB: string): [number, number] {
 }
 
 export function gestaltPattern(wordA: string, wordB: string): number {
-    const charsA = [...wordA].length;
-    const charsB = [...wordB].length;
+    const charsA = wordA.length;
+    const charsB = wordB.length;
 
     const buf = new Array(Math.max(charsA, charsB) + 1).fill(0);
 
@@ -75,11 +75,11 @@ function gestaltPatternMatching(wordA: string, wordB: string, buf: Array<number>
 }
 
 function prefix(s: string, len: number): string {
-    return [...s].slice(0, len).join("");
+    return s.slice(0, len);
 }
 
 function suffix(s: string, start: number): string {
-    return [...s].slice(start).join("");
+    return s.slice(start);
 }
 
 function longestCommonSubstring(wordA: string, wordB: string, buf: number[]): SubstringResult {
@@ -88,8 +88,8 @@ function longestCommonSubstring(wordA: string, wordB: string, buf: number[]): Su
     }
 
     let swapped = false;
-    let m = [...wordA].length;
-    let n = [...wordB].length;
+    let m = wordA.length;
+    let n = wordB.length;
 
     // Ensure wordB is the longer word with length n
     if (m > n) {
@@ -102,12 +102,11 @@ function longestCommonSubstring(wordA: string, wordB: string, buf: number[]): Su
     let startB = 0;
     let endA = 0;
 
-    const charsA = [...wordA].reverse();
-    const charsB = [...wordB];
-
-    for (let j = 0; j < charsA.length; j++) {
-        for (let i = 0; i < charsB.length; i++) {
-            if (charsA[j] !== charsB[i]) {
+    // Process strings directly without creating arrays
+    for (let j = m - 1; j >= 0; j--) {
+        const charA = wordA[j];
+        for (let i = 0; i < n; i++) {
+            if (charA !== wordB[i]) {
                 buf[i] = 0;
                 continue;
             }
@@ -118,7 +117,7 @@ function longestCommonSubstring(wordA: string, wordB: string, buf: number[]): Su
             if (val > len) {
                 len = val;
                 startB = i;
-                endA = j;
+                endA = m - 1 - j;
             }
         }
     }

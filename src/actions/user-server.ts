@@ -97,53 +97,83 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
         [banchoId]
     )) as [{ globalRank: number }];
 
+    // Calculate all mode ranks in a single query to avoid N+1 problem
+    const allModeRanks = (await query(
+        `WITH UserScores AS (
+            SELECT 
+                game_mode,
+                variant,
+                CASE WHEN variant = 'classic' THEN SUM(points) ELSE 0 END as total_score,
+                CASE WHEN variant = 'death' THEN MAX(streak) ELSE 0 END as highest_streak
+            FROM games
+            WHERE user_id = ?
+            GROUP BY game_mode, variant
+        ),
+        RankedClassic AS (
+            SELECT 
+                game_mode,
+                user_id,
+                SUM(points) as total_score,
+                RANK() OVER (PARTITION BY game_mode ORDER BY SUM(points) DESC) as rank
+            FROM games
+            WHERE variant = 'classic'
+            GROUP BY game_mode, user_id
+        ),
+        RankedDeath AS (
+            SELECT 
+                game_mode,
+                user_id,
+                MAX(streak) as highest_streak,
+                RANK() OVER (PARTITION BY game_mode ORDER BY MAX(streak) DESC) as rank
+            FROM games
+            WHERE variant = 'death'
+            GROUP BY game_mode, user_id
+        )
+        SELECT 
+            'background' as mode, 
+            'classic' as variant,
+            COALESCE((SELECT rank FROM RankedClassic WHERE game_mode = 'background' AND user_id = ?), 999999) as rank
+        UNION ALL
+        SELECT 
+            'background' as mode, 
+            'death' as variant,
+            COALESCE((SELECT rank FROM RankedDeath WHERE game_mode = 'background' AND user_id = ?), 999999) as rank
+        UNION ALL
+        SELECT 
+            'audio' as mode, 
+            'classic' as variant,
+            COALESCE((SELECT rank FROM RankedClassic WHERE game_mode = 'audio' AND user_id = ?), 999999) as rank
+        UNION ALL
+        SELECT 
+            'audio' as mode, 
+            'death' as variant,
+            COALESCE((SELECT rank FROM RankedDeath WHERE game_mode = 'audio' AND user_id = ?), 999999) as rank
+        UNION ALL
+        SELECT 
+            'skin' as mode, 
+            'classic' as variant,
+            COALESCE((SELECT rank FROM RankedClassic WHERE game_mode = 'skin' AND user_id = ?), 999999) as rank
+        UNION ALL
+        SELECT 
+            'skin' as mode, 
+            'death' as variant,
+            COALESCE((SELECT rank FROM RankedDeath WHERE game_mode = 'skin' AND user_id = ?), 999999) as rank`,
+        [banchoId, banchoId, banchoId, banchoId, banchoId, banchoId, banchoId]
+    )) as Array<{ mode: GameMode; variant: string; rank: number }>;
+
     const modeRanks: { [key in GameMode]: { classic?: number; death?: number } } = {
         background: {},
         audio: {},
         skin: {},
     };
 
-    for (const mode of Object.keys(modeRanks) as GameMode[]) {
-        const classicRank = (await query(
-            `WITH RankedUsers AS (
-                SELECT user_id, SUM(points) as total_score
-                FROM games
-                WHERE game_mode = ? AND variant = 'classic'
-                GROUP BY user_id
-                ORDER BY total_score DESC
-            )
-            SELECT COUNT(*) as rank
-            FROM RankedUsers r
-            WHERE r.total_score > (
-                SELECT COALESCE(SUM(points), 0)
-                FROM games
-                WHERE user_id = ? AND game_mode = ? AND variant = 'classic'
-            )`,
-            [mode, banchoId, mode]
-        )) as [{ rank: number }];
-
-        const deathRank = (await query(
-            `WITH RankedUsers AS (
-                SELECT user_id, MAX(streak) as highest_streak
-                FROM games
-                WHERE game_mode = ? AND variant = 'death'
-                GROUP BY user_id
-                ORDER BY highest_streak DESC
-            )
-            SELECT COUNT(*) as rank
-            FROM RankedUsers r
-            WHERE r.highest_streak > (
-                SELECT COALESCE(MAX(streak), 0)
-                FROM games
-                WHERE user_id = ? AND game_mode = ? AND variant = 'death'
-            )`,
-            [mode, banchoId, mode]
-        )) as [{ rank: number }];
-
-        modeRanks[mode] = {
-            classic: classicRank[0].rank + 1,
-            death: deathRank[0].rank + 1,
-        };
+    // Process the results into the expected structure
+    for (const row of allModeRanks) {
+        if (row.variant === "classic") {
+            modeRanks[row.mode].classic = row.rank;
+        } else if (row.variant === "death") {
+            modeRanks[row.mode].death = row.rank;
+        }
     }
 
     return {

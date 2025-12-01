@@ -3,8 +3,7 @@
 import { query } from "@/lib/database";
 import redisClient from "@/lib/redis";
 import { authenticatedAction } from "./server";
-import path from "path";
-import fs from "fs/promises";
+import { getCachedMediaFile } from "@/lib/media-cache";
 
 import type { MapsetTags, MapsetData, MapsetDataWithTags, SkinData } from "./types";
 
@@ -15,13 +14,7 @@ export async function getRandomAudioAction(sessionId?: string) {
             throw new Error("No audio found");
         }
 
-        const audioPath = path.join(process.cwd(), "mapsets", "audio", audio.audio_filename);
-        const audioBuffer = await fs.readFile(audioPath);
-
-        const fileExtension = path.extname(audio.audio_filename).toLowerCase();
-        const mimeType = fileExtension === ".ogg" ? "audio/ogg" : "audio/mp3";
-
-        const audioData = `data:${mimeType};base64,${audioBuffer.toString("base64")}`;
+        const audioData = await getCachedMediaFile("audio", audio.audio_filename);
 
         return {
             data: audio,
@@ -41,12 +34,27 @@ async function getRandomAudio(sessionId?: string): Promise<MapsetDataWithTags | 
         }
     }
 
+    // Get total count first for efficient random selection
+    const countResults: Array<{ count: number }> = await query(
+        `SELECT COUNT(*) as count FROM mapset_tags
+            WHERE audio_filename IS NOT NULL
+            AND mapset_id NOT IN (${excludedIds.length ? excludedIds.map(() => "?").join(",") : "0"})`,
+        excludedIds
+    );
+
+    const totalCount = countResults[0]?.count || 0;
+    if (totalCount === 0) {
+        return null;
+    }
+
+    // Use random offset instead of ORDER BY RAND() for better performance
+    const randomOffset = Math.floor(Math.random() * totalCount);
     const tagResults: Array<MapsetTags> = await query(
         `SELECT * FROM mapset_tags
             WHERE audio_filename IS NOT NULL
             AND mapset_id NOT IN (${excludedIds.length ? excludedIds.map(() => "?").join(",") : "0"})
-            ORDER BY RAND() LIMIT 1;`,
-        excludedIds
+            LIMIT 1 OFFSET ?;`,
+        [...excludedIds, randomOffset]
     );
 
     if (!tagResults.length) {
@@ -85,9 +93,7 @@ export async function getRandomBackgroundAction(sessionId?: string) {
             throw new Error("No background found");
         }
 
-        const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", background.image_filename);
-        const imageBuffer = await fs.readFile(imagePath);
-        const backgroundImageData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        const backgroundImageData = await getCachedMediaFile("backgrounds", background.image_filename);
 
         return {
             data: background,
@@ -107,12 +113,27 @@ async function getRandomBackground(sessionId?: string): Promise<MapsetDataWithTa
         }
     }
 
+    // Get total count first for efficient random selection
+    const countResults: Array<{ count: number }> = await query(
+        `SELECT COUNT(*) as count FROM mapset_tags
+            WHERE mapset_id IS NOT NULL
+            AND mapset_id NOT IN (${excludedIds.length ? excludedIds.map(() => "?").join(",") : "0"})`,
+        excludedIds
+    );
+
+    const totalCount = countResults[0]?.count || 0;
+    if (totalCount === 0) {
+        return null;
+    }
+
+    // Use random offset instead of ORDER BY RAND() for better performance
+    const randomOffset = Math.floor(Math.random() * totalCount);
     const tagResults: Array<MapsetTags> = await query(
         `SELECT * FROM mapset_tags
             WHERE mapset_id IS NOT NULL
             AND mapset_id NOT IN (${excludedIds.length ? excludedIds.map(() => "?").join(",") : "0"})
-            ORDER BY RAND() LIMIT 1;`,
-        excludedIds
+            LIMIT 1 OFFSET ?;`,
+        [...excludedIds, randomOffset]
     );
 
     if (!tagResults.length) {
@@ -157,9 +178,7 @@ export async function getRandomSkinAction(sessionId?: string) {
             throw new Error("No skin found");
         }
 
-        const imagePath = path.join(process.cwd(), "mapsets", "skins", skin.image_filename);
-        const imageBuffer = await fs.readFile(imagePath);
-        const skinData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        const skinData = await getCachedMediaFile("skins", skin.image_filename);
 
         return {
             data: skin,
@@ -181,14 +200,17 @@ async function getRandomSkin(sessionId?: string): Promise<SkinData | null> {
     const condition = excludedIds.length > 0 ? `WHERE id NOT IN (${excludedIds.map(() => "?").join(",")})` : "";
     const params = excludedIds;
 
-    const result = await query(
-        `SELECT * 
-         FROM skins
-         ${condition}
-         ORDER BY RAND()
-         LIMIT 1`,
-        params
-    );
+    // Get total count first for efficient random selection
+    const countResults = (await query(`SELECT COUNT(*) as count FROM skins ${condition}`, params)) as Array<{ count: number }>;
+
+    const totalCount = countResults[0]?.count || 0;
+    if (totalCount === 0) {
+        return null;
+    }
+
+    // Use random offset instead of ORDER BY RAND() for better performance
+    const randomOffset = Math.floor(Math.random() * totalCount);
+    const result = await query(`SELECT * FROM skins ${condition} LIMIT 1 OFFSET ?`, [...params, randomOffset]);
 
     return result.length > 0 ? (result[0] as SkinData) : null;
 }
