@@ -1,11 +1,23 @@
-import { createClient, RedisClientType } from "redis";
+import { createClient } from "redis";
 
-const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
-const redisClient: RedisClientType = createClient({ url: redisUrl });
+const globalForRedis = global as unknown as { redis: ReturnType<typeof createClient> };
 
-redisClient.on("error", (err: unknown) => console.error("Redis Client Error", err));
+const redisClient =
+    globalForRedis.redis ||
+    createClient({
+        url: process.env.REDIS_URL || "redis://localhost:6379",
+    });
 
-await redisClient.connect();
-console.log("Connected to Redis");
+redisClient.on("error", (err) => {
+    console.error("Redis Client Error:", err.message);
+});
+
+if (!redisClient.isOpen) {
+    redisClient.connect().catch(() => {
+        console.log("Redis connection failed (this is expected during build step)");
+    });
+}
+
+if (process.env.NODE_ENV !== "production") globalForRedis.redis = redisClient;
 
 export default redisClient;
