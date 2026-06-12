@@ -1,4 +1,5 @@
 import { createClient, RedisClientType } from "redis";
+import { env } from "./env";
 
 const globalForRedis = global as unknown as { redis: RedisClientType };
 
@@ -12,7 +13,7 @@ const mockClient = {
 
 const isBuild = process.env.IS_DOCKER_BUILD === "true";
 
-const redisClient = isBuild ? mockClient : globalForRedis.redis || createClient({ url: process.env.REDIS_URL || "redis://localhost:6379" });
+const redisClient = isBuild ? mockClient : globalForRedis.redis || createClient({ url: env.REDIS_URL });
 
 if (!isBuild) {
     redisClient.on("error", (err) => {

@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { ChevronDownIcon } from "lucide-react";
 import { getTopPlayersAction } from "@/actions/user-server";
-import type { GameMode, TopPlayer } from "@/actions/types";
+import { GameMode, type TopPlayer } from "@/actions/types";
 import type { GameVariant } from "@/app/games/config";
 import { useTranslationsContext } from "@/context/translations-provider";
 import { AdSlider } from "@/components/Ads";
@@ -17,7 +17,7 @@ import { AdSlider } from "@/components/Ads";
 export default function LeaderboardClient() {
     const { t } = useTranslationsContext();
     const { data: session } = useSession();
-    const [selectedMode, setSelectedMode] = useState<GameMode>("background");
+    const [selectedMode, setSelectedMode] = useState<GameMode>(GameMode.Background);
     const [selectedVariant, setSelectedVariant] = useState<GameVariant>("classic");
     const [leaderboardData, setLeaderboardData] = useState<Array<TopPlayer>>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +48,7 @@ export default function LeaderboardClient() {
         fetchLeaderboard();
     }, [selectedMode, selectedVariant, orderMetric, page, pageSize, errorMessage]);
 
-    const gameModes: GameMode[] = ["background", "audio", "skin"];
+    const gameModes: GameMode[] = [GameMode.Background, GameMode.Audio, GameMode.Skin];
 
     return (
         <div className="container mx-auto px-4 py-16">

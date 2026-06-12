@@ -1,33 +1,37 @@
-interface AppConfig {
-    game: {
-        roundTime: number;
-        maxRounds: number;
-        skipPenalty: number;
-        basePoints: number;
-        streakBonus: number;
-        timeBonusMultiplier: number;
-        autoAdvanceDelay: number;
-    };
-    ui: {
-        animationDuration: number;
-        toastDuration: number;
-        debounceDelay: number;
-    };
-    api: {
-        timeout: number;
-        retries: number;
-        baseUrl: string;
-    };
-    audio: {
-        defaultVolume: number;
-        enableSounds: boolean;
-        preloadSounds: boolean;
-    };
-    performance: {
-        enableAnalytics: boolean;
-        metricsInterval: number;
-    };
-}
+import { z } from "zod";
+
+const appConfigSchema = z.object({
+    game: z.object({
+        roundTime: z.number().min(5),
+        maxRounds: z.number().min(1),
+        skipPenalty: z.number().min(0),
+        basePoints: z.number().min(0),
+        streakBonus: z.number().min(0),
+        timeBonusMultiplier: z.number().min(0),
+        autoAdvanceDelay: z.number().min(0),
+    }),
+    ui: z.object({
+        animationDuration: z.number().min(0),
+        toastDuration: z.number().min(0),
+        debounceDelay: z.number().min(0),
+    }),
+    api: z.object({
+        timeout: z.number().min(1000),
+        retries: z.number().min(0),
+        baseUrl: z.string(),
+    }),
+    audio: z.object({
+        defaultVolume: z.number().min(0).max(1),
+        enableSounds: z.boolean(),
+        preloadSounds: z.boolean(),
+    }),
+    performance: z.object({
+        enableAnalytics: z.boolean(),
+        metricsInterval: z.number().min(1000),
+    }),
+});
+
+export type AppConfig = z.infer<typeof appConfigSchema>;
 
 const DEFAULT_CONFIG: AppConfig = {
     game: {
@@ -69,11 +73,18 @@ class ConfigManager {
     }
 
     private loadConfig(): void {
+        if (typeof window === "undefined") return; // Ensure this runs safely
         try {
             const stored = localStorage.getItem("app-config");
             if (stored) {
                 const parsedConfig = JSON.parse(stored);
-                this.config = { ...DEFAULT_CONFIG, ...parsedConfig };
+                // Validate parsed JSON to ensure it matches AppConfig shapes
+                const result = appConfigSchema.safeParse({ ...DEFAULT_CONFIG, ...parsedConfig });
+                if (result.success) {
+                    this.config = result.data;
+                } else {
+                    console.warn("Invalid config detected in localStorage, falling back to defaults.", result.error);
+                }
             }
         } catch (error) {
             console.warn("Failed to load config from localStorage:", error);

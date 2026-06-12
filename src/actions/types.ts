@@ -1,4 +1,8 @@
-export type GameMode = "background" | "audio" | "skin";
+export enum GameMode {
+    Background = "background",
+    Audio = "audio",
+    Skin = "skin"
+}
 export type GameVariant = "classic" | "death";
 export type ReportType = "incorrect_title" | "inappropriate_content" | "wrong_audio" | "wrong_background" | "other";
 type ReportStatus = "pending" | "investigating" | "resolved" | "rejected";

@@ -6,9 +6,8 @@ import redisClient from "@/lib/redis";
 import { z } from "zod";
 import { BASE_POINTS, STREAK_BONUS, TIME_BONUS_MULTIPLIER, MAX_ROUNDS, ROUND_TIME, GameVariant } from "../app/games/config";
 import { getRandomAudioAction, getRandomBackgroundAction, getRandomSkinAction } from "./mapsets-server";
-import type { MapsetDataWithTags, GameState, DatabaseGameSession, GameMode, SkinData } from "./types";
-import path from "path";
-import fs from "fs/promises";
+import { GameMode, type MapsetDataWithTags, type GameState, type DatabaseGameSession, type SkinData } from "./types";
+import { getMediaData } from "./media";
 import { checkGuess, GuessDifficulty } from "@/lib/guess-checker";
 
 const GRACE_PERIOD = 1;
@@ -59,10 +58,10 @@ export async function startGameAction(gameMode: GameMode, variant: GameVariant =
     const sessionId = crypto.randomUUID();
 
     try {
-        const item = gameMode === "audio" ? await getRandomAudioAction(sessionId) : gameMode === "background" ? await getRandomBackgroundAction(sessionId) : await getRandomSkinAction(sessionId);
+        const item = gameMode === GameMode.Audio ? await getRandomAudioAction(sessionId) : gameMode === GameMode.Background ? await getRandomBackgroundAction(sessionId) : await getRandomSkinAction(sessionId);
 
-        const itemId = gameMode === "skin" ? (item.data as SkinData).id : (item.data as MapsetDataWithTags).mapset_id;
-        const itemType = gameMode === "skin" ? "skin" : "mapset";
+        const itemId = gameMode === GameMode.Skin ? (item.data as SkinData).id : (item.data as MapsetDataWithTags).mapset_id;
+        const itemType = gameMode === GameMode.Skin ? "skin" : "mapset";
 
         const sessKey = `game_session:${sessionId}`;
         await Promise.all([redisClient.del(sessKey), redisClient.del(`session_items:${sessionId}:mapset`), redisClient.del(`session_items:${sessionId}:skin`)]);
@@ -98,15 +97,15 @@ export async function startGameAction(gameMode: GameMode, variant: GameVariant =
                 audio_filename: "mapset_id" in item.data ? (item.data as MapsetDataWithTags).audio_filename : null,
                 has_guessed_current_round: false,
             }),
-            { EX: 3600 } // Expire session after 1 hour
+            { EX: 3600 }, // Expire session after 1 hour
         );
 
         const currentBeatmap =
-            gameMode === "audio"
+            gameMode === GameMode.Audio
                 ? { audioUrl: "audioData" in item ? item.audioData : undefined, revealed: false }
-                : gameMode === "background"
-                ? { imageUrl: "backgroundData" in item ? item.backgroundData : undefined, revealed: false }
-                : { imageUrl: "skinData" in item ? item.skinData : undefined, revealed: false };
+                : gameMode === GameMode.Background
+                  ? { imageUrl: "backgroundData" in item ? item.backgroundData : undefined, revealed: false }
+                  : { imageUrl: "skinData" in item ? item.skinData : undefined, revealed: false };
 
         return {
             sessionId,
@@ -175,7 +174,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
 
         // Get current item data based on game mode
         let currentItem: MapsetDataWithTags | SkinData;
-        if (gameState.game_mode === "skin") {
+        if (gameState.game_mode === GameMode.Skin) {
             const [skin]: Array<SkinData> = await query(`SELECT * FROM skins WHERE id = ?`, [gameState.current_item_id]);
             currentItem = skin;
         } else {
@@ -184,33 +183,27 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
         }
 
         const currentMedia: { backgroundData?: string; audioData?: string; skinData?: string } = {};
-        if (gameState.game_mode === "background") {
-            const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
-            const imageBuffer = await fs.readFile(imagePath);
-            currentMedia.backgroundData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
-        } else if (gameState.game_mode === "audio" && gameState.audio_filename) {
-            const audioPath = path.join(process.cwd(), "mapsets", "audio", gameState.audio_filename);
-            const audioBuffer = await fs.readFile(audioPath);
-            currentMedia.audioData = `data:audio/mp3;base64,${audioBuffer.toString("base64")}`;
-        } else if (gameState.game_mode === "skin") {
-            const imagePath = path.join(process.cwd(), "mapsets", "skins", gameState.image_filename);
-            const imageBuffer = await fs.readFile(imagePath);
-            currentMedia.skinData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        if (gameState.game_mode === GameMode.Background) {
+            currentMedia.backgroundData = await getMediaData(GameMode.Background, gameState.image_filename);
+        } else if (gameState.game_mode === GameMode.Audio && gameState.audio_filename) {
+            currentMedia.audioData = await getMediaData(GameMode.Audio, gameState.audio_filename);
+        } else if (gameState.game_mode === GameMode.Skin) {
+            currentMedia.skinData = await getMediaData(GameMode.Skin, gameState.image_filename);
         }
 
         // Get the answer based on game mode
-        const currentAnswer = gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title;
+        const currentAnswer = gameState.game_mode === GameMode.Skin ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title;
 
         const isCorrect = isGuess ? checkGuess(effectiveGuess || "", currentAnswer, guessingDifficulty) : false;
         const points = isNextRound ? 0 : calculateScore(isCorrect, timeLeft, gameState.current_streak);
         // In death mode, if correct guess, check for remaining beatmaps; finish game if none left
         if (isDeathMode && isGuess && isCorrect) {
             try {
-                if (gameState.game_mode === "audio") {
+                if (gameState.game_mode === GameMode.Audio) {
                     await getRandomAudioAction(validated.sessionId);
-                } else if (gameState.game_mode === "background") {
+                } else if (gameState.game_mode === GameMode.Background) {
                     await getRandomBackgroundAction(validated.sessionId);
-                } else if (gameState.game_mode === "skin") {
+                } else if (gameState.game_mode === GameMode.Skin) {
                     await getRandomSkinAction(validated.sessionId);
                 }
             } catch {
@@ -223,13 +216,13 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 return {
                     sessionId,
                     currentBeatmap: {
-                        imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : gameState.game_mode === "skin" ? currentMedia.skinData : undefined,
-                        audioUrl: gameState.game_mode === "audio" ? currentMedia.audioData : undefined,
+                        imageUrl: gameState.game_mode === GameMode.Background ? currentMedia.backgroundData : gameState.game_mode === GameMode.Skin ? currentMedia.skinData : undefined,
+                        audioUrl: gameState.game_mode === GameMode.Audio ? currentMedia.audioData : undefined,
                         revealed: true,
-                        title: gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
+                        title: gameState.game_mode === GameMode.Skin ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
                         artist: (currentItem as MapsetDataWithTags).artist,
                         mapper: (currentItem as MapsetDataWithTags).mapper,
-                        mapsetId: gameState.game_mode === "skin" ? (currentItem as SkinData).id : (currentItem as MapsetDataWithTags).mapset_id,
+                        mapsetId: gameState.game_mode === GameMode.Skin ? (currentItem as SkinData).id : (currentItem as MapsetDataWithTags).mapset_id,
                     },
                     score: {
                         total: gameState.total_points + points,
@@ -260,13 +253,13 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
             return {
                 sessionId,
                 currentBeatmap: {
-                    imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : gameState.game_mode === "skin" ? currentMedia.skinData : undefined,
-                    audioUrl: gameState.game_mode === "audio" ? currentMedia.audioData : undefined,
+                    imageUrl: gameState.game_mode === GameMode.Background ? currentMedia.backgroundData : gameState.game_mode === GameMode.Skin ? currentMedia.skinData : undefined,
+                    audioUrl: gameState.game_mode === GameMode.Audio ? currentMedia.audioData : undefined,
                     revealed: true,
-                    title: gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
+                    title: gameState.game_mode === GameMode.Skin ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
                     artist: (currentItem as MapsetDataWithTags).artist,
                     mapper: (currentItem as MapsetDataWithTags).mapper,
-                    mapsetId: gameState.game_mode === "skin" ? (currentItem as SkinData).id : (currentItem as MapsetDataWithTags).mapset_id,
+                    mapsetId: gameState.game_mode === GameMode.Skin ? (currentItem as SkinData).id : (currentItem as MapsetDataWithTags).mapset_id,
                 },
                 score: {
                     total: gameState.total_points,
@@ -297,13 +290,13 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
 
         if (isNextRound) {
             try {
-                if (gameState.game_mode === "audio") {
+                if (gameState.game_mode === GameMode.Audio) {
                     const audio = await getRandomAudioAction(validated.sessionId);
                     nextBeatmap = { data: audio.data, audioData: audio.audioData };
-                } else if (gameState.game_mode === "background") {
+                } else if (gameState.game_mode === GameMode.Background) {
                     const background = await getRandomBackgroundAction(validated.sessionId);
                     nextBeatmap = { data: background.data, backgroundData: background.backgroundData };
-                } else if (gameState.game_mode === "skin") {
+                } else if (gameState.game_mode === GameMode.Skin) {
                     const skin = await getRandomSkinAction(validated.sessionId);
                     nextBeatmap = { data: skin.data, skinData: skin.skinData };
                 }
@@ -313,10 +306,10 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                     return {
                         sessionId,
                         currentBeatmap: {
-                            imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : gameState.game_mode === "skin" ? currentMedia.skinData : undefined,
-                            audioUrl: gameState.game_mode === "audio" ? currentMedia.audioData : undefined,
+                            imageUrl: gameState.game_mode === GameMode.Background ? currentMedia.backgroundData : gameState.game_mode === GameMode.Skin ? currentMedia.skinData : undefined,
+                            audioUrl: gameState.game_mode === GameMode.Audio ? currentMedia.audioData : undefined,
                             revealed: true,
-                            title: gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
+                            title: gameState.game_mode === GameMode.Skin ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
                             artist: (currentItem as MapsetDataWithTags).artist,
                             mapper: (currentItem as MapsetDataWithTags).mapper,
                             mapsetId: gameState.current_item_id,
@@ -344,10 +337,10 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
                 return {
                     sessionId,
                     currentBeatmap: {
-                        imageUrl: gameState.game_mode === "background" ? currentMedia.backgroundData : gameState.game_mode === "skin" ? currentMedia.skinData : undefined,
-                        audioUrl: gameState.game_mode === "audio" ? currentMedia.audioData : undefined,
+                        imageUrl: gameState.game_mode === GameMode.Background ? currentMedia.backgroundData : gameState.game_mode === GameMode.Skin ? currentMedia.skinData : undefined,
+                        audioUrl: gameState.game_mode === GameMode.Audio ? currentMedia.audioData : undefined,
                         revealed: true,
-                        title: gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
+                        title: gameState.game_mode === GameMode.Skin ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title,
                         artist: (currentItem as MapsetDataWithTags).artist,
                         mapper: (currentItem as MapsetDataWithTags).mapper,
                         mapsetId: gameState.current_item_id,
@@ -413,17 +406,17 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
             sessionId,
             currentBeatmap: {
                 imageUrl:
-                    gameState.game_mode === "background"
-                        ? nextBeatmap?.backgroundData ?? currentMedia.backgroundData
-                        : gameState.game_mode === "skin"
-                        ? nextBeatmap?.skinData ?? currentMedia.skinData
-                        : undefined,
-                audioUrl: gameState.game_mode === "audio" ? nextBeatmap?.audioData ?? currentMedia.audioData : undefined,
+                    gameState.game_mode === GameMode.Background
+                        ? (nextBeatmap?.backgroundData ?? currentMedia.backgroundData)
+                        : gameState.game_mode === GameMode.Skin
+                          ? (nextBeatmap?.skinData ?? currentMedia.skinData)
+                          : undefined,
+                audioUrl: gameState.game_mode === GameMode.Audio ? (nextBeatmap?.audioData ?? currentMedia.audioData) : undefined,
                 revealed: !isNextRound,
-                title: !isNextRound ? (gameState.game_mode === "skin" ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title) : undefined,
+                title: !isNextRound ? (gameState.game_mode === GameMode.Skin ? (currentItem as SkinData).name : (currentItem as MapsetDataWithTags).title) : undefined,
                 artist: !isNextRound ? (currentItem as MapsetDataWithTags).artist : undefined,
                 mapper: !isNextRound ? (currentItem as MapsetDataWithTags).mapper : undefined,
-                mapsetId: !isNextRound ? (gameState.game_mode === "skin" ? (currentItem as SkinData).id : (currentItem as MapsetDataWithTags).mapset_id) : undefined,
+                mapsetId: !isNextRound ? (gameState.game_mode === GameMode.Skin ? (currentItem as SkinData).id : (currentItem as MapsetDataWithTags).mapset_id) : undefined,
             },
             score: {
                 total: gameState.total_points + points,
@@ -471,26 +464,19 @@ export async function getGameStateAction(sessionId: string): Promise<GameState> 
         }
 
         let mediaData: string | undefined;
-
-        if (gameState.game_mode === "background") {
-            const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", gameState.image_filename);
-            const imageBuffer = await fs.readFile(imagePath);
-            mediaData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
-        } else if (gameState.game_mode === "audio" && gameState.audio_filename) {
-            const audioPath = path.join(process.cwd(), "mapsets", "audio", gameState.audio_filename);
-            const audioBuffer = await fs.readFile(audioPath);
-            mediaData = `data:audio/mp3;base64,${audioBuffer.toString("base64")}`;
-        } else if (gameState.game_mode === "skin") {
-            const imagePath = path.join(process.cwd(), "mapsets", "skins", gameState.image_filename);
-            const imageBuffer = await fs.readFile(imagePath);
-            mediaData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        if (gameState.game_mode === GameMode.Background) {
+            mediaData = await getMediaData(GameMode.Background, gameState.image_filename);
+        } else if (gameState.game_mode === GameMode.Audio && gameState.audio_filename) {
+            mediaData = await getMediaData(GameMode.Audio, gameState.audio_filename);
+        } else if (gameState.game_mode === GameMode.Skin) {
+            mediaData = await getMediaData(GameMode.Skin, gameState.image_filename);
         }
 
         return {
             sessionId,
             currentBeatmap: {
-                imageUrl: gameState.game_mode === "background" ? mediaData : gameState.game_mode === "skin" ? mediaData : undefined,
-                audioUrl: gameState.game_mode === "audio" ? mediaData : undefined,
+                imageUrl: gameState.game_mode === GameMode.Background ? mediaData : gameState.game_mode === GameMode.Skin ? mediaData : undefined,
+                audioUrl: gameState.game_mode === GameMode.Audio ? mediaData : undefined,
                 revealed: Boolean(gameState.last_guess),
                 title: gameState.last_guess ? gameState.title : undefined,
                 artist: gameState.last_guess ? gameState.artist : undefined,
@@ -560,7 +546,7 @@ export async function endGameAction(sessionId: string): Promise<void> {
         await query(
             `INSERT INTO games (user_id, game_mode, points, streak, variant)
                 VALUES (?, ?, ?, ?, ?)`,
-            [authSession.user.banchoId, gameState.game_mode, points, gameState.highest_streak, gameState.variant]
+            [authSession.user.banchoId, gameState.game_mode, points, gameState.highest_streak, gameState.variant],
         );
 
         if (gameState.variant === "classic") {
@@ -574,7 +560,7 @@ export async function endGameAction(sessionId: string): Promise<void> {
                    highest_streak = GREATEST(highest_streak, VALUES(highest_streak)),
                    highest_score = GREATEST(highest_score, VALUES(highest_score)),
                    last_played = CURRENT_TIMESTAMP`,
-                [authSession.user.banchoId, gameState.game_mode, points, gameState.highest_streak, points]
+                [authSession.user.banchoId, gameState.game_mode, points, gameState.highest_streak, points],
             );
         } else {
             await query(
@@ -585,7 +571,7 @@ export async function endGameAction(sessionId: string): Promise<void> {
                    games_played = games_played + 1,
                    highest_streak = GREATEST(highest_streak, VALUES(highest_streak)),
                    last_played = CURRENT_TIMESTAMP`,
-                [authSession.user.banchoId, gameState.game_mode, gameState.highest_streak]
+                [authSession.user.banchoId, gameState.game_mode, gameState.highest_streak],
             );
         }
     } catch (error) {
@@ -596,7 +582,7 @@ export async function endGameAction(sessionId: string): Promise<void> {
 export async function getSuggestionsAction(str: string, gamemode: GameMode): Promise<string[]> {
     if (!str || str.length < 2) return [];
 
-    if (gamemode === "skin") {
+    if (gamemode === GameMode.Skin) {
         const queryStr = `SELECT DISTINCT name AS title
                           FROM skins
                           WHERE LOWER(name) LIKE CONCAT('%', LOWER(?), '%')

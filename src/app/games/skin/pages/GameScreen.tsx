@@ -1,5 +1,6 @@
 "use client";
 
+import { GameMode } from "@/actions/types";
 import SharedGameScreen from "../../shared/pages/GameScreen";
 import GameSkin from "../components/GameSkin";
 import { GameVariant } from "../../config";
@@ -10,5 +11,5 @@ interface GameScreenProps {
 }
 
 export default function GameScreen({ onExit, variant }: GameScreenProps) {
-    return <SharedGameScreen onExit={onExit} gameVariant={variant} gameMode="skin" GameMedia={GameSkin} />;
+    return <SharedGameScreen onExit={onExit} gameVariant={variant} gameMode={GameMode.Skin} GameMedia={GameSkin} />;
 }

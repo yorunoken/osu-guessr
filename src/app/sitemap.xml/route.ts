@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
+import { env } from "@/lib/env";
 
-const ORIGIN = process.env.NEXTAUTH_URL || "https://your-domain.example";
+const ORIGIN = env.NEXTAUTH_URL || "https://your-domain.example";
 
 const APP_DIR = path.join(process.cwd(), "src", "app");
 

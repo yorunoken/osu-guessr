@@ -5,9 +5,11 @@ import { query } from "@/lib/database";
 import { authenticatedAction } from "./server";
 import { ReportType, Report } from "./types";
 
+import { env } from "@/lib/env";
+
 export type { ReportType };
 
-const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK!;
+const DISCORD_WEBHOOK_URL = env.DISCORD_WEBHOOK!;
 
 const reportSchema = z.object({
     mapsetId: z.number(),
