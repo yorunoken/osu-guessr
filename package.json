@@ -3,9 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "dotenv -e .env.local -- next dev",
+        "dev": "dotenv -e .env -- next dev",
         "build": "prisma generate && IS_DOCKER_BUILD=true next build",
-        "start": "dotenv -e .env.local -- next start",
+        "start": "dotenv -e .env -- next start",
         "check": "eslint src && tsc --noEmit",
         "test": "bun test",
         "sync": "bun scripts/sync-translations",
