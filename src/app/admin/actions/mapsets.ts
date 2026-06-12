@@ -7,6 +7,8 @@ import path from "path";
 import { pipeline } from "stream/promises";
 import unzipper from "unzipper";
 import sharp from "sharp";
+import { z } from "zod";
+import { env } from "@/lib/env";
 
 const DIRECTORIES = {
     audio: path.join(process.cwd(), "mapsets", "audio"),
@@ -14,7 +16,7 @@ const DIRECTORIES = {
     temp: path.join(process.cwd(), "tmp"),
 } as const;
 
-const OSU_API_KEY = process.env.OSU_API_KEY;
+const OSU_API_KEY = env.OSU_API_KEY;
 const BEATCONNECT_BASE_URL = "https://beatconnect.io/b";
 const OSU_COVERS_BASE_URL = "https://assets.ppy.sh/beatmaps";
 const OSU_API_BASE_URL = "https://osu.ppy.sh/api/get_beatmaps";
@@ -99,7 +101,6 @@ async function downloadMapset(mapsetId: number): Promise<string | null> {
         const oszPath = path.join(tempDir, `${mapsetId}.osz`);
 
         if (response.body) {
-            // @ts-expect-error response.body is a stream.Readable
             await pipeline(response.body, fsSync.createWriteStream(oszPath));
         } else {
             throw new Error("No response body");
@@ -125,7 +126,7 @@ async function downloadMapset(mapsetId: number): Promise<string | null> {
                 const read = entry.stream();
                 // pipe each entry to a write stream
                 await pipeline(read, fsSync.createWriteStream(dest));
-            })
+            }),
         );
 
         // remove the downloaded archive
@@ -230,7 +231,7 @@ async function saveMapsetToDatabase(mapsetId: number, beatmapData: BeatmapData, 
        title = VALUES(title),
        artist = VALUES(artist),
        mapper = VALUES(mapper)`,
-        [mapsetId, beatmapData.title, beatmapData.artist, beatmapData.creator]
+        [mapsetId, beatmapData.title, beatmapData.artist, beatmapData.creator],
     );
 
     await query(
@@ -239,7 +240,7 @@ async function saveMapsetToDatabase(mapsetId: number, beatmapData: BeatmapData, 
      ON DUPLICATE KEY UPDATE
        image_filename = VALUES(image_filename),
        audio_filename = VALUES(audio_filename)`,
-        [mapsetId, imageFilename, audioFilename]
+        [mapsetId, imageFilename, audioFilename],
     );
 }
 
@@ -261,7 +262,8 @@ async function removeMapsetFromDatabase(mapsetId: number): Promise<void> {
     await query("DELETE FROM mapset_data WHERE mapset_id = ?", [mapsetId]);
 }
 
-export async function addMapset(mapsetId: number): Promise<{ success: boolean; note?: string }> {
+export async function addMapset(rawMapsetId: number): Promise<{ success: boolean; note?: string }> {
+    const mapsetId = z.coerce.number().min(1).parse(rawMapsetId);
     console.log(`Processing mapset ID: ${mapsetId}`);
 
     try {
@@ -353,7 +355,8 @@ export async function addMapsetFromList(fileContent: string) {
     };
 }
 
-export async function removeMapset(mapsetId: number): Promise<void> {
+export async function removeMapset(rawMapsetId: number): Promise<void> {
+    const mapsetId = z.coerce.number().min(1).parse(rawMapsetId);
     try {
         const files = (await query("SELECT image_filename, audio_filename FROM mapset_tags WHERE mapset_id = ?", [mapsetId])) as Array<{ image_filename?: string; audio_filename?: string }>;
 
@@ -386,10 +389,15 @@ export async function removeMapset(mapsetId: number): Promise<void> {
 
 export async function listMapsets(page = 1, limit = 50, q?: string): Promise<Mapset[]> {
     try {
-        const pageNum = Math.max(1, Math.trunc(Number(page) || 1));
-        const maxLimit = 50;
-        const lim = Math.min(maxLimit, Math.max(1, Math.trunc(Number(limit) || maxLimit)));
-        const offset = (pageNum - 1) * lim;
+        const args = z
+            .object({
+                page: z.coerce.number().min(1).default(1),
+                limit: z.coerce.number().min(1).max(50).default(50),
+                q: z.string().optional(),
+            })
+            .parse({ page, limit, q });
+
+        const offset = (args.page - 1) * args.limit;
 
         let sql = `
             SELECT
@@ -405,14 +413,14 @@ export async function listMapsets(page = 1, limit = 50, q?: string): Promise<Map
 
         const params: (string | number)[] = [];
 
-        if (q && String(q).trim().length > 0) {
+        if (args.q && args.q.trim().length > 0) {
             sql += ` WHERE LOWER(md.artist) LIKE ? OR LOWER(md.title) LIKE ? `;
-            const like = `%${String(q).toLowerCase().trim()}%`;
+            const like = `%${args.q.toLowerCase().trim()}%`;
             params.push(like, like);
         }
 
         sql += ` ORDER BY md.artist DESC LIMIT ? OFFSET ? `;
-        params.push(lim, offset);
+        params.push(args.limit, offset);
 
         const mapsets = await query(sql, params);
 

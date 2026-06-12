@@ -6,14 +6,16 @@ import fsSync from "fs";
 import path from "path";
 import { pipeline } from "stream/promises";
 import { Readable } from "stream";
+import { z } from "zod";
+import { env } from "@/lib/env";
 
 const DIRECTORIES = {
     skins: path.join(process.cwd(), "mapsets", "skins"),
     temp: path.join(process.cwd(), "tmp"),
 } as const;
 
-const OSUCK_API_KEY = process.env.OSUCK_API_KEY;
-const OSUCK_API_BASE_URL = process.env.OSUCK_API_BASE;
+const OSUCK_API_KEY = env.OSUCK_API_KEY;
+const OSUCK_API_BASE_URL = env.OSUCK_API_BASE;
 
 interface SkinData {
     _nsfw: boolean;
@@ -144,7 +146,8 @@ async function removeSkinFromDatabase(id: number): Promise<void> {
     await query("DELETE FROM skins WHERE id = ?", [id]);
 }
 
-export async function addSkinById(skinId: number): Promise<SkinProcessResult> {
+export async function addSkinById(rawSkinId: number): Promise<SkinProcessResult> {
+    const skinId = z.coerce.number().min(1).parse(rawSkinId);
     console.log(`Processing skin ID: ${skinId}`);
 
     try {
@@ -179,7 +182,8 @@ export async function addSkinById(skinId: number): Promise<SkinProcessResult> {
     }
 }
 
-export async function addSkinsFromList(ids: number[]): Promise<Array<{ id: number; success: boolean; error?: string; image?: string }>> {
+export async function addSkinsFromList(rawIds: number[]): Promise<Array<{ id: number; success: boolean; error?: string; image?: string }>> {
+    const ids = z.array(z.coerce.number().min(1)).parse(rawIds);
     const results: Array<{ id: number; success: boolean; error?: string; image?: string }> = [];
 
     for (const [index, id] of ids.entries()) {
@@ -230,8 +234,9 @@ export async function listSkins(): Promise<DatabaseSkin[]> {
     }
 }
 
-export async function removeSkin(id: number): Promise<{ success: boolean; error?: string }> {
+export async function removeSkin(rawId: number): Promise<{ success: boolean; error?: string }> {
     try {
+        const id = z.coerce.number().min(1).parse(rawId);
         const rows = (await query("SELECT image_filename FROM skins WHERE id = ?", [id])) as Array<{ image_filename?: string }>;
 
         if (rows.length > 0 && rows[0]?.image_filename) {
@@ -245,7 +250,7 @@ export async function removeSkin(id: number): Promise<{ success: boolean; error?
         return { success: true };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
-        console.error(`Error removing skin ${id}:`, errorMessage);
+        console.error(`Error removing skin ${rawId}:`, errorMessage);
 
         return {
             success: false,
