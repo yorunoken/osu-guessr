@@ -1,5 +1,6 @@
 import { expect, test, describe } from "bun:test";
 import { sanitizeHtml, validateAndSanitizeGuess, validateGameSession, RateLimiter } from "./validation";
+import { GameMode } from "@/actions/types";
 
 describe("Validation", () => {
     describe("sanitizeHtml", () => {
@@ -34,7 +35,7 @@ describe("Validation", () => {
         test("validates correctly", () => {
             const valid = {
                 sessionId: "123e4567-e89b-12d3-a456-426614174000",
-                gameMode: "audio" as const,
+                gameMode: GameMode.Audio,
                 variant: "classic" as const,
             };
             expect(validateGameSession(valid)).toEqual(valid);

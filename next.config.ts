@@ -3,9 +3,6 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
     output: "standalone",
     images: { remotePatterns: [{ hostname: "a.ppy.sh" }, { hostname: "assets.ppy.sh" }] },
-    typescript: {
-        ignoreBuildErrors: true,
-    },
     reactStrictMode: false,
     experimental: {
         serverActions: {

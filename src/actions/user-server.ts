@@ -3,6 +3,7 @@
 import { query } from "@/lib/database";
 import { z } from "zod";
 import { authenticatedAction } from "./server";
+import { OWNER_ID } from "@/lib";
 import { GameVariant } from "@/app/games/config";
 import { Game, GameMode, HighestStats, TopPlayer, User, UserAchievement, UserWithStats, UserRanks, UserBadge } from "./types";
 
@@ -28,8 +29,14 @@ export async function createUserAction(banchoId: number, username: string, avata
 }
 
 export async function deleteUserAction(banchoId: number) {
-    return authenticatedAction(async () => {
-        await query("DELETE FROM users WHERE bancho_id = ?", [banchoId]);
+    return authenticatedAction(async (session) => {
+        const targetBanchoId = z.coerce.number().int().min(1).parse(banchoId);
+
+        if (session.user.banchoId !== targetBanchoId && session.user.banchoId !== OWNER_ID) {
+            throw new Error("Forbidden");
+        }
+
+        await query("DELETE FROM users WHERE bancho_id = ?", [targetBanchoId]);
         return { success: true };
     });
 }
@@ -171,10 +178,16 @@ export async function getUserStatsAction(banchoId: number): Promise<Array<UserAc
     return result;
 }
 
-export async function getUserLatestGamesAction(banchoId: number, gameMode?: GameMode, variant: GameVariant = "classic"): Promise<Array<Game>> {
+export async function getUserLatestGamesAction(banchoId: number, gameMode?: GameMode, variant: GameVariant = "classic", limit?: number, offset: number = 0): Promise<Array<Game>> {
     const validatedMode = gameMode ? gameModeSchema.parse(gameMode) : undefined;
+    const pagination = z
+        .object({
+            limit: z.number().int().min(1).max(100).optional(),
+            offset: z.number().int().min(0).default(0),
+        })
+        .parse({ limit, offset });
 
-    const query_string = validatedMode
+    let query_string = validatedMode
         ? `SELECT user_id, game_mode, points, streak, variant, ended_at
            FROM games
            WHERE user_id = ? AND game_mode = ? AND variant = ?
@@ -186,7 +199,23 @@ export async function getUserLatestGamesAction(banchoId: number, gameMode?: Game
 
     const params = validatedMode ? [banchoId, validatedMode, variant] : [banchoId, variant];
 
+    if (pagination.limit) {
+        query_string += " LIMIT ? OFFSET ?";
+        params.push(pagination.limit, pagination.offset);
+    }
+
     return query(query_string, params);
+}
+
+export async function getUserGamesCountAction(banchoId: number, gameMode?: GameMode, variant: GameVariant = "classic"): Promise<number> {
+    const validatedMode = gameMode ? gameModeSchema.parse(gameMode) : undefined;
+    const queryString = validatedMode
+        ? `SELECT COUNT(*) as total FROM games WHERE user_id = ? AND game_mode = ? AND variant = ?`
+        : `SELECT COUNT(*) as total FROM games WHERE user_id = ? AND variant = ?`;
+    const params = validatedMode ? [banchoId, validatedMode, variant] : [banchoId, variant];
+    const [row] = (await query(queryString, params)) as Array<{ total: number }>;
+
+    return row?.total ?? 0;
 }
 
 export async function getUserTopGamesAction(banchoId: number, gameMode?: GameMode, variant: GameVariant = "classic"): Promise<Array<Game>> {
