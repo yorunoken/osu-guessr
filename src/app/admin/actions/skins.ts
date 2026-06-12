@@ -8,6 +8,7 @@ import { pipeline } from "stream/promises";
 import { Readable } from "stream";
 import { z } from "zod";
 import { env } from "@/lib/env";
+import { requireOwner } from "@/actions/require-owner";
 
 const DIRECTORIES = {
     skins: path.join(process.cwd(), "mapsets", "skins"),
@@ -16,6 +17,7 @@ const DIRECTORIES = {
 
 const OSUCK_API_KEY = env.OSUCK_API_KEY;
 const OSUCK_API_BASE_URL = env.OSUCK_API_BASE;
+const MAX_BULK_SKINS = 50;
 
 interface SkinData {
     _nsfw: boolean;
@@ -147,6 +149,7 @@ async function removeSkinFromDatabase(id: number): Promise<void> {
 }
 
 export async function addSkinById(rawSkinId: number): Promise<SkinProcessResult> {
+    await requireOwner();
     const skinId = z.coerce.number().min(1).parse(rawSkinId);
     console.log(`Processing skin ID: ${skinId}`);
 
@@ -183,7 +186,8 @@ export async function addSkinById(rawSkinId: number): Promise<SkinProcessResult>
 }
 
 export async function addSkinsFromList(rawIds: number[]): Promise<Array<{ id: number; success: boolean; error?: string; image?: string }>> {
-    const ids = z.array(z.coerce.number().min(1)).parse(rawIds);
+    await requireOwner();
+    const ids = z.array(z.coerce.number().min(1)).max(MAX_BULK_SKINS).parse(rawIds);
     const results: Array<{ id: number; success: boolean; error?: string; image?: string }> = [];
 
     for (const [index, id] of ids.entries()) {
@@ -222,6 +226,7 @@ export async function addSkinsFromList(rawIds: number[]): Promise<Array<{ id: nu
 
 export async function listSkins(): Promise<DatabaseSkin[]> {
     try {
+        await requireOwner();
         const skins = await query(`
       SELECT * FROM skins 
       ORDER BY created_at DESC
@@ -236,6 +241,7 @@ export async function listSkins(): Promise<DatabaseSkin[]> {
 
 export async function removeSkin(rawId: number): Promise<{ success: boolean; error?: string }> {
     try {
+        await requireOwner();
         const id = z.coerce.number().min(1).parse(rawId);
         const rows = (await query("SELECT image_filename FROM skins WHERE id = ?", [id])) as Array<{ image_filename?: string }>;
 
