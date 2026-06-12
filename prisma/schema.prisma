@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum GameMode {
+  background
+  audio
+  skin
+}
+
+enum GameVariant {
+  classic
+  death
+}
+
+enum ReportType {
+  incorrect_title
+  inappropriate_content
+  wrong_audio
+  wrong_background
+  other
+}
+
+enum ReportStatus {
+  pending
+  investigating
+  resolved
+  rejected
+}
+
+model User {
+  banchoId  Int      @id @map("bancho_id")
+  username  String   @db.VarChar(255)
+  avatarUrl String   @map("avatar_url") @db.Text
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  @@index([username], map: "idx_username")
+  @@map("users")
+}
+
+model Badge {
+  name      String   @id @db.VarChar(255)
+  color     String   @db.VarChar(7)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  @@map("badges")
+}
+
+model UserBadge {
+  userId    Int      @map("user_id")
+  badgeName String   @map("badge_name") @db.VarChar(255)
+  assignedAt DateTime @default(now()) @map("assigned_at") @db.Timestamp(0)
+
+  @@id([userId, badgeName])
+  @@map("user_badges")
+}
+
+model ApiKey {
+  id       String    @id @db.VarChar(64)
+  userId   Int       @map("user_id")
+  name     String    @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  lastUsed DateTime? @map("last_used") @db.Timestamp(0)
+
+  @@index([userId], map: "user_id_idx")
+  @@index([lastUsed], map: "idx_api_keys_last_used")
+  @@map("api_keys")
+}
+
+model UserAchievement {
+  userId        Int         @map("user_id")
+  gameMode      GameMode    @map("game_mode")
+  variant       GameVariant @default(classic)
+  totalScore    BigInt      @default(0) @map("total_score")
+  gamesPlayed   Int         @default(0) @map("games_played")
+  highestStreak Int         @default(0) @map("highest_streak")
+  highestScore  Int         @default(0) @map("highest_score")
+  lastPlayed    DateTime    @default(now()) @map("last_played") @db.Timestamp(0)
+
+  @@unique([userId, gameMode, variant], map: "user_game_mode_variant")
+  @@index([totalScore], map: "idx_user_achievements_score")
+  @@index([userId, totalScore], map: "idx_achievements_user_score")
+  @@index([gameMode, variant, totalScore], map: "idx_achievements_mode_variant_score")
+  @@map("user_achievements")
+}
+
+model Game {
+  userId   Int         @map("user_id")
+  gameMode GameMode    @map("game_mode")
+  points   Int         @default(0)
+  streak   Int         @default(0)
+  variant  GameVariant @default(classic)
+  endedAt  DateTime    @default(now()) @map("ended_at") @db.Timestamp(0)
+
+  @@index([userId, gameMode], map: "idx_games_user_mode")
+  @@index([endedAt], map: "idx_games_ended")
+  @@index([gameMode, points], map: "idx_games_mode_points")
+  @@ignore
+  @@map("games")
+}
+
+model MapsetTag {
+  mapsetId      Int     @map("mapset_id")
+  imageFilename String? @map("image_filename") @db.VarChar(255)
+  audioFilename String? @map("audio_filename") @db.VarChar(255)
+
+  @@index([mapsetId], map: "idx_mapset_tags_mapset_id")
+  @@ignore
+  @@map("mapset_tags")
+}
+
+model MapsetData {
+  mapsetId Int     @id @map("mapset_id")
+  title    String? @db.VarChar(500)
+  artist   String? @db.VarChar(500)
+  mapper   String? @db.VarChar(500)
+
+  @@index([title], map: "idx_mapset_data_title")
+  @@index([artist], map: "idx_mapset_data_artist")
+  @@index([mapper], map: "idx_mapset_data_mapper")
+  @@map("mapset_data")
+}
+
+model Skin {
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(255)
+  imageFilename String   @map("image_filename") @db.VarChar(255)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  @@map("skins")
+}
+
+model Report {
+  id                Int          @id @default(autoincrement())
+  userId            Int          @map("user_id")
+  mapsetId          Int          @map("mapset_id")
+  reportType        ReportType   @map("report_type")
+  description       String?      @db.Text
+  status            ReportStatus @default(pending)
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt         DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  githubIssueNumber Int?         @map("github_issue_number")
+  githubIssueUrl    String?      @map("github_issue_url") @db.VarChar(255)
+
+  @@index([status], map: "idx_reports_status")
+  @@index([userId], map: "idx_reports_user")
+  @@index([mapsetId], map: "idx_reports_mapset")
+  @@map("reports")
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  @@map("announcements")
+}
