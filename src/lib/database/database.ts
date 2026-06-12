@@ -1,8 +1,7 @@
 "use server";
 
-import mysql from "mysql2/promise";
 import { QueryOptions, DatabaseError } from "./types";
-import { env } from "../env";
+import { prisma } from "./prisma";
 
 const DEFAULT_OPTIONS: Required<QueryOptions> = {
     timeout: 30000,
@@ -10,20 +9,30 @@ const DEFAULT_OPTIONS: Required<QueryOptions> = {
     logQuery: process.env.NODE_ENV === "production" ? false : true,
 };
 
-const connection = mysql.createPool({
-    host: env.DB_HOST,
-    port: Number(env.DB_PORT),
-    user: env.DB_USER,
-    password: env.DB_PASSWORD,
-    database: env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-});
-
 function sanitizeValues(values?: Array<unknown>): Array<unknown> | undefined {
     if (!values) return values;
     return values.map((value) => (value === undefined ? null : value));
+}
+
+function isReadQuery(sqlQuery: string): boolean {
+    const operation = sqlQuery.trimStart().split(/\s+/, 1)[0]?.toUpperCase();
+    return operation ? ["SELECT", "SHOW", "DESCRIBE", "DESC", "EXPLAIN", "WITH"].includes(operation) : false;
+}
+
+function normalizeDatabaseValue(value: unknown): unknown {
+    if (typeof value === "bigint") {
+        return Number(value);
+    }
+
+    if (value instanceof Date || value === null || typeof value !== "object") {
+        return value;
+    }
+
+    if (Array.isArray(value)) {
+        return value.map(normalizeDatabaseValue);
+    }
+
+    return Object.fromEntries(Object.entries(value).map(([key, nestedValue]) => [key, normalizeDatabaseValue(nestedValue)]));
 }
 
 export async function query<T = unknown>(sqlQuery: string, values?: Array<unknown>, options: QueryOptions = {}): Promise<T[]> {
@@ -58,8 +67,13 @@ export async function query<T = unknown>(sqlQuery: string, values?: Array<unknow
     }
 
     try {
-        const [rows] = await connection.execute(sqlQuery, sanitizedValues);
-        return rows as T[];
+        if (isReadQuery(sqlQuery)) {
+            const rows = await prisma.$queryRawUnsafe<T[]>(sqlQuery, ...(sanitizedValues ?? []));
+            return normalizeDatabaseValue(rows) as T[];
+        }
+
+        await prisma.$executeRawUnsafe(sqlQuery, ...(sanitizedValues ?? []));
+        return [] as T[];
     } catch (err: unknown) {
         const error = err as Error;
         throw new DatabaseError(`Query failed: ${error.message}`, sqlQuery, sanitizedValues, error);
