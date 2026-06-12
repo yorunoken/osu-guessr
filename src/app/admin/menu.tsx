@@ -10,7 +10,6 @@ import { addMapset, removeMapset, listMapsets, Mapset, addMapsetFromList } from 
 import { syncUserAchievements } from "./actions/update-outofsync-users";
 import { checkTranslation, fillMissingTranslations, removeExtraTranslations, getAllLanguages } from "./actions/check-translations";
 import { getBadges, addBadge, removeBadge, assignBadgeToUser, removeBadgeFromUser, listBadges, UserBadge } from "./actions/manage-badges";
-import { deploy } from "./actions/deploy";
 import { listReports, updateReportStatus } from "./actions/reports";
 import { listAnnouncements, addAnnouncement, removeAnnouncement } from "@/actions/announcements";
 import { listSkins, removeSkin, addSkinById, addSkinsFromList } from "./actions/skins";
@@ -359,25 +358,6 @@ export default function AdminMenu() {
         setIsLoading(false);
     };
 
-    const handleDeploy = async () => {
-        setIsLoading(true);
-        appendOutput("Starting deployment...");
-
-        try {
-            const result = await deploy();
-            if (result.success) {
-                appendOutput("Deployment successful!");
-            } else {
-                appendOutput(`Deployment failed: ${result.message}`);
-            }
-        } catch (error) {
-            console.log(error);
-            appendOutput(`Deployment error: ${error}`);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     const handleAddSkinById = async () => {
         if (!skinSingleId) return appendOutput("Provide skin id");
         setIsLoading(true);
@@ -550,9 +530,6 @@ export default function AdminMenu() {
                 <div>
                     <Button className="bg-green-600 hover:bg-green-700 mr-2">
                         <Link href={"/admin/beatmaps"}>Go to Beatmapsets</Link>
-                    </Button>
-                    <Button onClick={handleDeploy} disabled={isLoading} className="bg-green-600 hover:bg-green-700">
-                        Deploy Latest Changes
                     </Button>
                 </div>
             </div>

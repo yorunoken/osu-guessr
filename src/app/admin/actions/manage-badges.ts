@@ -1,6 +1,7 @@
 "use server";
 
 import { query } from "@/lib/database";
+import { requireOwner } from "@/actions/require-owner";
 import { z } from "zod";
 
 export interface UserBadge {
@@ -24,11 +25,13 @@ function capitalizeWords(str: string): string {
 }
 
 export async function getBadges() {
+    await requireOwner();
     return query("SELECT * FROM badges ORDER BY name");
 }
 
 export async function addBadge(name: string, color: string) {
     try {
+        await requireOwner();
         const validated = badgeSchema.parse({ name, color });
         const formattedName = capitalizeWords(validated.name);
 
@@ -45,6 +48,7 @@ export async function addBadge(name: string, color: string) {
 
 export async function removeBadge(name: string) {
     try {
+        await requireOwner();
         const formattedName = capitalizeWords(name);
         await query("DELETE FROM badges WHERE name = ?", [formattedName]);
         return `Successfully removed badge "${formattedName}"`;
@@ -55,6 +59,7 @@ export async function removeBadge(name: string) {
 
 export async function assignBadgeToUser(userId: number, badgeName: string) {
     try {
+        await requireOwner();
         const formattedName = capitalizeWords(badgeName);
         await query("INSERT INTO user_badges (user_id, badge_name) VALUES (?, ?)", [userId, formattedName]);
         return `Successfully assigned badge "${formattedName}" to user ${userId}`;
@@ -65,6 +70,7 @@ export async function assignBadgeToUser(userId: number, badgeName: string) {
 
 export async function removeBadgeFromUser(userId: number, badgeName: string) {
     try {
+        await requireOwner();
         const formattedName = capitalizeWords(badgeName);
         await query("DELETE FROM user_badges WHERE user_id = ? AND badge_name = ?", [userId, formattedName]);
         return `Successfully removed badge "${formattedName}" from user ${userId}`;
@@ -75,6 +81,7 @@ export async function removeBadgeFromUser(userId: number, badgeName: string) {
 
 export async function listBadges(): Promise<UserBadge[]> {
     try {
+        await requireOwner();
         const results = await query(`
             SELECT ub.user_id, u.username, b.name as badge_name, b.color, ub.assigned_at
             FROM user_badges ub
