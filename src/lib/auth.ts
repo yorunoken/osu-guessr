@@ -1,4 +1,5 @@
 import { createUserAction } from "@/actions/user-server";
+import { env } from "@/lib/env";
 import NextAuth, { DefaultSession } from "next-auth";
 import OsuProvider from "next-auth/providers/osu";
 
@@ -30,8 +31,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     providers: [
         OsuProvider({
-            clientId: process.env.OSU_CLIENT_ID,
-            clientSecret: process.env.OSU_CLIENT_SECRET,
+            clientId: env.OSU_CLIENT_ID,
+            clientSecret: env.OSU_CLIENT_SECRET,
         }),
     ],
     trustHost: true,
