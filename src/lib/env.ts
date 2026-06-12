@@ -63,4 +63,4 @@ if (!parsed.success && !isDockerBuild) {
     throw new Error("Invalid environment variables");
 }
 
-export const env = parsed.success ? parsed.data : (processEnv as any);
+export const env: z.infer<typeof envSchema> = parsed.success ? parsed.data : (processEnv as z.infer<typeof envSchema>);

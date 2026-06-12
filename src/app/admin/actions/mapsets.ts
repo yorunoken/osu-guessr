@@ -5,10 +5,13 @@ import fs from "fs/promises";
 import fsSync from "fs";
 import path from "path";
 import { pipeline } from "stream/promises";
+import { Readable } from "stream";
+import type { ReadableStream as NodeReadableStream } from "stream/web";
 import unzipper from "unzipper";
 import sharp from "sharp";
 import { z } from "zod";
 import { env } from "@/lib/env";
+import { requireOwner } from "@/actions/require-owner";
 
 const DIRECTORIES = {
     audio: path.join(process.cwd(), "mapsets", "audio"),
@@ -20,6 +23,10 @@ const OSU_API_KEY = env.OSU_API_KEY;
 const BEATCONNECT_BASE_URL = "https://beatconnect.io/b";
 const OSU_COVERS_BASE_URL = "https://assets.ppy.sh/beatmaps";
 const OSU_API_BASE_URL = "https://osu.ppy.sh/api/get_beatmaps";
+const MAX_BULK_MAPSETS = 50;
+const MAX_ARCHIVE_FILES = 1000;
+const MAX_ARCHIVE_TOTAL_BYTES = 300 * 1024 * 1024;
+const MAX_ARCHIVE_ENTRY_BYTES = 100 * 1024 * 1024;
 
 export interface Mapset {
     mapset_id: number;
@@ -40,6 +47,55 @@ interface OsuApiResponse {
     title: string;
     artist: string;
     creator: string;
+}
+
+interface ArchiveEntryMetadata {
+    path: string;
+    type?: string;
+    uncompressedSize?: number;
+    vars?: {
+        uncompressedSize?: number;
+    };
+    externalFileAttributes?: number;
+}
+
+function resolveContainedPath(baseDir: string, unsafePath: string): string {
+    if (!unsafePath || unsafePath.includes("\0") || unsafePath.includes("\\") || path.isAbsolute(unsafePath) || unsafePath.split("/").includes("..")) {
+        throw new Error("Unsafe archive path");
+    }
+
+    const resolvedBase = path.resolve(baseDir);
+    const resolvedPath = path.resolve(resolvedBase, unsafePath);
+
+    if (resolvedPath !== resolvedBase && !resolvedPath.startsWith(resolvedBase + path.sep)) {
+        throw new Error("Unsafe archive path");
+    }
+
+    return resolvedPath;
+}
+
+function resolveBackgroundPath(filename: string): string {
+    if (!filename || filename.includes("\0") || filename.includes("/") || filename.includes("\\") || filename.includes("..") || path.isAbsolute(filename)) {
+        throw new Error("Invalid filename");
+    }
+
+    const baseDir = path.resolve(DIRECTORIES.backgrounds);
+    const resolved = path.resolve(baseDir, filename);
+
+    if (!resolved.startsWith(baseDir + path.sep)) {
+        throw new Error("Invalid filename");
+    }
+
+    return resolved;
+}
+
+function getArchiveEntrySize(entry: ArchiveEntryMetadata): number {
+    return entry.uncompressedSize ?? entry.vars?.uncompressedSize ?? 0;
+}
+
+function isArchiveSymlink(entry: ArchiveEntryMetadata): boolean {
+    const mode = (entry.externalFileAttributes ?? 0) >>> 16;
+    return entry.type === "SymbolicLink" || (mode & 0o170000) === 0o120000;
 }
 
 async function ensureDirectories(): Promise<void> {
@@ -101,7 +157,8 @@ async function downloadMapset(mapsetId: number): Promise<string | null> {
         const oszPath = path.join(tempDir, `${mapsetId}.osz`);
 
         if (response.body) {
-            await pipeline(response.body, fsSync.createWriteStream(oszPath));
+            const nodeStream = Readable.fromWeb(response.body as unknown as NodeReadableStream<Uint8Array>);
+            await pipeline(nodeStream, fsSync.createWriteStream(oszPath));
         } else {
             throw new Error("No response body");
         }
@@ -113,21 +170,40 @@ async function downloadMapset(mapsetId: number): Promise<string | null> {
 
         const directory = await unzipper.Open.file(oszPath);
 
-        await Promise.all(
-            directory.files.map(async (entry) => {
-                const dest = path.join(tempDir, entry.path);
+        if (directory.files.length > MAX_ARCHIVE_FILES) {
+            throw new Error("Archive contains too many files");
+        }
 
-                if (entry.type === "Directory") {
-                    await fs.mkdir(dest, { recursive: true });
-                    return;
-                }
+        let totalExtractedBytes = 0;
 
-                await fs.mkdir(path.dirname(dest), { recursive: true });
-                const read = entry.stream();
-                // pipe each entry to a write stream
-                await pipeline(read, fsSync.createWriteStream(dest));
-            }),
-        );
+        for (const entry of directory.files) {
+            const entryMetadata = entry as ArchiveEntryMetadata;
+
+            if (isArchiveSymlink(entryMetadata)) {
+                continue;
+            }
+
+            const entrySize = getArchiveEntrySize(entryMetadata);
+            if (entrySize > MAX_ARCHIVE_ENTRY_BYTES) {
+                throw new Error("Archive entry is too large");
+            }
+
+            totalExtractedBytes += entrySize;
+            if (totalExtractedBytes > MAX_ARCHIVE_TOTAL_BYTES) {
+                throw new Error("Archive is too large");
+            }
+
+            const dest = resolveContainedPath(tempDir, entry.path);
+
+            if (entry.type === "Directory") {
+                await fs.mkdir(dest, { recursive: true });
+                continue;
+            }
+
+            await fs.mkdir(path.dirname(dest), { recursive: true });
+            const read = entry.stream();
+            await pipeline(read, fsSync.createWriteStream(dest));
+        }
 
         // remove the downloaded archive
         await fs.unlink(oszPath).catch(() => {});
@@ -263,6 +339,7 @@ async function removeMapsetFromDatabase(mapsetId: number): Promise<void> {
 }
 
 export async function addMapset(rawMapsetId: number): Promise<{ success: boolean; note?: string }> {
+    await requireOwner();
     const mapsetId = z.coerce.number().min(1).parse(rawMapsetId);
     console.log(`Processing mapset ID: ${mapsetId}`);
 
@@ -308,6 +385,7 @@ export async function addMapset(rawMapsetId: number): Promise<{ success: boolean
 }
 
 export async function addMapsetFromList(fileContent: string) {
+    await requireOwner();
     const mapsetIds = fileContent
         .split("\n")
         .map((line) => line.trim())
@@ -317,6 +395,10 @@ export async function addMapsetFromList(fileContent: string) {
             return match ? parseInt(match[1]) : null;
         })
         .filter((id): id is number => id !== null);
+
+    if (mapsetIds.length > MAX_BULK_MAPSETS) {
+        throw new Error(`Too many mapsets. Maximum is ${MAX_BULK_MAPSETS}.`);
+    }
 
     console.log(mapsetIds);
 
@@ -356,6 +438,7 @@ export async function addMapsetFromList(fileContent: string) {
 }
 
 export async function removeMapset(rawMapsetId: number): Promise<void> {
+    await requireOwner();
     const mapsetId = z.coerce.number().min(1).parse(rawMapsetId);
     try {
         const files = (await query("SELECT image_filename, audio_filename FROM mapset_tags WHERE mapset_id = ?", [mapsetId])) as Array<{ image_filename?: string; audio_filename?: string }>;
@@ -389,6 +472,7 @@ export async function removeMapset(rawMapsetId: number): Promise<void> {
 
 export async function listMapsets(page = 1, limit = 50, q?: string): Promise<Mapset[]> {
     try {
+        await requireOwner();
         const args = z
             .object({
                 page: z.coerce.number().min(1).default(1),
@@ -432,10 +516,11 @@ export async function listMapsets(page = 1, limit = 50, q?: string): Promise<Map
 }
 
 export async function fetchBackgroundImage(filename?: string | null): Promise<string | null> {
+    await requireOwner();
     if (!filename) return null;
 
     try {
-        const filePath = path.join(DIRECTORIES.backgrounds, filename);
+        const filePath = resolveBackgroundPath(filename);
         const stats = await fs.stat(filePath).catch(() => null);
         if (!stats || !stats.isFile()) return null;
 

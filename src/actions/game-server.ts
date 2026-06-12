@@ -16,6 +16,7 @@ const gameSchema = z.object({
     sessionId: z.string().uuid(),
     guess: z
         .string()
+        .max(200)
         .optional()
         .nullable()
         .transform((g) => g?.trim()),

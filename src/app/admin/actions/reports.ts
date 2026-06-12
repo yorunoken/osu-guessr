@@ -2,9 +2,11 @@
 
 import { query } from "@/lib/database";
 import { Report } from "@/actions/types";
+import { requireOwner } from "@/actions/require-owner";
 
 export async function listReports(): Promise<Report[]> {
     try {
+        await requireOwner();
         const results = await query(`
             SELECT
                 id,
@@ -28,6 +30,7 @@ export async function listReports(): Promise<Report[]> {
 
 export async function updateReportStatus(reportId: number, status: string): Promise<void> {
     try {
+        await requireOwner();
         await query(`UPDATE reports SET status = ? WHERE id = ?`, [status, reportId]);
         console.log(`Report ${reportId} status updated to ${status}`);
     } catch (error) {

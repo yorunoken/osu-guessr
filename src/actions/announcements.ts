@@ -2,6 +2,7 @@
 
 import { query } from "@/lib/database";
 import { Announcement } from "./types";
+import { requireOwner } from "@/actions/require-owner";
 
 export async function listAnnouncements(): Promise<Announcement[]> {
     try {
@@ -34,6 +35,7 @@ export async function getLatestAnnouncement(): Promise<Announcement | null> {
 
 export async function addAnnouncement(title: string, content: string): Promise<void> {
     try {
+        await requireOwner();
         await query(`INSERT INTO announcements (title, content) VALUES (?, ?);`, [title, content]);
     } catch (error) {
         console.error("Error adding announcement:", error);
@@ -43,6 +45,7 @@ export async function addAnnouncement(title: string, content: string): Promise<v
 
 export async function removeAnnouncement(id: number): Promise<void> {
     try {
+        await requireOwner();
         await query(`DELETE FROM announcements WHERE id = ?;`, [id]);
     } catch (error) {
         console.error(`Error removing announcement ${id}:`, error);

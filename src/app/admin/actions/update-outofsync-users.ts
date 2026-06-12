@@ -1,9 +1,11 @@
 "use server";
 
 import { query } from "@/lib/database";
+import { requireOwner } from "@/actions/require-owner";
 
 export async function syncUserAchievements() {
     try {
+        await requireOwner();
         await query(`
             UPDATE user_achievements
             SET

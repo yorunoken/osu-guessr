@@ -4,12 +4,15 @@ import { z } from "zod";
 import { query } from "@/lib/database";
 import { authenticatedAction } from "./server";
 import { ReportType, Report } from "./types";
+import redisClient from "@/lib/redis";
 
 import { env } from "@/lib/env";
 
 export type { ReportType };
 
 const DISCORD_WEBHOOK_URL = env.DISCORD_WEBHOOK!;
+const REPORT_RATE_LIMIT_WINDOW_SECONDS = 10 * 60;
+const REPORT_RATE_LIMIT_MAX_REQUESTS = 3;
 
 const reportSchema = z.object({
     mapsetId: z.number(),
@@ -23,12 +26,32 @@ async function sendDiscordWebhook(content: string) {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({
+            content,
+            allowed_mentions: { parse: [] },
+        }),
     });
+}
+
+async function enforceReportRateLimit(userId: number) {
+    const key = `report_rate:${userId}`;
+    const count = await redisClient.incr(key);
+    if (count === 1) {
+        await redisClient.expire(key, REPORT_RATE_LIMIT_WINDOW_SECONDS);
+    }
+
+    if (count > REPORT_RATE_LIMIT_MAX_REQUESTS) {
+        throw new Error("Too many reports. Please try again later.");
+    }
+}
+
+function escapeDiscordMentions(value: string): string {
+    return value.replace(/@/g, "@\u200b");
 }
 
 export async function createReportAction(mapsetId: number, reportType: ReportType, description: string): Promise<void> {
     return authenticatedAction(async (session) => {
+        await enforceReportRateLimit(session.user.banchoId);
         const validated = reportSchema.parse({
             mapsetId,
             reportType,
@@ -45,9 +68,9 @@ Mapset ID: ${mapsetId}
 Reported By: ${session.user.banchoId}
 
 Description:
-${description}
+${escapeDiscordMentions(validated.description)}
 
-Mapset Link: https://osu.ppy.sh/s/${mapsetId}
+Mapset Link: https://osu.ppy.sh/s/${validated.mapsetId}
 `;
 
         await sendDiscordWebhook(reportMessage);

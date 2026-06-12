@@ -3,6 +3,9 @@
 
 import { readFileSync, writeFileSync, readdirSync } from "fs";
 import path from "path";
+import { requireOwner } from "@/actions/require-owner";
+
+const LANGUAGE_CODE_PATTERN = /^[a-z]{2}(-[A-Z]{2})?$/;
 
 function getAllKeys(obj: any, prefix: string = ""): string[] {
     let keys: string[] = [];
@@ -64,6 +67,7 @@ function setValueByPath(obj: any, path: string, value: any) {
 }
 
 export async function getAllLanguages() {
+    await requireOwner();
     const messagesDir = path.join(process.cwd(), "src/messages");
     try {
         const files = readdirSync(messagesDir)
@@ -77,10 +81,26 @@ export async function getAllLanguages() {
     }
 }
 
+function getMessagesPath(languageCode: string): string {
+    if (!LANGUAGE_CODE_PATTERN.test(languageCode)) {
+        throw new Error("Invalid language code");
+    }
+
+    const messagesDir = path.resolve(process.cwd(), "src/messages");
+    const targetPath = path.resolve(messagesDir, `${languageCode}.json`);
+
+    if (!targetPath.startsWith(messagesDir + path.sep)) {
+        throw new Error("Invalid language code");
+    }
+
+    return targetPath;
+}
+
 export async function checkTranslation(languageCode: string) {
     try {
+        await requireOwner();
         const enPath = path.join(process.cwd(), "src/messages/en.json");
-        const targetPath = path.join(process.cwd(), `src/messages/${languageCode}.json`);
+        const targetPath = getMessagesPath(languageCode);
 
         const enJson = JSON.parse(readFileSync(enPath, "utf8"));
         const targetJson = JSON.parse(readFileSync(targetPath, "utf8"));
@@ -110,8 +130,9 @@ export async function checkTranslation(languageCode: string) {
 
 export async function fillMissingTranslations(languageCode: string) {
     try {
+        await requireOwner();
         const enPath = path.join(process.cwd(), "src/messages/en.json");
-        const targetPath = path.join(process.cwd(), `src/messages/${languageCode}.json`);
+        const targetPath = getMessagesPath(languageCode);
 
         const enJson = JSON.parse(readFileSync(enPath, "utf8"));
         const targetJson = JSON.parse(readFileSync(targetPath, "utf8"));
@@ -145,8 +166,9 @@ export async function fillMissingTranslations(languageCode: string) {
 
 export async function removeExtraTranslations(languageCode: string) {
     try {
+        await requireOwner();
         const enPath = path.join(process.cwd(), "src/messages/en.json");
-        const targetPath = path.join(process.cwd(), `src/messages/${languageCode}.json`);
+        const targetPath = getMessagesPath(languageCode);
 
         const enJson = JSON.parse(readFileSync(enPath, "utf8"));
         const targetJson = JSON.parse(readFileSync(targetPath, "utf8"));
