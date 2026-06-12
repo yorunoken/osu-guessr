@@ -19,3 +19,4 @@ tsconfig.tsbuildinfo
 mapsets/
 backgrounds/
 tmp
+/src/generated/prisma

@@ -2,9 +2,7 @@ import { expect, test, describe, mock, beforeEach, beforeAll } from "bun:test";
 import { GameMode } from "@/actions/types";
 
 Object.assign(process.env, {
-    DB_USER: "test",
-    DB_PASSWORD: "test",
-    DB_NAME: "test",
+    DATABASE_URL: "mysql://root@localhost:3306/test",
     REDIS_URL: "redis://localhost:6379",
     AUTH_SECRET: "test",
     OSU_CLIENT_ID: "test",

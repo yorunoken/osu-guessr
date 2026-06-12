@@ -39,7 +39,7 @@ Want to add your language? Follow the guide and submit a PR!
 1. **Prerequisites**
 
     - Node.js 18+
-    - MySQL database
+    - MariaDB/MySQL database
     - osu! API key
 
 2. **Installation**
@@ -47,13 +47,13 @@ Want to add your language? Follow the guide and submit a PR!
     ```bash
     git clone https://github.com/yorunoken/osu-guessr.git
     cd osu-guessr
-    npm install
+    bun install
     ```
 
 3. **Environment Setup**
 
     ```bash
-    cp .env.example .env
+    cp .env.template .env.local
     ```
 
     Fill in your environment variables:
@@ -70,7 +70,12 @@ Want to add your language? Follow the guide and submit a PR!
 
     # NextAuth Configuration
     NEXTAUTH_URL=https://your-domain.com
-    NEXTAUTH_SECRET=your_secret_key
+    AUTH_SECRET=your_secret_key
+
+    # Database
+    DB_HOST=mariadb_shared
+    # Or, for custom credentials/name:
+    # DATABASE_URL=mysql://user:password@host:3306/osu_guessr
     ```
 
     You'll need to:
@@ -78,17 +83,20 @@ Want to add your language? Follow the guide and submit a PR!
     - Register an osu! OAuth application at https://osu.ppy.sh/home/account/edit#oauth
     - Get an osu! API key from https://osu.ppy.sh/p/api
     - Set your `NEXTAUTH_URL` to your domain (use `http://localhost:3000` for local development)
-    - Generate a random string for `NEXTAUTH_SECRET`
+    - Generate a random string for `AUTH_SECRET`
 
 4. **Database Setup**
 
     ```bash
-    npm run db:migrate
+    mysql -u your_database_user -p osu_guessr < init.sql
+    bun run prisma:generate
     ```
+
+    MariaDB remains the database engine. Prisma is used as the application data-access layer, and `bun run db:introspect` can refresh `prisma/schema.prisma` from an existing database when needed.
 
 5. **Development**
     ```bash
-    npm run dev
+    bun run dev
     ```
 
 ## Built With
@@ -96,7 +104,8 @@ Want to add your language? Follow the guide and submit a PR!
 -   [Next.js 15](https://nextjs.org/) - React framework
 -   [NextAuth.js](https://next-auth.js.org/) - Authentication
 -   [Tailwind CSS](https://tailwindcss.com/) - Styling
--   [MySQL](https://www.mysql.com/) - Database
+-   [Prisma](https://www.prisma.io/) - Database access
+-   [MariaDB/MySQL](https://mariadb.org/) - Database
 -   [TypeScript](https://www.typescriptlang.org/) - Language
 
 ## License
