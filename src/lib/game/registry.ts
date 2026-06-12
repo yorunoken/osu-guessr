@@ -119,7 +119,7 @@ gameRegistry.registerVariant({
 // modes
 
 gameRegistry.registerMode({
-    id: "background",
+    id: GameMode.Background,
     name: "Background Guessr",
     description: "Test your knowledge by guessing songs from their beatmap backgrounds.",
     image: "/ghostrule.webp",
@@ -129,7 +129,7 @@ gameRegistry.registerMode({
 });
 
 gameRegistry.registerMode({
-    id: "audio",
+    id: GameMode.Audio,
     name: "Audio Guessr",
     description: "Challenge yourself by identifying songs from short audio clips.",
     image: "/audio-mode.webp",
@@ -139,7 +139,7 @@ gameRegistry.registerMode({
 });
 
 gameRegistry.registerMode({
-    id: "skin",
+    id: GameMode.Skin,
     name: "Skin Guessr",
     description: "Test your knowledge of osu! skins by identifying them from screenshots.",
     image: "/skin-mode.webp",

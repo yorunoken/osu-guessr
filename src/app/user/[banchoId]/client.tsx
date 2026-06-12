@@ -18,7 +18,7 @@ interface GameStats {
     last_played: Date;
 }
 
-const gamemodes: Array<GameMode> = ["audio", "background", "skin"];
+const gamemodes: Array<GameMode> = [GameMode.Audio, GameMode.Background, GameMode.Skin];
 
 interface UserProfileClientProps {
     currentMode: GameMode;
@@ -104,9 +104,9 @@ export default function UserProfileClient({ currentMode, currentVariant, banchoI
     const defaultRanks: UserRanks = {
         globalRank: undefined,
         modeRanks: {
-            background: {},
-            audio: {},
-            skin: {},
+            [GameMode.Background]: {},
+            [GameMode.Audio]: {},
+            [GameMode.Skin]: {},
         },
     };
 
@@ -121,24 +121,24 @@ export default function UserProfileClient({ currentMode, currentVariant, banchoI
     }, {} as Record<GameMode, Array<Game>>);
 
     const gameStats: Record<GameMode, GameStats> = {
-        background: {
-            game_mode: "background",
+        [GameMode.Background]: {
+            game_mode: GameMode.Background,
             total_score: 0n,
             games_played: 0,
             highest_streak: 0,
             highest_score: 0,
             last_played: new Date(0),
         },
-        audio: {
-            game_mode: "audio",
+        [GameMode.Audio]: {
+            game_mode: GameMode.Audio,
             total_score: 0n,
             games_played: 0,
             highest_streak: 0,
             highest_score: 0,
             last_played: new Date(0),
         },
-        skin: {
-            game_mode: "skin",
+        [GameMode.Skin]: {
+            game_mode: GameMode.Skin,
             total_score: 0n,
             games_played: 0,
             highest_streak: 0,

@@ -1,12 +1,12 @@
 "use server";
 
 import { query } from "@/lib/database";
+import { env } from "@/lib/env";
 import redisClient from "@/lib/redis";
 import { authenticatedAction } from "./server";
-import path from "path";
-import fs from "fs/promises";
+import { getMediaData } from "./media";
 
-import type { MapsetTags, MapsetData, MapsetDataWithTags, SkinData } from "./types";
+import { GameMode, type MapsetTags, type MapsetData, type MapsetDataWithTags, type SkinData } from "./types";
 
 export async function getRandomAudioAction(sessionId?: string) {
     return authenticatedAction(async () => {
@@ -15,13 +15,7 @@ export async function getRandomAudioAction(sessionId?: string) {
             throw new Error("No audio found");
         }
 
-        const audioPath = path.join(process.cwd(), "mapsets", "audio", audio.audio_filename);
-        const audioBuffer = await fs.readFile(audioPath);
-
-        const fileExtension = path.extname(audio.audio_filename).toLowerCase();
-        const mimeType = fileExtension === ".ogg" ? "audio/ogg" : "audio/mp3";
-
-        const audioData = `data:${mimeType};base64,${audioBuffer.toString("base64")}`;
+        const audioData = await getMediaData(GameMode.Audio, audio.audio_filename);
 
         return {
             data: audio,
@@ -85,9 +79,7 @@ export async function getRandomBackgroundAction(sessionId?: string) {
             throw new Error("No background found");
         }
 
-        const imagePath = path.join(process.cwd(), "mapsets", "backgrounds", background.image_filename);
-        const imageBuffer = await fs.readFile(imagePath);
-        const backgroundImageData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        const backgroundImageData = await getMediaData(GameMode.Background, background.image_filename);
 
         return {
             data: background,
@@ -140,7 +132,7 @@ async function getRandomBackground(sessionId?: string): Promise<MapsetDataWithTa
 }
 
 async function getMapsetById(mapsetId: number): Promise<MapsetData | null> {
-    const res = await fetch(`https://osu.ppy.sh/api/get_beatmaps?k=${process.env.OSU_API_KEY}&s=${mapsetId}`);
+    const res = await fetch(`https://osu.ppy.sh/api/get_beatmaps?k=${env.OSU_API_KEY}&s=${mapsetId}`);
 
     if (!res.ok) {
         return null;
@@ -157,9 +149,7 @@ export async function getRandomSkinAction(sessionId?: string) {
             throw new Error("No skin found");
         }
 
-        const imagePath = path.join(process.cwd(), "mapsets", "skins", skin.image_filename);
-        const imageBuffer = await fs.readFile(imagePath);
-        const skinData = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+        const skinData = await getMediaData(GameMode.Skin, skin.image_filename);
 
         return {
             data: skin,

@@ -9,7 +9,7 @@ import { Game, GameMode, HighestStats, TopPlayer, User, UserAchievement, UserWit
 export type { UserRanks };
 
 // Schemas
-const gameModeSchema = z.enum(["background", "audio", "skin"]);
+const gameModeSchema = z.nativeEnum(GameMode);
 const searchSchema = z.object({
     term: z.string().min(2).max(250),
     limit: z.number().min(1).max(100).default(10),
@@ -98,9 +98,9 @@ export async function getUserByIdAction(banchoId: number): Promise<UserWithStats
     )) as [{ globalRank: number }];
 
     const modeRanks: { [key in GameMode]: { classic?: number; death?: number } } = {
-        background: {},
-        audio: {},
-        skin: {},
+        [GameMode.Background]: {},
+        [GameMode.Audio]: {},
+        [GameMode.Skin]: {},
     };
 
     for (const mode of Object.keys(modeRanks) as GameMode[]) {
@@ -298,6 +298,6 @@ export async function getHighestStatsAction(variant: GameVariant = "classic"): P
     return {
         total_users: Number(result[0].total_users),
         total_games: Number(result[0].total_games),
-        highest_points: variant === "classic" ? Number(result[0].highest_score) : Number(result[0].highest_score), // This is actually highest streak for death mode
+        highest_points: Number(result[0].highest_score),
     };
 }

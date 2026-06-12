@@ -21,7 +21,7 @@ export class GameClient {
     private config: GameClientConfig;
     private status: GameClientStatus = "idle";
 
-    constructor(events: GameClientEvents, gameMode: GameMode = "background", gameVariant: GameVariant = "classic", config: Partial<GameClientConfig> = {}) {
+    constructor(events: GameClientEvents, gameMode: GameMode = GameMode.Background, gameVariant: GameVariant = "classic", config: Partial<GameClientConfig> = {}) {
         this.events = events;
         this.gameMode = gameMode;
         this.gameVariant = gameVariant;
@@ -29,7 +29,7 @@ export class GameClient {
     }
 
     private isSupportedGameMode(mode: GameMode): mode is GameMode {
-        return mode === "audio" || mode === "background" || mode === "skin";
+        return mode === GameMode.Audio || mode === GameMode.Background || mode === GameMode.Skin;
     }
 
     getStatus(): GameClientStatus {

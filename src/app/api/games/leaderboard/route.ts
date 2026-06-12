@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { validateApiKey } from "@/actions/api-keys-server";
 import { getTopPlayersAction } from "@/actions/user-server";
+import { GameMode } from "@/actions/types";
 import { z } from "zod";
 
 const querySchema = z.object({
-    mode: z.enum(["background", "audio", "skin"]).default("background"),
+    mode: z.nativeEnum(GameMode).default(GameMode.Background),
     variant: z.enum(["classic", "death"]).default("classic"),
     limit: z.coerce.number().min(1).max(100).default(100),
 });

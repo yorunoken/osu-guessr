@@ -1,5 +1,6 @@
 "use client";
 
+import { GameMode } from "@/actions/types";
 import { GameVariant } from "../../config";
 import PreGameMenu from "../../shared/pages/PreGameMenu";
 
@@ -8,5 +9,5 @@ interface PreGameMenuProps {
 }
 
 export default function SkinPreGameMenu({ onStart }: PreGameMenuProps) {
-    return <PreGameMenu onStart={onStart} gameMode="skin" />;
+    return <PreGameMenu onStart={onStart} gameMode={GameMode.Skin} />;
 }

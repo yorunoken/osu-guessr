@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { GameMode } from "@/actions/types";
 
 // Common validation schemas
 export const gameSessionSchema = z.object({
     sessionId: z.string().uuid(),
-    gameMode: z.enum(["audio", "background", "skin"]),
+    gameMode: z.nativeEnum(GameMode),
     variant: z.enum(["classic", "death"]),
 });
 
