@@ -79,7 +79,11 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                 }
             );
 
-            await gameClient.current.startGame();
+            const resumed = await gameClient.current.resumeStoredGame();
+            if (!resumed) {
+                await gameClient.current.startGame();
+            }
+
             setCountdown(AUTO_ADVANCE_DELAY_MS / 1000);
         } catch (error) {
             console.error("Failed to restart game:", error);
@@ -92,7 +96,7 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
         handleStartGame();
 
         return () => {
-            gameClient.current?.endGame().catch(console.error);
+            gameClient.current?.dispose();
         };
     }, [handleStartGame]);
 

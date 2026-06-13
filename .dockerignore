@@ -8,12 +8,9 @@ node_modules
 build
 dist
 
-# Environment variables
+# Environment variables. `.env` is the local app file; variants stay ignored too.
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env*.local
 
 # Git
 .git

@@ -53,7 +53,7 @@ Want to add your language? Follow the guide and submit a PR!
 3. **Environment Setup**
 
     ```bash
-    cp .env.template .env.local
+    cp .env.template .env
     ```
 
     Fill in your environment variables:

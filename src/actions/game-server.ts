@@ -11,6 +11,13 @@ import { getMediaData } from "./media";
 import { checkGuess, GuessDifficulty } from "@/lib/guess-checker";
 
 const GRACE_PERIOD = 1;
+const SESSION_LOCK_TTL_MS = 5000;
+const RELEASE_SESSION_LOCK_SCRIPT = `
+if redis.call("get", KEYS[1]) == ARGV[1] then
+    return redis.call("del", KEYS[1])
+end
+return 0
+`;
 
 const gameSchema = z.object({
     sessionId: z.string().uuid(),
@@ -25,20 +32,34 @@ const gameSchema = z.object({
 // const rateLimits = new Map<string, number>();
 // const RATE_LIMIT_WINDOW = 1000;
 
-const activeSessions = new Map<string, boolean>();
+type SessionLock = {
+    key: string;
+    token: string;
+};
 
-async function acquireSessionLock(sessionId: string, timeoutMs: number = 5000): Promise<boolean> {
-    if (activeSessions.get(sessionId)) {
-        return false;
+async function acquireSessionLock(sessionId: string, timeoutMs: number = SESSION_LOCK_TTL_MS): Promise<SessionLock | null> {
+    const key = `game_session_lock:${sessionId}`;
+    const token = crypto.randomUUID();
+    const result = await redisClient.set(key, token, {
+        condition: "NX",
+        expiration: {
+            type: "PX",
+            value: timeoutMs,
+        },
+    });
+
+    return result === "OK" ? { key, token } : null;
+}
+
+async function releaseSessionLock(lock: SessionLock): Promise<void> {
+    try {
+        await redisClient.eval(RELEASE_SESSION_LOCK_SCRIPT, {
+            keys: [lock.key],
+            arguments: [lock.token],
+        });
+    } catch (error) {
+        console.error("Failed to release game session lock:", error);
     }
-
-    activeSessions.set(sessionId, true);
-
-    setTimeout(() => {
-        activeSessions.delete(sessionId);
-    }, timeoutMs);
-
-    return true;
 }
 
 async function validateGameSession(sessionId: string, userId: number): Promise<DatabaseGameSession> {
@@ -135,8 +156,9 @@ export async function startGameAction(gameMode: GameMode, variant: GameVariant =
 export async function submitGuessAction(sessionId: string, guess?: string | null): Promise<GameState> {
     const authSession = await getAuthSession();
     const validated = gameSchema.parse({ sessionId, guess });
+    const lock = await acquireSessionLock(validated.sessionId);
 
-    if (!(await acquireSessionLock(validated.sessionId))) {
+    if (!lock) {
         throw new Error("Action in progress, please wait");
     }
 
@@ -445,7 +467,7 @@ export async function submitGuessAction(sessionId: string, guess?: string | null
     } catch (error) {
         throw error;
     } finally {
-        activeSessions.delete(validated.sessionId);
+        await releaseSessionLock(lock);
     }
 }
 
