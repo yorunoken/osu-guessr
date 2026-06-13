@@ -11,10 +11,10 @@ export default function UserNotFound() {
     const { t } = useTranslationsContext();
 
     return (
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-10 md:py-16">
             <div className="max-w-2xl mx-auto text-center">
-                <div className="bg-card rounded-xl p-8 border border-border/50">
-                    <h1 className="text-4xl font-bold mb-4">{t.user.notFound.title}</h1>
+                <div className="bg-card rounded-lg p-5 sm:p-8 border border-border/60">
+                    <h1 className="text-3xl md:text-4xl font-bold mb-4">{t.user.notFound.title}</h1>
 
                     <div className="space-y-4 mb-8">
                         <p className="text-foreground/70">{t.user.notFound.description}</p>

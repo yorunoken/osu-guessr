@@ -111,8 +111,8 @@ export default function SettingsClient() {
 
         return apiKeys.map((key) => (
             <div key={key.id} className="py-4 space-y-3">
-                <div className="flex items-center justify-between">
-                    <div>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
                         <p className="font-medium">{key.name}</p>
                         <p className="text-sm text-foreground/70">{t.settings.apiKeys.keyInfo.created.replace("{date}", new Date(key.created_at).toLocaleDateString())}</p>
                         {key.last_used ? (
@@ -121,7 +121,7 @@ export default function SettingsClient() {
                             <p className="text-sm text-foreground/70">{t.settings.apiKeys.keyInfo.neverUsed}</p>
                         )}
                     </div>
-                    <Button variant="destructive" onClick={() => setDialogs((prev) => ({ ...prev, delete: key }))}>
+                    <Button variant="destructive" onClick={() => setDialogs((prev) => ({ ...prev, delete: key }))} className="w-full sm:w-auto">
                         {t.settings.apiKeys.actions.delete}
                     </Button>
                 </div>
@@ -130,12 +130,12 @@ export default function SettingsClient() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-10 md:py-16">
             <div className="max-w-3xl mx-auto">
-                <h1 className="text-4xl font-bold mb-8">{t.settings.title}</h1>
+                <h1 className="text-3xl md:text-4xl font-bold mb-8">{t.settings.title}</h1>
 
-                <section className="bg-card rounded-xl p-8 border border-border/50">
-                    <div className="flex items-center justify-between mb-6">
+                <section className="bg-card rounded-lg p-5 sm:p-8 border border-border/60">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-6">
                         <h2 className="text-2xl font-bold">{t.settings.apiKeys.title}</h2>
                         <div className="text-sm text-foreground/70">{t.settings.apiKeys.usage.replace("{count}", apiKeys.length.toString())}</div>
                     </div>
@@ -192,7 +192,7 @@ export default function SettingsClient() {
                     <div className="py-4">
                         <Input value={newKeyName} onChange={(e) => setNewKeyName(e.target.value)} placeholder={t.settings.apiKeys.dialog.create.placeholder} className="w-full" />
                     </div>
-                    <DialogFooter>
+                    <DialogFooter className="flex-col sm:flex-row gap-2">
                         <Button variant="outline" onClick={() => setDialogs((prev) => ({ ...prev, create: false }))}>
                             {t.settings.apiKeys.actions.close}
                         </Button>
@@ -217,7 +217,7 @@ export default function SettingsClient() {
                             </div>
                         </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter>
+                    <DialogFooter className="flex-col sm:flex-row gap-2">
                         <Button variant="outline" onClick={() => setDialogs((prev) => ({ ...prev, delete: null }))}>
                             {t.settings.apiKeys.actions.close}
                         </Button>

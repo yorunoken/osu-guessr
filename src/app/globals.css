@@ -28,10 +28,142 @@ body {
         --input: 0 0% 14.9%;
         --ring: 252 100% 69%;
         --radius: 0.75rem;
+        --ease-out-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+        --ease-press: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 }
 
 @layer utilities {
+    @keyframes osu-fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes osu-scale-in {
+        from {
+            opacity: 0;
+            transform: scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes osu-soft-pulse {
+        0%,
+        100% {
+            opacity: 0.72;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.04);
+        }
+    }
+
+    .motion-fade-up {
+        animation: osu-fade-up 420ms var(--ease-out-smooth) both;
+    }
+
+    .motion-scale-in {
+        animation: osu-scale-in 220ms var(--ease-out-smooth) both;
+    }
+
+    .motion-delay-1 {
+        animation-delay: 80ms;
+    }
+
+    .motion-delay-2 {
+        animation-delay: 150ms;
+    }
+
+    .motion-delay-3 {
+        animation-delay: 220ms;
+    }
+
+    .interactive-surface {
+        transition:
+            border-color 180ms var(--ease-out-smooth),
+            background-color 180ms var(--ease-out-smooth),
+            box-shadow 180ms var(--ease-out-smooth),
+            transform 180ms var(--ease-out-smooth);
+    }
+
+    .interactive-surface:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 50px -34px hsl(var(--primary) / 0.6);
+    }
+
+    .interactive-surface:active {
+        transform: translateY(0);
+    }
+
+    .press-feedback {
+        transition:
+            transform 120ms var(--ease-press),
+            box-shadow 160ms var(--ease-out-smooth),
+            background-color 160ms var(--ease-out-smooth),
+            border-color 160ms var(--ease-out-smooth),
+            color 160ms var(--ease-out-smooth),
+            opacity 160ms var(--ease-out-smooth);
+    }
+
+    .press-feedback:active:not(:disabled) {
+        transform: translateY(1px) scale(0.99);
+    }
+
+    .subtle-link {
+        position: relative;
+    }
+
+    .subtle-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -0.25rem;
+        height: 1px;
+        background: hsl(var(--primary));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 180ms var(--ease-out-smooth);
+    }
+
+    .subtle-link:hover::after,
+    .subtle-link:focus-visible::after {
+        transform: scaleX(1);
+    }
+
+    .soft-loading-dot {
+        animation: osu-soft-pulse 1.4s var(--ease-out-smooth) infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .motion-fade-up,
+        .motion-scale-in,
+        .soft-loading-dot {
+            animation: none;
+        }
+
+        .interactive-surface,
+        .press-feedback,
+        .subtle-link::after {
+            transition-duration: 1ms;
+        }
+
+        .interactive-surface:hover,
+        .press-feedback:active:not(:disabled) {
+            transform: none;
+        }
+    }
+
     .scrollbar-thin {
         scrollbar-width: thin;
     }

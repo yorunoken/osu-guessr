@@ -34,14 +34,14 @@ export default function Header() {
         <header className="bg-background/95 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">
             <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                 <div className="flex items-center space-x-8">
-                    <Link href="/" className="text-2xl font-bold text-primary hover:text-primary/80 transition-colors">
+                    <Link href="/" className="text-2xl font-bold text-primary hover:text-primary/80 transition-[color,opacity] duration-150 ease-[var(--ease-out-smooth)]">
                         osu!guessr
                     </Link>
                     <nav className="hidden md:block">
                         <ul className="flex space-x-8 items-center">
                             {NAV_ITEMS.map((item) => (
                                 <li key={item}>
-                                    <Link href={`/${item}`} className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium">
+                                    <Link href={`/${item}`} className="subtle-link text-foreground/80 hover:text-primary transition-colors duration-200 font-medium">
                                         {getNavLabel(item)}
                                     </Link>
                                 </li>
@@ -59,19 +59,19 @@ export default function Header() {
                         <SupportPageLink />
                     </div>
 
-                    <Button variant="ghost" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    <Button variant="ghost" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-expanded={isMenuOpen}>
                         <Menu className="h-6 w-6" />
                     </Button>
 
                     {session ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
+                                <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 active:!transform-none">
                                     <Image src={session.user?.image || "/default-avatar.png"} alt="Avatar" className="rounded-full" fill style={{ objectFit: "cover" }} />
                                 </Button>
                             </DropdownMenuTrigger>
 
-                            <DropdownMenuContent align="end" className="w-56">
+                            <DropdownMenuContent align="end" className="w-56 duration-0 data-[state=closed]:!animate-none data-[state=open]:!animate-none">
                                 <DropdownMenuItem className="cursor-pointer" asChild>
                                     <Link href={`/user/${session.user.banchoId}`} className="flex items-center">
                                         <div className="relative h-8 w-8 rounded-full mr-2">
@@ -103,8 +103,8 @@ export default function Header() {
 
                 <nav
                     className={`${
-                        isMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-                    } md:hidden overflow-hidden transition-all duration-200 ease-in-out absolute top-full left-0 w-full bg-background shadow-md`}
+                        isMenuOpen ? "max-h-[500px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"
+                    } md:hidden overflow-hidden transition-all duration-200 ease-[var(--ease-out-smooth)] absolute top-full left-0 w-full bg-background shadow-md`}
                 >
                     <ul className="flex flex-col space-y-4 items-center py-4">
                         <li className="w-full px-4">

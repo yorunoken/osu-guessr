@@ -87,14 +87,16 @@ export default function UserSearch() {
 
                 <div className="max-h-[60vh] overflow-y-auto">
                     {isSearching ? (
-                        <div className="p-8 text-center text-foreground/70">{t.user.search.searching}</div>
+                        <div className="p-8 text-center text-foreground/70">
+                            <span className="soft-loading-dot inline-block">{t.user.search.searching}</span>
+                        </div>
                     ) : results.length > 0 ? (
                         <div className="py-2">
                             {results.map((user) => (
                                 <Link
                                     key={user.bancho_id.toString()}
                                     href={`/user/${user.bancho_id.toString()}`}
-                                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-accent/50 transition-colors"
+                                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-accent/50 transition-[background-color,color] duration-150 ease-[var(--ease-out-smooth)]"
                                     onClick={() => handleSelect()}
                                 >
                                     <Image src={user.avatar_url || "/placeholder.svg"} alt={user.username} width={40} height={40} className="rounded-full" />

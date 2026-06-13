@@ -51,11 +51,11 @@ export default function LeaderboardClient() {
     const gameModes: GameMode[] = [GameMode.Background, GameMode.Audio, GameMode.Skin];
 
     return (
-        <div className="container mx-auto px-4 py-16">
-            <h1 className="text-4xl font-bold mb-8 text-center">{t.leaderboard.title}</h1>
+        <div className="container mx-auto px-4 py-10 md:py-16">
+            <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">{t.leaderboard.title}</h1>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 mb-8 p-4 bg-card rounded-lg border">
-                <div className="flex items-center gap-2">
+            <div className="flex flex-col md:flex-row md:flex-wrap items-stretch md:items-center justify-center gap-4 mb-8 p-4 bg-card rounded-lg border border-border/60">
+                <div className="flex items-center justify-between gap-2 md:justify-start">
                     <span className="text-sm font-medium text-muted-foreground">Mode:</span>
                     <Select value={selectedMode} onValueChange={(value: GameMode) => setSelectedMode(value)}>
                         <SelectTrigger className="w-32">
@@ -71,9 +71,9 @@ export default function LeaderboardClient() {
                     </Select>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between gap-2 md:justify-start">
                     <span className="text-sm font-medium text-muted-foreground">Variant:</span>
-                    <div className="flex rounded-md border">
+                    <div className="flex rounded-md border border-border/60">
                         <Button variant={selectedVariant === "classic" ? "default" : "ghost"} size="sm" onClick={() => setSelectedVariant("classic")} className="rounded-r-none border-r">
                             {t.leaderboard.filters.variant.classic}
                         </Button>
@@ -84,7 +84,7 @@ export default function LeaderboardClient() {
                 </div>
             </div>
 
-            <div className="bg-card rounded-xl border border-border/50 overflow-hidden">
+            <div className="bg-card rounded-lg border border-border/60 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead className="bg-secondary/50">
@@ -127,10 +127,10 @@ export default function LeaderboardClient() {
                                 </tr>
                             ) : leaderboardData.length > 0 ? (
                                 leaderboardData.map((player, index) => (
-                                    <tr key={index} className={`hover:bg-secondary/20 transition-colors ${session?.user?.name === player.username ? "bg-primary/10" : ""}`}>
+                                    <tr key={player.bancho_id} className={`hover:bg-secondary/20 transition-colors ${session?.user?.name === player.username ? "bg-primary/10" : ""}`}>
                                         <td className="px-6 py-4">
-                                            {(index + 1 <= 3) && page < 1 ? (
-                                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-white font-bold text-sm">
+                                            {index + 1 <= 3 && page === 1 ? (
+                                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-foreground font-bold text-sm ring-1 ring-border/70">
                                                     {(page - 1) * pageSize + index + 1}
                                                 </div>
                                             ) : (
@@ -183,8 +183,8 @@ export default function LeaderboardClient() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-3 items-center gap-4 mt-4">
-                <div />
+            <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 mt-4">
+                <div className="hidden md:block" />
 
                 <div className="flex items-center justify-center">
                     <Button size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
@@ -196,7 +196,7 @@ export default function LeaderboardClient() {
                     </Button>
                 </div>
 
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center justify-center md:justify-end gap-2">
                     <span className="text-sm text-muted-foreground">Page size</span>
                     <Select
                         value={String(pageSize)}
