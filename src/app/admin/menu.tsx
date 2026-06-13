@@ -524,7 +524,7 @@ export default function AdminMenu() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8 space-y-4">
+        <div className="container mx-auto px-4 py-6 md:py-8 space-y-4">
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">Admin Panel</h1>
                 <div>
@@ -536,7 +536,7 @@ export default function AdminMenu() {
 
             <CollapsibleSection title="Mapset Management">
                 <div className="space-y-8">
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">Single Mapset</h3>
                         <div className="flex gap-4">
                             <Input type="number" placeholder="Mapset ID" value={mapsetId} onChange={(e) => setMapsetId(e.target.value)} />
@@ -552,7 +552,7 @@ export default function AdminMenu() {
                         </div>
                     </div>
 
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">Bulk Upload Mapsets</h3>
                         <div className="space-y-4">
                             <div className="flex items-center gap-4">
@@ -571,7 +571,7 @@ export default function AdminMenu() {
 
             <CollapsibleSection title="Skins Management">
                 <div className="space-y-4">
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">Random Skin</h3>
                         <div className="flex gap-4">
                             <Button onClick={handleListSkins} disabled={isLoading} variant="outline">
@@ -580,7 +580,7 @@ export default function AdminMenu() {
                         </div>
                     </div>
 
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">Add Skin by ID or List</h3>
                         <div className="space-y-4">
                             <div className="flex gap-4">
@@ -603,7 +603,7 @@ export default function AdminMenu() {
                         </div>
                     </div>
 
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">Remove Skin</h3>
                         <div className="flex gap-4">
                             <Input placeholder="Skin ID" value={skinRemoveId} onChange={(e) => setSkinRemoveId(e.target.value)} />
@@ -617,7 +617,7 @@ export default function AdminMenu() {
 
             <CollapsibleSection title="Badge Management">
                 <div className="space-y-8">
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">Assign User Badges</h3>
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
@@ -653,7 +653,7 @@ export default function AdminMenu() {
                         </div>
                     </div>
 
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">Manage Badge Types</h3>
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
@@ -686,7 +686,7 @@ export default function AdminMenu() {
             </CollapsibleSection>
 
             <CollapsibleSection title="User">
-                <div className="bg-secondary/20 p-6 rounded-xl">
+                <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                     <Button onClick={handleSyncUsers} disabled={isLoading}>
                         Sync User Achievements
                     </Button>
@@ -694,7 +694,7 @@ export default function AdminMenu() {
             </CollapsibleSection>
 
             <CollapsibleSection title="Translation Management">
-                <div className="bg-secondary/20 p-6 rounded-xl">
+                <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                     <div className="space-y-4">
                         <div className="flex items-center space-x-4">
                             <div className="flex items-center space-x-2">
@@ -731,7 +731,7 @@ export default function AdminMenu() {
 
             <CollapsibleSection title="Report Management">
                 <div className="space-y-4">
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">View and Manage Reports</h3>
                         <Button
                             onClick={async () => {
@@ -758,7 +758,7 @@ export default function AdminMenu() {
                             List Reports
                         </Button>
                     </div>
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">Update Report Status</h3>
                         <div className="flex gap-4">
                             <Input type="number" placeholder="Report ID" onChange={(e) => setReportId(e.target.value)} className="w-1/4" />
@@ -791,7 +791,7 @@ export default function AdminMenu() {
 
             <CollapsibleSection title="Announcements">
                 <div className="space-y-4">
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">Create Announcement</h3>
                         <div className="space-y-4">
                             <Input placeholder="Title" value={announcementTitle} onChange={(e) => setAnnouncementTitle(e.target.value)} />
@@ -813,7 +813,7 @@ export default function AdminMenu() {
                         </div>
                     </div>
 
-                    <div className="bg-secondary/20 p-6 rounded-xl">
+                    <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                         <h3 className="text-lg font-medium mb-4">Existing Announcements</h3>
                         <div className="space-y-2">
                             {announcementsList.length === 0 ? (
@@ -839,7 +839,7 @@ export default function AdminMenu() {
             </CollapsibleSection>
 
             <CollapsibleSection title="Server Lockdown">
-                <div className="bg-secondary/20 p-6 rounded-xl">
+                <div className="bg-secondary/20 p-5 rounded-lg border border-border/50">
                     <h3 className="text-lg font-medium mb-4">Temporarily lock the server</h3>
                     <div className="flex items-center gap-4">
                         <Input type="number" className="w-24" value={String(lockMinutes)} onChange={(e) => setLockMinutes(Number(e.target.value))} />
@@ -857,7 +857,7 @@ export default function AdminMenu() {
                 </div>
             </CollapsibleSection>
 
-            <div className="bg-card p-6 rounded-lg border border-border" ref={consoleDivRef}>
+            <div className="bg-card p-5 sm:p-6 rounded-lg border border-border/60" ref={consoleDivRef}>
                 <h2 className="text-xl font-semibold mb-4">Console Output</h2>
                 <pre className="bg-background p-4 rounded-md h-64 overflow-y-auto whitespace-pre-wrap">{output}</pre>
                 <Button onClick={() => setOutput("")} variant="outline" className="mt-2">

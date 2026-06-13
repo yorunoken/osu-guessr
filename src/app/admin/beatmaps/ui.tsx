@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import { listMapsets, removeMapset, fetchBackgroundImage, Mapset } from "../actions/mapsets";
 
@@ -108,9 +109,9 @@ export default function BeatmapsAdmin() {
     const nextPage = () => setPage((p) => p + 1);
 
     return (
-        <div className="space-y-6 p-6">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+        <div className="space-y-6 p-4 sm:p-6">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex flex-wrap items-center gap-4">
                     <Link href="/admin">
                         <Button variant="ghost" size="sm">
                             Back
@@ -119,11 +120,11 @@ export default function BeatmapsAdmin() {
                     <h1 className="text-2xl font-bold">Beatmaps</h1>
                 </div>
 
-                <div className="text-sm text-muted-foreground">{output}</div>
+                <div className="text-sm text-muted-foreground break-words lg:text-right">{output}</div>
             </div>
 
-            <div className="flex items-center gap-4">
-                <input className="input" placeholder="Search artist or title" value={search} onChange={(e) => setSearch(e.target.value)} />
+            <div className="flex flex-col gap-3 rounded-lg border border-border/60 bg-card p-4 sm:flex-row sm:flex-wrap sm:items-center">
+                <Input className="sm:max-w-xs" placeholder="Search artist or title" value={search} onChange={(e) => setSearch(e.target.value)} />
                 <Button size="sm" onClick={() => fetchMapsets(1, search)}>
                     Search
                 </Button>
@@ -135,14 +136,14 @@ export default function BeatmapsAdmin() {
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {mapsets.map((m) => (
-                    <div key={m.mapset_id} className="bg-card rounded-lg border border-border p-4 flex flex-col">
-                        <div className="flex items-center gap-4">
+                    <div key={m.mapset_id} className="bg-card rounded-lg border border-border/60 p-4 flex flex-col">
+                        <div className="flex items-start gap-4">
                             <div>
                                 <input type="checkbox" checked={!!selected[m.mapset_id]} onChange={() => handleToggle(m.mapset_id)} />
                             </div>
-                            <div className="w-28 h-16 relative rounded overflow-hidden bg-muted">
+                            <div className="w-28 h-16 relative rounded overflow-hidden bg-muted shrink-0">
                                 {images[m.mapset_id] ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={images[m.mapset_id] as string} alt={m.title} className="w-full h-full object-cover" />
@@ -153,7 +154,7 @@ export default function BeatmapsAdmin() {
                                 )}
                             </div>
 
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                                 <div className="font-semibold">{m.title}</div>
                                 <div className="text-sm text-muted-foreground">
                                     {m.artist} — {m.mapper}
@@ -162,12 +163,14 @@ export default function BeatmapsAdmin() {
                             </div>
                         </div>
 
-                        <div className="mt-4 flex gap-2">
+                        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                             <Button variant="destructive" size="sm" onClick={() => handleDelete(m.mapset_id)}>
                                 Delete
                             </Button>
-                            <a className="btn" href={`https://osu.ppy.sh/beatmapsets/${m.mapset_id}`} target="_blank" rel="noreferrer">
-                                <Button size="sm">Open osu!</Button>
+                            <a href={`https://osu.ppy.sh/beatmapsets/${m.mapset_id}`} target="_blank" rel="noreferrer" className="sm:w-auto">
+                                <Button size="sm" className="w-full sm:w-auto">
+                                    Open osu!
+                                </Button>
                             </a>
                         </div>
                     </div>
