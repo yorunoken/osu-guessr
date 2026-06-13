@@ -12,6 +12,10 @@ const DEFAULT_CONFIG: GameClientConfig = {
     recoveryMode: "auto",
 };
 
+const SERVER_ACTION_DEPLOYMENT_MISMATCH = "Failed to find Server Action";
+const SERVER_ACTION_DEPLOYMENT_VERSION_HINT = "older or newer deployment";
+const ACTION_RELOAD_ATTEMPTED_KEY = "osu-guessr:action-reload-attempted";
+
 export class GameClient {
     private session: GameSession | null = null;
     private events: GameClientEvents;
@@ -30,6 +34,43 @@ export class GameClient {
 
     private isSupportedGameMode(mode: GameMode): mode is GameMode {
         return mode === GameMode.Audio || mode === GameMode.Background || mode === GameMode.Skin;
+    }
+
+    private get storageKey(): string {
+        return `osu-guessr:game-session:${this.gameMode}:${this.gameVariant}`;
+    }
+
+    private getStorage(): Storage | null {
+        if (typeof window === "undefined") return null;
+        return window.sessionStorage;
+    }
+
+    private persistSessionId(sessionId: string): void {
+        try {
+            this.getStorage()?.setItem(this.storageKey, sessionId);
+        } catch (error) {
+            console.warn("Failed to persist game session id:", error);
+        }
+    }
+
+    private clearStoredSessionId(): void {
+        try {
+            this.getStorage()?.removeItem(this.storageKey);
+        } catch (error) {
+            console.warn("Failed to clear stored game session id:", error);
+        }
+    }
+
+    private shouldReloadForServerActionMismatch(error: Error): boolean {
+        return error.message.includes(SERVER_ACTION_DEPLOYMENT_MISMATCH) || error.message.includes(SERVER_ACTION_DEPLOYMENT_VERSION_HINT);
+    }
+
+    private reloadForServerActionMismatch(): void {
+        const storage = this.getStorage();
+        if (!storage || storage.getItem(ACTION_RELOAD_ATTEMPTED_KEY) === "true") return;
+
+        storage.setItem(ACTION_RELOAD_ATTEMPTED_KEY, "true");
+        window.location.reload();
     }
 
     getStatus(): GameClientStatus {
@@ -58,6 +99,11 @@ export class GameClient {
             } catch (error) {
                 const gameError = handleGameError(error);
                 lastError = gameError;
+
+                if (this.shouldReloadForServerActionMismatch(gameError)) {
+                    this.reloadForServerActionMismatch();
+                    throw gameError;
+                }
 
                 this.events.onError?.(gameError);
 
@@ -95,6 +141,7 @@ export class GameClient {
                 retryCount: 0,
             };
 
+            this.persistSessionId(initialState.sessionId);
             this.setStatus("active");
             this.startTimer();
             console.log(`[Game Client]: Started ${this.gameMode} Game (${this.gameVariant} mode)`);
@@ -102,6 +149,49 @@ export class GameClient {
             this.setStatus("error");
             console.error("Failed to start game:", error);
             throw error;
+        }
+    }
+
+    async resumeStoredGame(): Promise<boolean> {
+        const sessionId = this.getStorage()?.getItem(this.storageKey);
+        if (!sessionId) return false;
+
+        this.setStatus("starting");
+
+        try {
+            const restoredState = await this.executeWithRetry(() => getGameStateAction(sessionId), "resumeStoredGame");
+
+            if (restoredState.gameStatus !== "active") {
+                this.clearStoredSessionId();
+                return false;
+            }
+
+            this.session = {
+                id: restoredState.sessionId,
+                state: restoredState,
+                timer: null,
+                isActive: true,
+                lastActivity: new Date(),
+                retryCount: 0,
+            };
+
+            this.getStorage()?.removeItem(ACTION_RELOAD_ATTEMPTED_KEY);
+            this.persistSessionId(restoredState.sessionId);
+            this.setStatus("active");
+            this.events.onRecovery?.();
+            this.events.onStateUpdate(restoredState);
+
+            if (!restoredState.currentBeatmap.revealed) {
+                this.startTimer();
+            }
+
+            console.log("[Game Client]: Resumed stored game session");
+            return true;
+        } catch (error) {
+            this.setStatus("error");
+            this.clearStoredSessionId();
+            console.error("Failed to resume stored game:", error);
+            return false;
         }
     }
 
@@ -135,7 +225,7 @@ export class GameClient {
         this.stopTimer();
         try {
             soundManager.play("timeout");
-            const newState = await submitGuessAction(this.session.id, "");
+            const newState = await this.executeWithRetry(() => submitGuessAction(this.session!.id, ""), "handleTimeout");
             this.updateState(newState);
             console.log("[Game Client]: Round timed out");
         } catch (error) {
@@ -223,6 +313,15 @@ export class GameClient {
         this.session.state = newState;
         this.session.lastActivity = new Date();
         this.events.onStateUpdate(newState);
+
+        if (newState.gameStatus === "finished") {
+            this.stopTimer();
+            this.session.isActive = false;
+            this.clearStoredSessionId();
+            this.setStatus("ended");
+        } else {
+            this.persistSessionId(newState.sessionId);
+        }
     }
 
     async endGame(): Promise<void> {
@@ -243,6 +342,15 @@ export class GameClient {
         }
     }
 
+    dispose(): void {
+        this.stopTimer();
+        if (this.session) {
+            this.session.isActive = false;
+        }
+        this.session = null;
+        this.setStatus("idle");
+    }
+
     async getSuggestions(query: string): Promise<string[]> {
         if (!this.session?.isActive || this.session.state.currentBeatmap.revealed) {
             return [];
@@ -260,6 +368,7 @@ export class GameClient {
     private cleanup(): void {
         this.stopTimer();
         this.session = null;
+        this.clearStoredSessionId();
         this.setStatus("idle");
     }
 }
