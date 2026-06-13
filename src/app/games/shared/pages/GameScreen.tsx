@@ -245,7 +245,7 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6 md:py-8">
             <GameHeader
                 streak={gameState.score.streak}
                 points={gameState.score.total}
@@ -257,7 +257,7 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                 maxStreak={gameState.score.highestStreak}
             />
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                 <div className="relative">
                     <GameMedia
                         mediaUrl={gameMode === "audio" ? gameState.currentBeatmap.audioUrl! : gameState.currentBeatmap.imageUrl!}
@@ -272,7 +272,7 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                 <div className="flex flex-col gap-6">
                     <GuessInput guess={guess} setGuess={setGuess} isRevealed={gameState.currentBeatmap.revealed} onGuess={handleGuess} onSkip={handleSkip} gameClient={gameClient.current!} />
 
-                    <div className="bg-card p-6 rounded-xl border border-border/50">
+                    <div className="bg-card p-6 rounded-lg border border-border/60">
                         <h3 className="font-semibold mb-2">{t.game.shortcuts.title}</h3>
                         <ul className="list-disc list-inside space-y-1 text-foreground/70">
                             <li>{t.game.shortcuts.items.tab}</li>
@@ -285,7 +285,7 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia }:
                 </div>
             </div>
 
-            <div className="flex justify-between mt-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-8">
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={handleExit} disabled={isLoading}>
                         {gameVariant === "death" ? t.game.actions.endRun : t.game.actions.exitGame}

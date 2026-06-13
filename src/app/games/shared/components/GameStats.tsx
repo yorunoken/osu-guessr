@@ -18,29 +18,29 @@ export default function GameStats({ totalPoints, correctGuesses, maxStreak, tota
     const { t } = useTranslationsContext();
 
     return (
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-10 md:py-16">
             <div className="max-w-2xl mx-auto">
-                <div className="bg-card rounded-xl p-8 border border-border/50">
+                <div className="motion-fade-up bg-card rounded-lg p-5 sm:p-8 border border-border/60 shadow-xl shadow-black/20">
                     {gameVariant === "classic" ? (
                         <>
-                            <h1 className="text-3xl font-bold mb-6">{t.game.stats.classic.title}</h1>
+                            <h1 className="text-2xl sm:text-3xl font-bold mb-6">{t.game.stats.classic.title}</h1>
 
-                            <div className="grid grid-cols-2 gap-4 mb-8">
-                                <div className="bg-secondary/50 p-4 rounded-lg text-center">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                                <div className="interactive-surface bg-secondary/50 p-4 rounded-lg text-center border border-border/50">
                                     <div className="text-2xl font-bold text-primary">{totalPoints}</div>
                                     <div className="text-sm text-foreground/70">{t.game.stats.classic.totalPoints}</div>
                                 </div>
-                                <div className="bg-secondary/50 p-4 rounded-lg text-center">
+                                <div className="interactive-surface bg-secondary/50 p-4 rounded-lg text-center border border-border/50">
                                     <div className="text-2xl font-bold text-primary">{maxStreak}</div>
                                     <div className="text-sm text-foreground/70">{t.game.stats.classic.highestStreak}</div>
                                 </div>
-                                <div className="bg-secondary/50 p-4 rounded-lg text-center">
+                                <div className="interactive-surface bg-secondary/50 p-4 rounded-lg text-center border border-border/50">
                                     <div className="text-2xl font-bold text-primary">
                                         {t.game.stats.classic.correctGuesses.replace("{correct}", correctGuesses.toString()).replace("{total}", totalRounds.toString())}
                                     </div>
                                     <div className="text-sm text-foreground/70">{t.game.stats.labels.correctGuesses}</div>
                                 </div>
-                                <div className="bg-secondary/50 p-4 rounded-lg text-center">
+                                <div className="interactive-surface bg-secondary/50 p-4 rounded-lg text-center border border-border/50">
                                     <div className="text-2xl font-bold text-primary">{t.game.stats.classic.averageTime.replace("{time}", averageTime.toFixed(1))}</div>
                                     <div className="text-sm text-foreground/70">{t.game.stats.labels.averageTime}</div>
                                 </div>
@@ -48,17 +48,17 @@ export default function GameStats({ totalPoints, correctGuesses, maxStreak, tota
                         </>
                     ) : (
                         <>
-                            <h1 className={`text-3xl font-bold mb-6 ${gameEndReason === "died" ? "text-destructive" : "text-primary"}`}>
+                            <h1 className={`text-2xl sm:text-3xl font-bold mb-6 ${gameEndReason === "died" ? "text-destructive" : "text-primary"}`}>
                                 {gameEndReason === "died" ? t.game.stats.death.title.died : t.game.stats.death.title.completed}
                             </h1>
 
                             <div className="grid grid-cols-1 gap-6 mb-8">
-                                <div className="bg-secondary/50 p-6 rounded-lg text-center">
+                                <div className="interactive-surface bg-secondary/50 p-6 rounded-lg text-center border border-border/50">
                                     <div className="text-4xl font-bold text-primary mb-2">{maxStreak}</div>
                                     <div className="text-lg text-foreground/70">{t.game.stats.death.maxStreak}</div>
                                 </div>
 
-                                <div className="bg-secondary/50 p-4 rounded-lg grid grid-cols-2 gap-4">
+                                <div className="bg-secondary/50 p-4 rounded-lg grid grid-cols-1 sm:grid-cols-2 gap-4 border border-border/50">
                                     <div className="text-center">
                                         <div className="text-2xl font-bold text-primary">{correctGuesses}</div>
                                         <div className="text-sm text-foreground/70">{t.game.stats.death.totalCorrect}</div>
@@ -70,7 +70,7 @@ export default function GameStats({ totalPoints, correctGuesses, maxStreak, tota
                                 </div>
 
                                 {gameEndReason === "died" && (
-                                    <div className="bg-destructive/10 p-4 rounded-lg text-center">
+                                    <div className="bg-destructive/10 p-4 rounded-lg text-center border border-destructive/20">
                                         <p className="text-destructive font-medium">{t.game.stats.death.diedMessage}</p>
                                     </div>
                                 )}
@@ -78,7 +78,7 @@ export default function GameStats({ totalPoints, correctGuesses, maxStreak, tota
                         </>
                     )}
 
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                         <Button onClick={onPlayAgain} className="flex-1" variant={gameVariant === "death" ? "destructive" : "default"}>
                             {t.game.stats.actions.tryAgain}
                         </Button>
