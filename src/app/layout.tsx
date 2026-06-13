@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { SessionWrapper } from "@/context/session-wrapper";
 import { ThemeProvider } from "@/context/theme-provider";
@@ -40,6 +41,17 @@ export const metadata: Metadata = {
     },
 };
 
+function AnalyticsScripts() {
+    if (process.env.NODE_ENV !== "production") return null;
+
+    return (
+        <>
+            <Script src="https://umami.yorunoken.com/script.js" data-website-id="43244628-cb56-43d3-936e-0edbc45d4790" strategy="afterInteractive" />
+            <Script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3511683752810096" crossOrigin="anonymous" strategy="afterInteractive" />
+        </>
+    );
+}
+
 export default async function RootLayout({
     children,
 }: Readonly<{
@@ -51,10 +63,6 @@ export default async function RootLayout({
     if (lock && session?.user?.banchoId !== OWNER_ID) {
         return (
             <html lang="en">
-                <head>
-                    <script defer src="https://umami.yorunoken.com/script.js" data-website-id="43244628-cb56-43d3-936e-0edbc45d4790"></script>
-                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3511683752810096" crossOrigin="anonymous"></script>
-                </head>
                 <body className={`${publicSans.variable} antialiased`}>
                     <div className="flex items-center justify-center min-h-screen bg-background">
                         <div className="max-w-xl mx-auto p-8 bg-card rounded-lg border border-border">
@@ -63,6 +71,7 @@ export default async function RootLayout({
                             <p className="text-sm text-muted-foreground">Access is restricted. Only the owner can access the site while it&apos;s locked. Sorry for the inconvenience.</p>
                         </div>
                     </div>
+                    <AnalyticsScripts />
                 </body>
             </html>
         );
@@ -71,10 +80,9 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <head>
-                <script defer src="https://umami.yorunoken.com/script.js" data-website-id="43244628-cb56-43d3-936e-0edbc45d4790"></script>
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3511683752810096" crossOrigin="anonymous"></script>
                 {/* JSON-LD structured data for Site */}
                 <script
+                    type="application/ld+json"
                     dangerouslySetInnerHTML={{
                         __html: JSON.stringify({
                             "@context": "https://schema.org",
@@ -94,16 +102,16 @@ export default async function RootLayout({
                 <TranslationsProvider>
                     <SessionWrapper>
                         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
-                            <Header />
-
-                            <div className="flex flex-col min-h-screen">
+                            <div className="flex min-h-screen flex-col bg-background text-foreground">
+                                <Header />
                                 <main className="flex-grow">{children}</main>
+                                <Footer />
                             </div>
-                            <Footer />
                             <Toaster />
                         </ThemeProvider>
                     </SessionWrapper>
                 </TranslationsProvider>
+                <AnalyticsScripts />
             </body>
         </html>
     );

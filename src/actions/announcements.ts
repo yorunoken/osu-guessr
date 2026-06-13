@@ -18,6 +18,24 @@ export async function listAnnouncements(): Promise<Announcement[]> {
     }
 }
 
+export async function listRecentAnnouncements(limit: number = 6): Promise<Announcement[]> {
+    try {
+        const results = await query<Announcement>(
+            `
+            SELECT id, title, content, created_at
+            FROM announcements
+            ORDER BY created_at DESC
+            LIMIT ?
+        `,
+            [limit]
+        );
+        return (results as Announcement[]).map((r) => ({ ...r, created_at: new Date(r.created_at).toISOString() } as unknown as Announcement));
+    } catch (error) {
+        console.error("Error listing recent announcements:", error);
+        return [];
+    }
+}
+
 export async function getLatestAnnouncement(): Promise<Announcement | null> {
     try {
         const results = await query<Announcement>(`

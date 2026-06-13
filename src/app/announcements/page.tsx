@@ -7,19 +7,21 @@ export default async function AnnouncementsPage() {
     const announcements = await listAnnouncements();
 
     return (
-        <div className="min-h-screen bg-background text-foreground py-12">
-            <div className="container mx-auto px-4">
-                <h1 className="text-2xl font-bold mb-6">Announcements</h1>
+        <div className="bg-background text-foreground py-10 md:py-16">
+            <div className="container mx-auto px-4 max-w-3xl">
+                <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">Announcements</h1>
                 {announcements.length === 0 ? (
-                    <p className="text-muted-foreground">No announcements</p>
+                    <div className="rounded-lg border border-border/60 bg-card p-8 text-center text-muted-foreground">No announcements</div>
                 ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         {announcements.map((a) => (
-                            <div key={a.id} className="p-4 bg-card border border-border rounded-md">
-                                <h2 className="text-lg font-semibold">{a.title}</h2>
-                                <div className="text-xs text-muted-foreground mb-2">{new Date(a.created_at).toLocaleString()}</div>
-                                <div className="whitespace-pre-wrap">{a.content}</div>
-                            </div>
+                            <article key={a.id} className="p-5 sm:p-6 bg-card border border-border/60 rounded-lg">
+                                <h2 className="text-xl font-semibold">{a.title}</h2>
+                                <time className="block text-sm text-muted-foreground mb-4" dateTime={new Date(a.created_at).toISOString()}>
+                                    {new Date(a.created_at).toLocaleString()}
+                                </time>
+                                <div className="whitespace-pre-wrap leading-relaxed text-foreground/85">{a.content}</div>
+                            </article>
                         ))}
                     </div>
                 )}

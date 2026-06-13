@@ -26,32 +26,32 @@ export default function AboutClient() {
     const { t } = useTranslationsContext();
 
     return (
-        <div className="container mx-auto px-4 py-16 max-w-4xl">
-            <h1 className="text-4xl font-bold mb-8 text-center">{t.about.title}</h1>
+        <div className="container mx-auto px-4 py-10 md:py-16 max-w-4xl">
+            <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">{t.about.title}</h1>
 
             <div className="space-y-8">
-                <section className="bg-card rounded-xl p-8 border border-border/50">
+                <section className="bg-card rounded-lg p-5 sm:p-8 border border-border/60">
                     <h2 className="text-2xl font-semibold mb-4">{t.about.whatIs.title}</h2>
                     <p className="text-foreground/80 leading-relaxed mb-4">{t.about.whatIs.description1}</p>
                     <p className="text-foreground/80 leading-relaxed">{t.about.whatIs.description2}</p>
                 </section>
 
-                <section className="bg-card rounded-xl p-8 border border-border/50">
+                <section className="bg-card rounded-lg p-5 sm:p-8 border border-border/60">
                     <h2 className="text-2xl font-semibold mb-6">{t.about.gameModes.title}</h2>
                     <div className="grid gap-6 md:grid-cols-2">
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.gameModes.background.title}</h3>
                             <p className="text-foreground/80">{t.about.gameModes.background.description}</p>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.gameModes.audio.title}</h3>
                             <p className="text-foreground/80">{t.about.gameModes.audio.description}</p>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.gameModes.skin.title}</h3>
                             <p className="text-foreground/80">{t.about.gameModes.skin.description}</p>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">
                                 {t.about.gameModes.more.title}
                                 <span className="text-xs bg-primary/20 px-2 py-1 rounded ml-2">{t.about.gameModes.more.planned}</span>
@@ -61,7 +61,7 @@ export default function AboutClient() {
                     </div>
                 </section>
 
-                <section className="bg-card rounded-xl p-8 border border-border/50">
+                <section className="bg-card rounded-lg p-5 sm:p-8 border border-border/60">
                     <h2 className="text-2xl font-semibold mb-4">{t.about.howToPlay.title}</h2>
                     <div className="space-y-4">
                         <div className="flex items-start gap-4">
@@ -88,15 +88,15 @@ export default function AboutClient() {
                     </div>
                 </section>
 
-                <section className="bg-card rounded-xl p-8 border border-border/50">
+                <section className="bg-card rounded-lg p-5 sm:p-8 border border-border/60">
                     <h2 className="text-2xl font-semibold mb-4">{t.about.scoringSystem.title}</h2>
                     <div className="grid gap-4 md:grid-cols-2">
-                        <div className="bg-background/50 p-4 rounded-lg">
+                        <div className="bg-background/50 p-4 rounded-lg border border-border/50">
                             <p className="text-foreground/80">{t.about.scoringSystem.points.base.replace("{points}", BASE_POINTS.toString())}</p>
                             <p className="text-foreground/80">{t.about.scoringSystem.points.timeBonus.replace("{multiplier}", TIME_BONUS_MULTIPLIER.toString())}</p>
                             <p className="text-foreground/80">{t.about.scoringSystem.points.streakBonus.replace("{bonus}", STREAK_BONUS.toString())}</p>
                         </div>
-                        <div className="bg-background/50 p-4 rounded-lg">
+                        <div className="bg-background/50 p-4 rounded-lg border border-border/50">
                             <p className="text-foreground/80">{t.about.scoringSystem.gameInfo.length.replace("{rounds}", MAX_ROUNDS.toString())}</p>
                             <p className="text-foreground/80">{t.about.scoringSystem.gameInfo.time.replace("{seconds}", ROUND_TIME.toString())}</p>
                             <p className="text-foreground/80">{t.about.scoringSystem.points.skipPenalty.replace("{penalty}", SKIP_PENALTY.toString())}</p>
@@ -104,32 +104,32 @@ export default function AboutClient() {
                     </div>
                 </section>
 
-                <section className="bg-card rounded-xl p-8 border border-border/50">
+                <section className="bg-card rounded-lg p-5 sm:p-8 border border-border/60">
                     <h2 className="text-2xl font-semibold mb-6">{t.about.features.title}</h2>
                     <div className="grid gap-6 md:grid-cols-2">
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.features.leaderboards.title}</h3>
                             <p className="text-foreground/80">{t.about.features.leaderboards.description}</p>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.features.autoComplete.title}</h3>
                             <p className="text-foreground/80">{t.about.features.autoComplete.description}</p>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.features.profiles.title}</h3>
                             <p className="text-foreground/80">{t.about.features.profiles.description}</p>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.features.api.title}</h3>
                             <p className="text-foreground/80">{t.about.features.api.description}</p>
                         </div>
                     </div>
                 </section>
 
-                <section className="bg-card rounded-xl p-8 border border-border/50">
+                <section className="bg-card rounded-lg p-5 sm:p-8 border border-border/60">
                     <h2 className="text-2xl font-semibold mb-6">{t.about.documentation.title}</h2>
                     <div className="grid gap-6 md:grid-cols-2">
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.documentation.api.title}</h3>
                             <p className="text-foreground/80 mb-4">{t.about.documentation.api.description}</p>
                             <a
@@ -141,7 +141,7 @@ export default function AboutClient() {
                                 {t.common.viewMore} →
                             </a>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.documentation.technical.title}</h3>
                             <p className="text-foreground/80 mb-4">{t.about.documentation.technical.description}</p>
                             <a
@@ -156,10 +156,10 @@ export default function AboutClient() {
                     </div>
                 </section>
 
-                <section className="bg-card rounded-xl p-8 border border-border/50">
+                <section className="bg-card rounded-lg p-5 sm:p-8 border border-border/60">
                     <h2 className="text-2xl font-semibold mb-6">{t.about.credits.title}</h2>
                     <div className="grid gap-6 md:grid-cols-2">
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.credits.development.title}</h3>
                             <p className="text-foreground/80">
                                 {t.about.credits.development.description.split("{author}").map((part, index, array) => (
@@ -170,11 +170,11 @@ export default function AboutClient() {
                                 ))}
                             </p>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.credits.artwork.title}</h3>
                             <p className="text-foreground/80">{t.home.hero.artCredit}</p>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.credits.inspiration.title}</h3>
                             <div className="space-y-2">
                                 <p className="text-foreground/80">
@@ -195,7 +195,7 @@ export default function AboutClient() {
                                 </p>
                             </div>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.credits.specialThanks.title}</h3>
                             <div className="space-y-2">
                                 <p className="text-foreground/80">{t.about.credits.specialThanks.items.peppy}</p>
@@ -206,10 +206,10 @@ export default function AboutClient() {
                     </div>
                 </section>
 
-                <section className="bg-card rounded-xl p-8 border border-border/50">
+                <section className="bg-card rounded-lg p-5 sm:p-8 border border-border/60">
                     <h2 className="text-2xl font-semibold mb-6">{t.about.contact.title}</h2>
                     <div className="grid gap-6 md:grid-cols-2">
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.contact.getInTouch.title}</h3>
                             <div className="space-y-2">
                                 <p className="text-foreground/80">
@@ -229,7 +229,7 @@ export default function AboutClient() {
                                 </p>
                             </div>
                         </div>
-                        <div className="bg-background/50 p-6 rounded-lg">
+                        <div className="bg-background/50 p-5 rounded-lg border border-border/50">
                             <h3 className="text-xl font-medium mb-2 text-primary">{t.about.contact.contribute.title}</h3>
                             <p className="text-foreground/80 mb-4">{t.about.contact.contribute.description}</p>
                             <div className="space-y-2">
