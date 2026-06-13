@@ -2,6 +2,7 @@
 
 import { QueryOptions, DatabaseError } from "./types";
 import { prisma } from "./prisma";
+import { normalizeDatabaseValue } from "./normalize";
 
 const DEFAULT_OPTIONS: Required<QueryOptions> = {
     timeout: 30000,
@@ -17,22 +18,6 @@ function sanitizeValues(values?: Array<unknown>): Array<unknown> | undefined {
 function isReadQuery(sqlQuery: string): boolean {
     const operation = sqlQuery.trimStart().split(/\s+/, 1)[0]?.toUpperCase();
     return operation ? ["SELECT", "SHOW", "DESCRIBE", "DESC", "EXPLAIN", "WITH"].includes(operation) : false;
-}
-
-function normalizeDatabaseValue(value: unknown): unknown {
-    if (typeof value === "bigint") {
-        return Number(value);
-    }
-
-    if (value instanceof Date || value === null || typeof value !== "object") {
-        return value;
-    }
-
-    if (Array.isArray(value)) {
-        return value.map(normalizeDatabaseValue);
-    }
-
-    return Object.fromEntries(Object.entries(value).map(([key, nestedValue]) => [key, normalizeDatabaseValue(nestedValue)]));
 }
 
 export async function query<T = unknown>(sqlQuery: string, values?: Array<unknown>, options: QueryOptions = {}): Promise<T[]> {
