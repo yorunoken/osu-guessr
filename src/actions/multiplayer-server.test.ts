@@ -74,7 +74,7 @@ mock.module("@/lib/multiplayer-realtime", () => ({
 
 const { joinMultiplayerLobbyAction, resetMultiplayerLobbyAction, setMultiplayerReadyAction, startMultiplayerLobbyAction, updateMultiplayerLobbyAction, leaveMultiplayerLobbyAction } =
     await import("./multiplayer-server");
-const { addMultiplayerMessage, cleanupDisconnectedMultiplayerPlayer, disconnectMultiplayerPlayer, finishMultiplayerCountdown, readMultiplayerLobby, updateMultiplayerProgress } =
+const { addMultiplayerMessage, cleanupDisconnectedMultiplayerPlayer, disconnectMultiplayerPlayer, finishMultiplayerCountdown, markMultiplayerPlayerConnected, readMultiplayerLobby, updateMultiplayerProgress } =
     await import("@/lib/multiplayer");
 
 function sessionFor(userId: number): AuthSession {
@@ -354,6 +354,35 @@ describe("multiplayer pre-game lifecycle", () => {
             message: "left the lobby.",
             kind: "leave",
         });
+    });
+
+    test("removes a join that never connected without removing a newer join", async () => {
+        seedLobby({ players: [player(1)] });
+        loginAs(2);
+
+        const firstJoin = await joinMultiplayerLobbyAction(lobbyCode);
+        const firstJoinedAt = firstJoin.players.find((item) => item.userId === 2)!.joinedAt;
+        await cleanupDisconnectedMultiplayerPlayer(lobbyCode, 2, firstJoinedAt);
+        expect((await storedLobby()).players.map((item) => item.userId)).toEqual([1]);
+
+        setSystemTime(new Date(now.getTime() + 1000));
+        await joinMultiplayerLobbyAction(lobbyCode);
+        await cleanupDisconnectedMultiplayerPlayer(lobbyCode, 2, firstJoinedAt);
+        expect((await storedLobby()).players.map((item) => item.userId)).toEqual([1, 2]);
+    });
+
+    test("does not let an initial connection timeout shorten a later disconnect grace period", async () => {
+        seedLobby({ players: [player(1)] });
+        loginAs(2);
+
+        const joined = await joinMultiplayerLobbyAction(lobbyCode);
+        const joinedAt = joined.players.find((item) => item.userId === 2)!.joinedAt;
+        await markMultiplayerPlayerConnected(lobbyCode, 2);
+        await cleanupDisconnectedMultiplayerPlayer(lobbyCode, 2, joinedAt);
+        expect((await storedLobby()).players.map((item) => item.userId)).toEqual([1, 2]);
+
+        await cleanupDisconnectedMultiplayerPlayer(lobbyCode, 2);
+        expect((await storedLobby()).players.map((item) => item.userId)).toEqual([1]);
     });
 
     test("transfers host when the host disconnects", async () => {

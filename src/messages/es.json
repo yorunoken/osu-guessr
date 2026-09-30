@@ -8,7 +8,7 @@
             "title": "{osu_guessr}",
             "subtitle": "Adivina canciones de {osu_base} por fondos o audio, y skins por capturas de pantalla.",
             "startPlaying": "Comienza a jugar",
-            "signIn": "Inicia sesión con Hanami",
+            "signIn": "Continuar con osu!",
             "learnMore": "Más información",
             "artCredit": "Arte de {artist_name}",
             "developerCredit": "Creado por yorunoken",
@@ -712,7 +712,7 @@
                 "leaderboard": "Clasificaciones",
                 "about": "Acerca del sitio",
                 "settings": "Ajustes",
-                "signIn": "Inicia sesión con Hanami",
+                "signIn": "Iniciar sesión con osu!",
                 "signOut": "Cerrar sesión",
                 "viewProfile": "Ver perfil",
                 "admin": "Admin",
@@ -777,7 +777,7 @@
         "auth": {
             "required": {
                 "title": "Inicio de sesión obligatorio",
-                "description": "Inicia sesión con Hanami para continuar.",
+                "description": "Hanami gestiona el inicio de sesión en osu!guessr. Si es tu primera vez, se creará una cuenta de Hanami automáticamente. Después de iniciar sesión, volverás a osu!guessr.",
                 "noAccount": "¿No tienes una cuenta de {osu_base}? Crea una aquí"
             }
         }

@@ -8,7 +8,7 @@
             "title": "{osu_guessr}",
             "subtitle": "Zgaduj utwory z {osu_base} na podstawie teł lub dźwięku, a skiny ze zrzutów ekranu.",
             "startPlaying": "Zacznij Grać",
-            "signIn": "Zaloguj się przez Hanami",
+            "signIn": "Kontynuuj z osu!",
             "learnMore": "Dowiedz się więcej",
             "artCredit": "Grafika autorstwa: {artist_name}",
             "developerCredit": "Stworzone przez: yorunoken",
@@ -778,7 +778,7 @@
                 "leaderboard": "Ranking",
                 "about": "O Grze",
                 "settings": "Ustawienia",
-                "signIn": "Zaloguj się przez Hanami",
+                "signIn": "Zaloguj się przez osu!",
                 "signOut": "Wyloguj się",
                 "viewProfile": "Zobacz Profil",
                 "admin": "Admin",
@@ -843,7 +843,7 @@
         "auth": {
             "required": {
                 "title": "Musisz się zalogować",
-                "description": "Zaloguj się przez Hanami, aby kontynuować.",
+                "description": "Hanami obsługuje logowanie do osu!guessr. Jeśli korzystasz z niego po raz pierwszy, konto Hanami zostanie utworzone automatycznie. Po zalogowaniu wrócisz do osu!guessr.",
                 "noAccount": "Nie masz konta {osu_base}? Stwórz je tutaj."
             }
         }

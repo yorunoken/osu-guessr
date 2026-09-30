@@ -11,6 +11,7 @@ import {
     addMultiplayerMessage,
     cleanupDisconnectedMultiplayerPlayer,
     finishMultiplayerCountdown,
+    markMultiplayerPlayerConnected,
     markMultiplayerRoundReady,
     normalizeLobbyCode,
     readMultiplayerLobby,
@@ -31,7 +32,7 @@ const hostname = process.env.HOSTNAME || "0.0.0.0";
 const port = Number(process.env.PORT || 3000);
 const SOCKET_PATH = "/multiplayer-ws";
 const HEARTBEAT_MS = 10_000;
-const DISCONNECT_GRACE_MS = 15_000;
+const DISCONNECT_GRACE_MS = 5_000;
 
 type SocketContext = {
     code: string;
@@ -62,6 +63,7 @@ const socketsByLobby = new Map<string, Set<WebSocket>>();
 const browserSockets = new Set<WebSocket>();
 const socketContexts = new WeakMap<WebSocket, SocketContext>();
 const countdowns = new Map<string, ReturnType<typeof setTimeout>>();
+const disconnectCleanups = new Map<string, ReturnType<typeof setTimeout>>();
 
 function scheduleCountdown(lobby: MultiplayerLobby): void {
     const previous = countdowns.get(lobby.code);
@@ -114,9 +116,15 @@ async function publishPresence(code: string): Promise<void> {
 }
 
 function scheduleDisconnectedPlayerCleanup(context: Pick<SocketContext, "code" | "userId">): void {
+    const key = `${context.code}:${context.userId}`;
+    const previous = disconnectCleanups.get(key);
+    if (previous) clearTimeout(previous);
     const timer = setTimeout(() => {
+        if (disconnectCleanups.get(key) !== timer) return;
+        disconnectCleanups.delete(key);
         void cleanupDisconnectedMultiplayerPlayer(context.code, context.userId).catch((error) => console.error("Failed to clean up disconnected multiplayer player:", error));
     }, DISCONNECT_GRACE_MS);
+    disconnectCleanups.set(key, timer);
     timer.unref();
 }
 
@@ -261,6 +269,10 @@ async function registerSocket(socket: WebSocket, requestUrl: URL): Promise<void>
         connectionId: crypto.randomUUID(),
         alive: true,
     };
+    const cleanupKey = `${code}:${userId}`;
+    const pendingCleanup = disconnectCleanups.get(cleanupKey);
+    if (pendingCleanup) clearTimeout(pendingCleanup);
+    disconnectCleanups.delete(cleanupKey);
     socketContexts.set(socket, context);
     const room = socketsByLobby.get(code) ?? new Set<WebSocket>();
     room.add(socket);
@@ -295,8 +307,8 @@ async function registerSocket(socket: WebSocket, requestUrl: URL): Promise<void>
         await removePresence(context);
         return;
     }
-    const currentLobby = await readMultiplayerLobby(code);
-    if (!currentLobby || !currentLobby.players.some((player) => player.userId === userId)) {
+    const currentLobby = await markMultiplayerPlayerConnected(code, userId);
+    if (!currentLobby) {
         socket.close(1008, "Multiplayer lobby unavailable");
         return;
     }
@@ -370,7 +382,8 @@ async function main(): Promise<void> {
                     if (lobby && lobby.status !== "playing") {
                         for (const player of lobby.players) {
                             if (!userIds.includes(player.userId) && (!player.completedMatch || lobby.hostId === player.userId) && Date.now() - Date.parse(player.joinedAt) >= HEARTBEAT_MS) {
-                                scheduleDisconnectedPlayerCleanup({ code, userId: player.userId });
+                                const cleanupKey = `${code}:${player.userId}`;
+                                if (!disconnectCleanups.has(cleanupKey)) scheduleDisconnectedPlayerCleanup({ code, userId: player.userId });
                             }
                         }
                     }

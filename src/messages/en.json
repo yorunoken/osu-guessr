@@ -8,7 +8,7 @@
             "title": "{osu_guessr}",
             "subtitle": "Guess {osu_base} songs from backgrounds or audio, and skins from screenshots.",
             "startPlaying": "Start Playing",
-            "signIn": "Sign in with Hanami",
+            "signIn": "Continue with osu!",
             "learnMore": "Learn More",
             "artCredit": "Art by {artist_name}",
             "developerCredit": "Created by yorunoken",
@@ -843,7 +843,7 @@
                 "leaderboard": "Leaderboard",
                 "about": "About",
                 "settings": "Settings",
-                "signIn": "Sign in with Hanami",
+                "signIn": "Sign in with osu!",
                 "signOut": "Sign out",
                 "viewProfile": "View Profile",
                 "admin": "Admin",
@@ -901,7 +901,7 @@
         "auth": {
             "required": {
                 "title": "Sign in Required",
-                "description": "Sign in with Hanami to continue.",
+                "description": "Hanami manages sign-in for osu!guessr. If you're new, a Hanami account is created automatically. You'll return to osu!guessr after signing in.",
                 "noAccount": "Don't have an {osu_base} account? Create one here"
             }
         }

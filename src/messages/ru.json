@@ -8,7 +8,7 @@
             "title": "{osu_guessr}",
             "subtitle": "Угадывай песни из {osu_base} по фонам или аудио, а скины по скриншотам.",
             "startPlaying": "Начать игру",
-            "signIn": "Войти через Hanami",
+            "signIn": "Продолжить с osu!",
             "learnMore": "Узнать больше",
             "artCredit": "Арт создан {artist_name}",
             "developerCredit": "Created by yorunoken",
@@ -698,7 +698,7 @@
                 "leaderboard": "Лидерборд",
                 "about": "О нас",
                 "settings": "Настройки",
-                "signIn": "Войти через Hanami",
+                "signIn": "Войти через osu!",
                 "signOut": "Выйти",
                 "viewProfile": "Посмотреть профиль",
                 "admin": "Admin",
@@ -777,7 +777,7 @@
         "auth": {
             "required": {
                 "title": "Требуется войти в аккаунт",
-                "description": "Войди через Hanami, чтобы продолжить.",
+                "description": "Hanami управляет входом в osu!guessr. При первом входе аккаунт Hanami создаётся автоматически. После входа ты вернёшься в osu!guessr.",
                 "noAccount": "У вас нет аккаунта {osu_base}? Создайте его здесь"
             }
         }

@@ -5,6 +5,7 @@ import { GameMode, type GameVariant } from "@/actions/types";
 import { getAuthSession } from "@/actions/server";
 import {
     createMultiplayerLobby,
+    cleanupDisconnectedMultiplayerPlayer,
     cancelMultiplayerCountdown,
     clearMultiplayerUserLobby,
     isMultiplayerLobbyHost,
@@ -38,6 +39,14 @@ const lobbySettingsSchema = z.object({
     variant: variantSchema,
 });
 const LOBBY_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const JOIN_CONNECT_TIMEOUT_MS = 15_000;
+
+function scheduleUnconnectedPlayerCleanup(code: string, userId: number, joinedAt: string): void {
+    const timer = setTimeout(() => {
+        void cleanupDisconnectedMultiplayerPlayer(code, userId, joinedAt).catch((error) => console.error("Failed to clean up unconnected multiplayer player:", error));
+    }, JOIN_CONNECT_TIMEOUT_MS);
+    timer.unref();
+}
 
 function newLobbyCode(): string {
     return Array.from({ length: 8 }, () => LOBBY_CODE_ALPHABET[Math.floor(Math.random() * LOBBY_CODE_ALPHABET.length)]).join("");
@@ -74,6 +83,7 @@ export async function createMultiplayerLobbyAction(settings: { name: string; max
 
         for (let attempt = 0; attempt < 10; attempt += 1) {
             const code = newLobbyCode();
+            const hostPlayer = playerFromSession(session);
             const lobby: MultiplayerLobby = {
                 code,
                 name: parsedSettings.name,
@@ -88,11 +98,12 @@ export async function createMultiplayerLobbyAction(settings: { name: string; max
                 startAt: null,
                 setupVersion: 0,
                 notice: null,
-                players: [playerFromSession(session)],
+                players: [hostPlayer],
                 messages: [],
             };
             if (await createMultiplayerLobby(lobby)) {
                 await setMultiplayerUserLobby(userId, code);
+                scheduleUnconnectedPlayerCleanup(code, userId, hostPlayer.joinedAt);
                 return code;
             }
         }
@@ -122,6 +133,7 @@ export async function joinMultiplayerLobbyAction(code: string): Promise<Multipla
 
     return withMultiplayerUserLock(userId, async () => {
         let addedToTarget = false;
+        let joinedAt: string | null = null;
         const joinedLobby = await withMultiplayerLobbyLock(normalizedCode, async () => {
             const currentLobby = await readMultiplayerLobby(normalizedCode);
             if (!currentLobby) throw new Error("Lobby not found");
@@ -131,6 +143,7 @@ export async function joinMultiplayerLobbyAction(code: string): Promise<Multipla
             const joinedPlayer = playerFromSession(session);
             currentLobby.players.push(joinedPlayer);
             addedToTarget = true;
+            joinedAt = joinedPlayer.joinedAt;
             currentLobby.messages.push({
                 id: crypto.randomUUID(),
                 userId: joinedPlayer.userId,
@@ -151,6 +164,7 @@ export async function joinMultiplayerLobbyAction(code: string): Promise<Multipla
             throw error;
         }
         await setMultiplayerUserLobby(userId, normalizedCode);
+        if (joinedAt) scheduleUnconnectedPlayerCleanup(normalizedCode, userId, joinedAt);
         return joinedLobby;
     });
 }

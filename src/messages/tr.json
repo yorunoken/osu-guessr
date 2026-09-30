@@ -8,7 +8,7 @@
             "title": "{osu_guessr}",
             "subtitle": "{osu_base} şarkılarını arka planlardan veya seslerden, skinleri ekran görüntülerinden tahmin et.",
             "startPlaying": "Oynamaya Başla",
-            "signIn": "Hanami ile Giriş Yap",
+            "signIn": "osu! ile Devam Et",
             "learnMore": "Daha Fazla Bilgi",
             "artCredit": "Sanatçı: {artist_name}",
             "developerCredit": "Created by yorunoken",
@@ -712,7 +712,7 @@
                 "leaderboard": "Sıralama",
                 "about": "Hakkında",
                 "settings": "Ayarlar",
-                "signIn": "Hanami ile Giriş Yap",
+                "signIn": "osu! ile Giriş Yap",
                 "signOut": "Çıkış Yap",
                 "viewProfile": "Profili Görüntüle",
                 "admin": "Admin",
@@ -777,7 +777,7 @@
         "auth": {
             "required": {
                 "title": "Giriş Yapmanız Gerekiyor",
-                "description": "Devam etmek için Hanami ile giriş yap.",
+                "description": "Hanami, osu!guessr için giriş işlemini yönetir. İlk kez giriş yapıyorsan Hanami hesabın otomatik olarak oluşturulur. Ardından osu!guessr'a dönersin.",
                 "noAccount": "Bir {osu_base} hesabınız yok mu? Buradan oluşturun"
             }
         }

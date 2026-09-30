@@ -22,6 +22,7 @@ export interface MultiplayerPlayer {
     username: string;
     avatarUrl: string | null;
     joinedAt: string;
+    hasConnected?: boolean;
     points: number;
     round: number;
     submittedRound: number;
@@ -322,12 +323,25 @@ export async function removeMultiplayerUserFromLobby(code: string, userId: numbe
     });
 }
 
-export async function cleanupDisconnectedMultiplayerPlayer(code: string, userId: number): Promise<void> {
+export async function markMultiplayerPlayerConnected(code: string, userId: number): Promise<MultiplayerLobby | null> {
+    return withMultiplayerLobbyLock(code, async () => {
+        const lobby = await readMultiplayerLobby(code);
+        const player = lobby?.players.find((item) => item.userId === userId);
+        if (!lobby || !player) return null;
+        if (!player.hasConnected) {
+            player.hasConnected = true;
+            await writeMultiplayerLobby(lobby);
+        }
+        return lobby;
+    });
+}
+
+export async function cleanupDisconnectedMultiplayerPlayer(code: string, userId: number, expectedJoinedAt?: string): Promise<void> {
     const normalizedCode = normalizeLobbyCode(code);
     await withMultiplayerLobbyLock(normalizedCode, async () => {
         const lobby = await readMultiplayerLobby(normalizedCode);
         const player = lobby?.players.find((item) => item.userId === userId);
-        if (!lobby || !player) return;
+        if (!lobby || !player || (expectedJoinedAt && (player.joinedAt !== expectedJoinedAt || player.hasConnected))) return;
 
         const present = new Set(await getPresentMultiplayerUsers(normalizedCode));
         if (present.has(userId)) return;

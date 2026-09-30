@@ -8,7 +8,7 @@
             "title": "{osu_guessr}",
             "subtitle": "Hádejte písně z {osu_base} podle pozadí nebo zvuku a skiny podle snímků obrazovky.",
             "startPlaying": "Začít hru",
-            "signIn": "Přihlásit se přes Hanami",
+            "signIn": "Pokračovat přes osu!",
             "learnMore": "Zjistit více",
             "artCredit": "Dílo od {artist_name}",
             "developerCredit": "Vytvořil/a yorunoken",
@@ -712,7 +712,7 @@
                 "leaderboard": "Žebříček",
                 "about": "O projektu",
                 "settings": "Nastavení",
-                "signIn": "Přihlásit se přes Hanami",
+                "signIn": "Přihlásit se přes osu!",
                 "signOut": "Odhlásit se",
                 "viewProfile": "Zobrazit profil",
                 "admin": "Admin",
@@ -777,7 +777,7 @@
         "auth": {
             "required": {
                 "title": "Nutné přihlášení",
-                "description": "Pokračujte přihlášením přes Hanami.",
+                "description": "Přihlášení do osu!guessr spravuje Hanami. Pokud jste tu poprvé, účet Hanami se vytvoří automaticky. Po přihlášení se vrátíte do osu!guessr.",
                 "noAccount": "Nemáte {osu_base} účet? Vytvořte si ho zde"
             }
         }
