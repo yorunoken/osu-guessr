@@ -3,16 +3,23 @@
 import { useState, useEffect } from "react";
 import type { Translations } from "@/lib/translations";
 import { useTranslationsContext } from "@/context/translations-provider";
+import { AtSign, Coffee, Gamepad2, MessagesSquare, type LucideIcon } from "lucide-react";
 import AdSlot from "./AdSlot";
 
 interface LinkPromo {
     id: string;
     title: string;
     link: string;
-    icon?: string;
 }
 
 type Promo = LinkPromo | { id: "adsense"; kind: "ad" };
+
+const promoIcons: Record<string, LucideIcon> = {
+    twitter: AtSign,
+    osu: Gamepad2,
+    buymeacoffe: Coffee,
+    discord: MessagesSquare,
+};
 
 const createPromos = (t: Translations): Array<Promo> => {
     const promos: Array<Promo> = [
@@ -20,25 +27,21 @@ const createPromos = (t: Translations): Array<Promo> => {
             id: "twitter",
             title: t.components.ads.twitter.title,
             link: "https://twitter.com/_yorunoken",
-            icon: "🐦",
         },
         {
             id: "osu",
             title: t.components.ads.osu.title,
             link: "https://osu.ppy.sh/users/yorunoken",
-            icon: "🎮",
         },
         {
             id: "buymeacoffe",
             title: t.components.ads.buymeacoffe.title,
             link: "https://ko-fi.com/yorunoken",
-            icon: "☕",
         },
         {
             id: "discord",
             title: t.components.ads.discord.title,
             link: "https://discord.gg/qrud2g4CA5",
-            icon: "👾",
         },
     ];
 
@@ -88,7 +91,10 @@ export function AdSlider({ compact = false }: { compact?: boolean }) {
                 ) : (
                     <a href={currentPromo.link} target="_blank" rel="noopener noreferrer" className={`block h-full ${compact ? "py-3" : "p-4"} hover:opacity-80 transition-opacity`}>
                         <div className={`flex items-center justify-center text-center h-full ${compact ? "gap-2" : "flex-col gap-3"}`}>
-                            {currentPromo.icon && <span className={compact ? "text-sm" : "text-2xl"}>{currentPromo.icon}</span>}
+                            {(() => {
+                                const Icon = promoIcons[currentPromo.id];
+                                return Icon ? <Icon aria-hidden="true" className={compact ? "size-4" : "size-7"} /> : null;
+                            })()}
                             <div>
                                 <h3 className="font-medium">{currentPromo.title}</h3>
                             </div>

@@ -155,7 +155,7 @@ export default function BeatmapsAdmin({ initialMapsets }: BeatmapsAdminProps) {
                             <ArrowLeft /> Admin
                         </Link>
                     </Button>
-                    <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Beatmaps</h1>
+                    <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">Beatmaps</h1>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">Search, inspect, and remove imported mapsets.</p>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">

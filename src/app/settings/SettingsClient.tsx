@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, type KeyboardEvent } from "react";
+import { SectionLabel } from "@/components/page-heading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createApiKeyAction, deleteApiKeyAction, ApiKey, listApiKeysAction } from "@/actions/api-keys-server";
@@ -273,11 +274,10 @@ export default function SettingsClient({ initialApiKeys, initialBannerUrl, initi
                         </button>
                     ))}
                 </nav>
-                <div className="mt-4 rounded-xl bg-card/60 px-4 py-5 sm:px-6 sm:py-6">
+                <div className="mt-4 rounded-lg border border-border bg-card/60 px-4 py-5 sm:px-6 sm:py-6">
                     <section id="settings-profile" role="tabpanel" hidden={activeSection !== "profile"} aria-labelledby="settings-tab-profile">
-                        <h2 id="settings-profile-title" className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-                            <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                            {t.settings.profile.title}
+                        <h2 id="settings-profile-title" className="leading-none">
+                            <SectionLabel>{t.settings.profile.title}</SectionLabel>
                         </h2>
                         <p className="mt-1 text-sm text-muted-foreground">{t.settings.profile.description}</p>
 
@@ -338,9 +338,8 @@ export default function SettingsClient({ initialApiKeys, initialBannerUrl, initi
                     </section>
 
                     <section id="settings-preferences" role="tabpanel" hidden={activeSection !== "preferences"} aria-labelledby="settings-tab-preferences">
-                        <h2 id="settings-preferences-title" className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-                            <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                            {t.settings.preferences.title}
+                        <h2 id="settings-preferences-title" className="leading-none">
+                            <SectionLabel>{t.settings.preferences.title}</SectionLabel>
                         </h2>
                         <p className="mt-1 text-sm text-muted-foreground">{t.settings.preferences.description}</p>
 
@@ -417,9 +416,8 @@ export default function SettingsClient({ initialApiKeys, initialBannerUrl, initi
                     </section>
 
                     <section id="settings-account" role="tabpanel" hidden={activeSection !== "account"} aria-labelledby="settings-tab-account">
-                        <h2 id="settings-account-title" className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-                            <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                            {t.settings.account.title}
+                        <h2 id="settings-account-title" className="leading-none">
+                            <SectionLabel>{t.settings.account.title}</SectionLabel>
                         </h2>
                         <p className="mt-1 text-sm text-muted-foreground">{t.settings.account.description}</p>
 
@@ -453,9 +451,8 @@ export default function SettingsClient({ initialApiKeys, initialBannerUrl, initi
                     <section id="settings-apiKeys" role="tabpanel" hidden={activeSection !== "apiKeys"} aria-labelledby="settings-tab-apiKeys">
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-6">
                             <div>
-                                <h2 id="settings-apiKeys-title" className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-                                    <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                                    {t.settings.apiKeys.title}
+                                <h2 id="settings-apiKeys-title" className="leading-none">
+                                    <SectionLabel>{t.settings.apiKeys.title}</SectionLabel>
                                 </h2>
                                 <p className="mt-1 text-sm text-muted-foreground">{t.settings.apiKeys.description}</p>
                             </div>
@@ -500,9 +497,8 @@ export default function SettingsClient({ initialApiKeys, initialBannerUrl, initi
                     </section>
 
                     <section id="settings-privacy" role="tabpanel" hidden={activeSection !== "privacy"} aria-labelledby="settings-tab-privacy">
-                        <h2 id="settings-privacy-title" className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-                            <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                            {t.settings.privacy.title}
+                        <h2 id="settings-privacy-title" className="leading-none">
+                            <SectionLabel>{t.settings.privacy.title}</SectionLabel>
                         </h2>
                         <p className="mt-1 text-sm text-muted-foreground">{t.settings.privacy.description}</p>
 

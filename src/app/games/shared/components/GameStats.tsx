@@ -24,7 +24,7 @@ interface ResultStatProps {
 function ResultStat({ label, value }: ResultStatProps) {
     return (
         <div className="py-4 text-center sm:text-left">
-            <div className="text-2xl font-semibold tabular-nums text-foreground">{value}</div>
+            <div className="font-mono text-2xl font-semibold tabular-nums text-foreground">{value}</div>
             <div className="mt-1 text-sm text-muted-foreground">{label}</div>
         </div>
     );
@@ -48,13 +48,13 @@ export default function GameStats({ runPp, totalPoints, correctGuesses, maxStrea
         <div className="page-container py-5 md:py-8">
             <div className="motion-fade-up">
                 <header className="border-b border-border/60 pb-4">
-                    <h1 className={`text-3xl font-bold tracking-tight sm:text-4xl ${died ? "text-destructive" : "text-foreground"}`}>{title}</h1>
+                    <h1 className={`font-display text-3xl font-semibold tracking-tight sm:text-4xl ${died ? "text-destructive" : "text-foreground"}`}>{title}</h1>
                     {died && <p className="mt-2 text-sm font-medium text-destructive/90">{t.game.stats.death.diedMessage.replace("{count}", SURVIVAL_LIVES.toString())}</p>}
                 </header>
 
                 <section className="border-b border-border/60 py-5 sm:py-6">
                     <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{t.game.stats.labels.runPp}</div>
-                    <div className="mt-2 text-5xl font-bold tabular-nums text-primary sm:text-6xl">{runPp.toLocaleString(locale, { maximumFractionDigits: 1 })}</div>
+                    <div className="font-mono mt-2 text-5xl font-semibold tabular-nums text-primary sm:text-6xl">{runPp.toLocaleString(locale, { maximumFractionDigits: 1 })}</div>
                 </section>
 
                 {isContinuous ? (

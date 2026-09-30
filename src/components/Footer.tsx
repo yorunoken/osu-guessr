@@ -8,8 +8,8 @@ export default function Footer() {
     const { t } = useTranslationsContext();
 
     return (
-        <footer className="border-t border-border/60 bg-muted/30 py-4 sm:py-6">
-            <div className="container mx-auto px-4 text-center">
+        <footer className="border-t border-border/40 bg-muted/30 py-4 sm:py-6">
+            <div className="page-container text-center">
                 <p className="text-sm sm:text-lg text-foreground/80">
                     {t.components.footer.madeWith.split("{author}").map((part, index, array) => (
                         <React.Fragment key={index}>

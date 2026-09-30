@@ -23,10 +23,10 @@ export default function Header() {
     const pathname = usePathname();
 
     return (
-        <header className="bg-background/95 backdrop-blur-md border-b sticky top-0 z-50 shadow-sm">
-            <div className="mx-auto flex w-full max-w-[72rem] items-center justify-between gap-2 px-2 py-3 sm:px-4">
+        <header className="bg-background/95 backdrop-blur-md border-b border-border/40 sticky top-0 z-50">
+            <div className="page-container flex items-center justify-between gap-2 py-3">
                 <div className="flex min-w-0 items-center gap-6 xl:gap-8">
-                    <Link href="/" className="whitespace-nowrap text-xl font-bold text-primary transition-[color,opacity] duration-150 ease-smooth hover:text-primary/80 sm:text-2xl">
+                    <Link href="/" className="whitespace-nowrap font-display text-xl font-bold text-primary transition-[color,opacity] duration-150 ease-smooth hover:text-primary/80 sm:text-2xl">
                         osu!guessr
                     </Link>
                     <nav className="hidden lg:block">
@@ -108,11 +108,7 @@ export default function Header() {
                 </div>
 
                 {isMenuOpen && (
-                    <nav
-                        id={MOBILE_NAV_ID}
-                        aria-label={t.components.header.accessibility.mobileNavigation}
-                        className="absolute left-0 top-full w-full border-b border-border/60 bg-background shadow-lg lg:hidden"
-                    >
+                    <nav id={MOBILE_NAV_ID} aria-label={t.components.header.accessibility.mobileNavigation} className="absolute left-0 top-full w-full bg-background shadow-lg lg:hidden">
                         <ul className="page-container flex flex-col gap-1 py-3">
                             <li className="w-full pb-2">
                                 <UserSearch />

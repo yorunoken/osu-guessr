@@ -540,7 +540,7 @@ export default function AdminMenu() {
         <div className="page-container py-6 md:py-10">
             <header className="flex flex-col gap-5 border-b border-border/60 pb-6 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Administration</h1>
+                    <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">Administration</h1>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                     {isLoading && (

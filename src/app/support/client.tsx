@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslationsContext } from "@/context/translations-provider";
+import { SectionLabel } from "@/components/page-heading";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, Check, Coffee, Info } from "lucide-react";
 
@@ -10,17 +11,16 @@ export function SupportPageContent() {
 
     return (
         <div className="page-container pb-6 pt-3 md:pb-8 md:pt-4">
-            <div className="mx-auto max-w-5xl">
+            <div className="page-container">
                 <header className="py-5 sm:py-6">
-                    <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{t.support.title}</h1>
+                    <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{t.support.title}</h1>
                     <p className="mt-1.5 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">{t.support.description}</p>
                 </header>
 
                 <div className="grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:divide-x lg:divide-border/60">
                     <section className="border-b border-border/60 py-6 lg:border-b-0 lg:pr-9">
-                        <div className="mb-4 flex items-center gap-2">
-                            <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                            <h2 className="text-sm font-semibold tracking-tight text-foreground">{t.support.benefits.title}</h2>
+                        <div className="mb-4">
+                            <SectionLabel>{t.support.benefits.title}</SectionLabel>
                         </div>
 
                         <div>

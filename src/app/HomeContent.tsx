@@ -1,9 +1,11 @@
 "use client";
 
 import { StatsCard } from "./components/StatsCard";
-import { ArrowRight, Gamepad2, Trophy, Users2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useTranslationsContext } from "@/context/translations-provider";
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface ChangelogEntry {
     description: string;
@@ -32,36 +34,16 @@ export function HomeStatsSection({ highStats }: Pick<HomeContentProps, "highStat
     return (
         <section className="pb-6 pt-2">
             <div className="page-container">
-                <h2 className="flex items-center gap-2 text-sm font-semibold tracking-tight mb-3">
-                    <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                    {t.home.statistics.title}
-                </h2>
-                <div className="grid grid-cols-1 rounded-xl bg-card/60 md:grid-cols-3">
-                    <div>
-                        <StatsCard
-                            title={t.home.statistics.totalPlayers.title}
-                            value={highStats.total_users.toLocaleString(locale)}
-                            description={t.home.statistics.totalPlayers.description}
-                            icon={<Users2 className="h-6 w-6" />}
-                        />
-                    </div>
-                    <div>
-                        <StatsCard
-                            title={t.home.statistics.gamesPlayed.title}
-                            value={highStats.total_games.toLocaleString(locale)}
-                            description={t.home.statistics.gamesPlayed.description}
-                            icon={<Gamepad2 className="h-6 w-6" />}
-                        />
-                    </div>
-                    <div>
-                        <StatsCard
-                            title={t.home.statistics.profilePp.title}
-                            value={highStats.highest_run_pp.toLocaleString(locale, { maximumFractionDigits: 1 })}
-                            description={t.home.statistics.profilePp.description}
-                            icon={<Trophy className="h-6 w-6" />}
-                        />
-                    </div>
-                </div>
+                <h2 className="font-display mb-4 text-lg font-semibold tracking-tight">{t.home.statistics.title}</h2>
+                <Card className="grid grid-cols-1 divide-y divide-border/60 md:grid-cols-3 md:divide-x md:divide-y-0">
+                    <StatsCard title={t.home.statistics.totalPlayers.title} value={highStats.total_users.toLocaleString(locale)} description={t.home.statistics.totalPlayers.description} />
+                    <StatsCard title={t.home.statistics.gamesPlayed.title} value={highStats.total_games.toLocaleString(locale)} description={t.home.statistics.gamesPlayed.description} />
+                    <StatsCard
+                        title={t.home.statistics.profilePp.title}
+                        value={highStats.highest_run_pp.toLocaleString(locale, { maximumFractionDigits: 1 })}
+                        description={t.home.statistics.profilePp.description}
+                    />
+                </Card>
             </div>
         </section>
     );
@@ -78,10 +60,7 @@ export function HomeAnnouncementsSection({ latestAnnouncement }: Pick<HomeConten
         <section className="py-6">
             <div className="page-container">
                 <div className="mb-5 flex items-center justify-between gap-4">
-                    <h2 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-                        <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                        {t.home.announcements.title}
-                    </h2>
+                    <h2 className="font-display text-lg font-semibold tracking-tight">{t.home.announcements.title}</h2>
                     <Link href="/announcements" className="subtle-link shrink-0 text-sm text-foreground/65 transition-colors hover:text-primary">
                         {t.home.announcements.viewAll}
                     </Link>
@@ -89,7 +68,9 @@ export function HomeAnnouncementsSection({ latestAnnouncement }: Pick<HomeConten
 
                 <Link
                     href="/announcements"
-                    className="group grid gap-5 rounded-xl bg-card/60 px-4 py-4 transition-colors hover:bg-card/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:px-5"
+                    className={cn(
+                        "group grid gap-5 rounded-lg border border-border bg-card/60 p-4 transition-colors hover:border-primary/40 hover:bg-card/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:p-5",
+                    )}
                 >
                     <div className="min-w-0">
                         <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">

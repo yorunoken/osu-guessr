@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { SectionLabel } from "@/components/page-heading";
 import { prisma } from "@/lib/database/prisma";
 import { ArrowLeft, Check, Clock3, ExternalLink, X } from "lucide-react";
 import type { Metadata } from "next";
@@ -253,14 +254,14 @@ export default async function ScorePage({ params, searchParams }: Props) {
                 <div className="text-xs text-muted-foreground">Score #{game.id.toString()}</div>
             </div>
 
-            <section className="overflow-hidden rounded-2xl bg-card/70 shadow-sm">
+            <section className="overflow-hidden rounded-lg border border-border bg-card/60">
                 <div className="border-b border-border/60 px-5 py-5 sm:px-7">
                     <div className="flex flex-wrap items-start justify-between gap-4">
                         <div>
                             <div className="text-sm text-muted-foreground">
                                 {modeLabel} · {formatMode(game.variant)} · {game.endedAt.toLocaleString(locale)}
                             </div>
-                            <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
+                            <h1 className="font-display mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
                                 <Link
                                     href={`/user/${game.userId}?mode=${game.gameMode}&variant=${game.variant}`}
                                     className="hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
@@ -305,13 +306,12 @@ export default async function ScorePage({ params, searchParams }: Props) {
             </section>
 
             <section className="mt-8">
-                <div className="mb-3 flex items-center gap-2 px-1">
-                    <span aria-hidden="true" className="h-4 w-[3px] rounded-full bg-primary" />
-                    <h2 className="text-base font-semibold">{isScorePp ? t.game.scorePp.results.comparedPlays : "Guesses"}</h2>
+                <div className="mb-3 px-1">
+                    <SectionLabel>{isScorePp ? t.game.scorePp.results.comparedPlays : "Guesses"}</SectionLabel>
                 </div>
 
                 {rounds.length === 0 ? (
-                    <div className="rounded-xl bg-muted/35 px-5 py-8 text-sm text-muted-foreground">Round details are unavailable for this legacy score.</div>
+                    <div className="rounded-lg bg-muted/35 px-5 py-8 text-sm text-muted-foreground">Round details are unavailable for this legacy score.</div>
                 ) : (
                     <div className="space-y-2">
                         {rounds.map((round) => {
@@ -493,7 +493,7 @@ function ScorePpReviewCard({ score, side, selected, winner, locale, t }: { score
                     <div className={`font-mono text-xl font-bold tabular-nums ${winner ? "text-success" : "text-foreground"}`}>
                         {score.pp.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}pp
                     </div>
-                    <div className="mt-1 flex justify-end gap-1 text-[10px] font-semibold uppercase tracking-wide">
+                    <div className="mt-1 flex justify-end gap-1 text-[0.7rem] font-semibold uppercase tracking-wide">
                         {selected && <span className={`${winner ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"} px-1.5 py-0.5`}>{t.game.scorePp.results.yourPick}</span>}
                         {winner && !selected && <span className="bg-success/15 px-1.5 py-0.5 text-success">{t.game.scorePp.results.winningChoice}</span>}
                     </div>

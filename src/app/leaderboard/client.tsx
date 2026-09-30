@@ -83,11 +83,11 @@ export default function LeaderboardClient({ initialData, initialMode, initialVar
         <div className="page-container pb-5 pt-3 md:pb-8 md:pt-4">
             <div>
                 <header className="py-5 sm:py-6">
-                    <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{t.leaderboard.title}</h1>
+                    <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{t.leaderboard.title}</h1>
                     <p className="mt-1.5 max-w-2xl text-sm leading-6 text-muted-foreground">{t.leaderboard.description}</p>
                 </header>
 
-                <div className="flex flex-col gap-3 rounded-t-xl bg-card/60 px-4 pt-4 sm:flex-row sm:items-end sm:gap-6 sm:px-5">
+                <div className="flex flex-col gap-3 rounded-t-lg bg-card/60 px-4 pt-4 sm:flex-row sm:items-end sm:gap-6 sm:px-5">
                     <div>
                         <p className="mb-1 text-xs text-muted-foreground">{t.user.profile.modeLabel}</p>
                         <div className="flex flex-wrap items-center gap-1.5" role="radiogroup" aria-label={t.user.profile.modeLabel}>
@@ -151,7 +151,7 @@ export default function LeaderboardClient({ initialData, initialMode, initialVar
                             <div className="overflow-x-auto">
                                 <table className="w-full table-fixed sm:table-auto">
                                     <caption className="sr-only">{t.leaderboard.title}</caption>
-                                    <thead className="text-[11px] font-semibold text-muted-foreground">
+                                    <thead className="text-xs font-semibold text-muted-foreground">
                                         <tr>
                                             <th scope="col" className="w-14 px-3 py-2.5 text-left sm:w-auto sm:px-5">
                                                 {t.leaderboard.table.rank}
@@ -202,7 +202,7 @@ export default function LeaderboardClient({ initialData, initialMode, initialVar
                                                                     <Badge
                                                                         key={badgeIndex}
                                                                         variant="secondary"
-                                                                        className="hidden text-[10px] font-medium lg:inline-flex"
+                                                                        className="hidden text-[0.7rem] font-medium lg:inline-flex"
                                                                         style={{
                                                                             backgroundColor: `${badge.color}15`,
                                                                             color: badge.color,
@@ -215,7 +215,7 @@ export default function LeaderboardClient({ initialData, initialMode, initialVar
                                                         </div>
                                                     </Link>
                                                 </td>
-                                                <td className="px-3 py-3 text-right text-sm font-bold tabular-nums text-primary sm:px-5 sm:py-3.5">
+                                                <td className="px-3 py-3 text-right font-mono text-sm font-bold tabular-nums text-primary sm:px-5 sm:py-3.5">
                                                     {Number(player.profile_pp).toLocaleString(locale, { maximumFractionDigits: 1 })}
                                                 </td>
                                                 <td className="hidden px-5 py-3.5 text-right text-sm tabular-nums text-muted-foreground lg:table-cell">
@@ -236,7 +236,7 @@ export default function LeaderboardClient({ initialData, initialMode, initialVar
                     )}
                 </div>
 
-                <div className="flex flex-col-reverse items-center justify-between gap-3 rounded-b-xl bg-card/60 px-4 py-4 sm:flex-row sm:px-5">
+                <div className="flex flex-col-reverse items-center justify-between gap-3 rounded-b-lg bg-card/60 px-4 py-4 sm:flex-row sm:px-5">
                     <div className="flex items-center gap-2">
                         <span className="text-xs text-muted-foreground">{t.leaderboard.pagination.pageSize}</span>
                         <Select

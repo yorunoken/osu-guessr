@@ -19,13 +19,13 @@ export default function Hero() {
     };
 
     return (
-        <section className="relative isolate overflow-hidden border-b border-primary/15">
+        <section className="relative isolate overflow-hidden">
             <div className="absolute inset-0 bg-[url('/main_bg.webp')] bg-cover bg-center"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30"></div>
 
             <div className="page-container relative z-10 py-14 sm:py-20 lg:py-24">
                 <div className="max-w-3xl">
-                    <h1 className="text-3xl font-semibold tracking-tight mb-4 leading-tight sm:text-4xl lg:text-5xl">
+                    <h1 className="font-display text-3xl font-semibold tracking-tight mb-4 leading-tight sm:text-4xl lg:text-5xl">
                         {titleParts[0]}
                         <span className="text-primary">osu!guessr</span>
                         {titleParts[1]}
@@ -43,20 +43,21 @@ export default function Hero() {
                                 {t.home.hero.signIn}
                             </Button>
                         )}
-                        <Button asChild variant="outline" size="lg" className="text-sm px-6 w-full sm:w-auto bg-background/60">
+                        <Button asChild variant="secondary" size="lg" className="text-sm px-6 w-full sm:w-auto bg-background/60">
                             <Link href="/multiplayer">
                                 <Users className="size-4" />
                                 {t.home.hero.multiplayer}
                             </Link>
                         </Button>
-                        <Button asChild variant="outline" size="lg" className="text-sm px-6 w-full sm:w-auto bg-background/60">
+                        <Button asChild variant="ghost" size="lg" className="text-sm px-6 w-full sm:w-auto">
                             <Link href="/about">{t.home.hero.learnMore}</Link>
                         </Button>
                     </div>
+                    {!session && <p className="mt-3 max-w-xl text-xs leading-relaxed text-muted-foreground sm:text-sm">{t.errors.auth.required.description}</p>}
                 </div>
             </div>
 
-            <div className="relative z-10 w-full border-t border-border/60 bg-background/65 py-3 backdrop-blur-sm">
+            <div className="relative z-10 w-full py-3">
                 <div className="page-container flex flex-col sm:flex-row justify-between items-center gap-3 text-xs sm:text-sm">
                     <Link href={"https://twitter.com/Akariimia"} target="_blank" className="subtle-link text-foreground/65 hover:text-primary transition-colors">
                         {t.home.hero.artCredit}

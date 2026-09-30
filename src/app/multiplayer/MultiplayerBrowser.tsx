@@ -100,13 +100,30 @@ export default function MultiplayerBrowser() {
                     <Users className="size-4" />
                     Multiplayer
                 </div>
-                <h1 className="text-3xl font-semibold tracking-tight">Play together</h1>
+                <h1 className="font-display text-3xl font-semibold tracking-tight">Play together</h1>
                 <p className="max-w-2xl text-sm text-muted-foreground">Create a room with your own settings or join an active lobby.</p>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
                 <div className="flex flex-col gap-5">
-                    <form onSubmit={(event) => void createLobby(event)} className="order-2 rounded-xl border border-border/60 bg-card p-5">
+                    <form onSubmit={joinLobby} className="rounded-lg border border-border bg-card/60 p-5">
+                        <div className="mb-3 text-sm font-semibold">Join by code</div>
+                        <div className="flex gap-2">
+                            <Input
+                                aria-label="Lobby code"
+                                value={joinCode}
+                                onChange={(event) => setJoinCode(event.target.value.toUpperCase())}
+                                maxLength={8}
+                                placeholder="ABCD1234"
+                                className="font-mono uppercase"
+                            />
+                            <Button type="submit" variant="outline" disabled={!joinCode.trim()}>
+                                Join
+                            </Button>
+                        </div>
+                    </form>
+
+                    <form onSubmit={(event) => void createLobby(event)} className="rounded-lg border border-border bg-card/60 p-5">
                         <div className="mb-4 flex items-center gap-2 text-sm font-semibold">
                             <Plus className="size-4 text-primary" />
                             Create room
@@ -161,16 +178,6 @@ export default function MultiplayerBrowser() {
                             </Button>
                         </div>
                     </form>
-
-                    <form onSubmit={joinLobby} className="order-1 rounded-xl border border-border/60 bg-card p-5">
-                        <div className="mb-3 text-sm font-semibold">Join by code</div>
-                        <div className="flex gap-2">
-                            <Input value={joinCode} onChange={(event) => setJoinCode(event.target.value.toUpperCase())} maxLength={8} placeholder="ABCD1234" className="font-mono uppercase" />
-                            <Button type="submit" variant="outline" disabled={!joinCode.trim()}>
-                                Join
-                            </Button>
-                        </div>
-                    </form>
                 </div>
 
                 <section className="min-w-0">
@@ -188,20 +195,18 @@ export default function MultiplayerBrowser() {
                     {error && <div className="mb-3 rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</div>}
 
                     {lobbies.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-border/70 px-6 py-14 text-center text-sm text-muted-foreground">No active lobbies yet.</div>
+                        <div className="px-6 py-14 text-center text-sm text-muted-foreground">No active lobbies yet.</div>
                     ) : (
                         <div className="space-y-3">
                             {lobbies.map((lobby) => {
                                 const full = lobby.playerCount >= lobby.maxPlayers;
                                 const joinable = lobby.status === "waiting" && !full;
                                 return (
-                                    <div key={lobby.code} className="flex flex-col gap-4 rounded-xl border border-border/60 bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+                                    <div key={lobby.code} className="flex flex-col gap-4 rounded-xl border border-border/40 bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
                                         <div className="min-w-0">
                                             <div className="flex flex-wrap items-center gap-2">
                                                 <h3 className="truncate font-semibold">{lobby.name}</h3>
-                                                <span
-                                                    className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${lobby.status === "waiting" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}
-                                                >
+                                                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${lobby.status === "waiting" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>
                                                     {lobby.status === "waiting" ? "Waiting" : lobby.status === "starting" ? "Starting" : "In progress"}
                                                 </span>
                                             </div>

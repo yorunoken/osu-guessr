@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import UserNotFound from "./NotFound";
+import { SectionLabel } from "@/components/page-heading";
 
 const gamemodes: GameMode[] = [GameMode.Background, GameMode.Audio, GameMode.Skin, GameMode.ScorePp];
 
@@ -41,7 +42,7 @@ export default function UserProfileClient({
     if (loadError) {
         return (
             <div className="page-container py-12">
-                <h1 className="text-2xl font-semibold">{t.user.profile.loadFailed}</h1>
+                <h1 className="font-display text-2xl font-semibold">{t.user.profile.loadFailed}</h1>
                 <p className="mt-3 text-muted-foreground">{loadError}</p>
                 <Link href="/" className="mt-5 inline-block text-primary hover:underline">
                     {t.user.notFound.actions.home}
@@ -70,7 +71,7 @@ export default function UserProfileClient({
 
     return (
         <div className="page-container pb-5 pt-3 md:pb-8 md:pt-4">
-            <div className="overflow-hidden rounded-2xl bg-card/70 shadow-sm">
+            <div className="overflow-hidden rounded-lg border border-border bg-card/60">
                 <div className="flex flex-wrap items-center gap-2 bg-muted/35 p-2.5 sm:gap-3 sm:px-4">
                     <nav aria-label={t.user.profile.modeLabel} className="flex flex-wrap items-center gap-1.5">
                         {gamemodes.map((mode) => (
@@ -122,13 +123,13 @@ export default function UserProfileClient({
                     <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_1px_minmax(320px,0.9fr)] lg:gap-9">
                         <section className="min-w-0">
                             <div className="-mt-12 translate-y-2 flex min-w-0 items-end gap-4 sm:-mt-14 sm:gap-5">
-                                <div className="relative size-24 shrink-0 overflow-hidden rounded-2xl border-4 border-card bg-muted shadow-lg sm:size-28">
+                                <div className="relative size-24 shrink-0 overflow-hidden rounded-lg border-4 border-card bg-muted sm:size-28">
                                     <Image src={user.avatar_url} alt="" fill sizes="(min-width: 640px) 112px, 96px" priority unoptimized className="object-cover" />
                                 </div>
 
                                 <div className="min-w-0 pb-1.5">
                                     <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
-                                        <h1 className="break-words text-2xl font-semibold tracking-tight text-foreground sm:text-3xl md:text-4xl">{user.username}</h1>
+                                        <h1 className="break-words font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl md:text-4xl">{user.username}</h1>
                                         <Link
                                             href={`https://osu.ppy.sh/users/${banchoId}`}
                                             target="_blank"
@@ -181,7 +182,7 @@ export default function UserProfileClient({
                 </div>
             </div>
 
-            <div className="mt-6 rounded-2xl bg-card/70 p-4 shadow-sm sm:p-5">
+            <div className="mt-6 rounded-lg border border-border bg-card/60 p-4 sm:p-5">
                 <ScoreSection
                     title={t.user.profile.topGames.title}
                     emptyText={t.user.profile.topGames.empty}
@@ -237,9 +238,8 @@ function ScoreSection({ title, emptyText, games, kind, variant, locale, pointsTe
     return (
         <section aria-label={title}>
             <div className="mb-3 flex items-center gap-2 px-1">
-                <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                <h2 className="truncate text-sm font-semibold tracking-tight text-foreground">{title}</h2>
-                <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground">{games.length.toLocaleString(locale)}</span>
+                <SectionLabel className="shrink-0">{title}</SectionLabel>
+                <span className="rounded-full bg-muted px-2 py-0.5 text-[0.7rem] font-medium tabular-nums text-muted-foreground">{games.length.toLocaleString(locale)}</span>
             </div>
 
             {games.length > 0 ? (
@@ -269,7 +269,7 @@ function ScoreSection({ title, emptyText, games, kind, variant, locale, pointsTe
 
                                     <div className="min-w-0 self-center px-3 py-2 sm:px-4">
                                         <div className={`truncate text-sm font-semibold ${!isLegacyDeath && game.points < 0 ? "text-destructive" : "text-foreground"}`}>{scoreText}</div>
-                                        <div className="mt-0.5 flex min-w-0 items-center gap-2 text-[11px] text-muted-foreground">
+                                        <div className="mt-0.5 flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
                                             <span className="truncate sm:hidden">{!isLegacyDeath ? detailText : ppText}</span>
                                             {!isLegacyDeath && (
                                                 <span aria-hidden="true" className="sm:hidden">
@@ -286,7 +286,7 @@ function ScoreSection({ title, emptyText, games, kind, variant, locale, pointsTe
                                         {!isLegacyDeath && (
                                             <div>
                                                 <div className="text-xs font-semibold tabular-nums text-foreground">{game.streak.toLocaleString(locale)}x</div>
-                                                <div className="text-[10px] text-muted-foreground">streak</div>
+                                                <div className="text-[0.7rem] text-muted-foreground">streak</div>
                                             </div>
                                         )}
                                     </div>
@@ -294,7 +294,7 @@ function ScoreSection({ title, emptyText, games, kind, variant, locale, pointsTe
                                     <div className="relative flex items-center justify-center border-l border-primary/10 bg-primary/[0.08] px-2 text-center">
                                         <div
                                             title={hasPp ? undefined : "pp was not recorded for this legacy score"}
-                                            className={`text-sm font-bold tabular-nums ${hasPp ? "text-primary" : "text-muted-foreground"}`}
+                                            className={`font-mono text-sm font-bold tabular-nums ${hasPp ? "text-primary" : "text-muted-foreground"}`}
                                         >
                                             {ppText}
                                         </div>
@@ -332,8 +332,8 @@ function formatHoursAgo(date: Date, now: Date): string {
 function SummaryMetric({ label, value }: { label: string; value: string }) {
     return (
         <div className="min-w-0 px-3 first:pl-0 last:pr-0 sm:px-5">
-            <dt className="text-[11px] text-muted-foreground">{label}</dt>
-            <dd className="mt-1 truncate text-[15px] font-semibold tabular-nums tracking-tight text-foreground sm:text-lg">{value}</dd>
+            <dt className="text-xs text-muted-foreground">{label}</dt>
+            <dd className="mt-1 truncate text-base font-semibold tabular-nums tracking-tight text-foreground sm:text-lg">{value}</dd>
         </div>
     );
 }
@@ -373,7 +373,7 @@ function RankHistory({ title, points, locale }: { title: string; points: UserRan
 
     return (
         <div className="mt-5">
-            <div className="mb-1.5 flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
+            <div className="mb-1.5 flex items-center justify-between gap-3 text-xs text-muted-foreground">
                 <span className="font-medium">{title}</span>
                 <span className="shrink-0 tabular-nums">{dateLabel}</span>
             </div>
@@ -400,7 +400,7 @@ function RankHistory({ title, points, locale }: { title: string; points: UserRan
                     <div className="pointer-events-none absolute size-0" style={{ left: `${hoveredCoordinate.x}%`, top: `${(hoveredCoordinate.y / 40) * 100}%` }}>
                         <span className="absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary ring-2 ring-card" />
                         <span
-                            className={`absolute whitespace-nowrap rounded-md bg-popover px-2 py-1 text-[10px] font-medium tabular-nums text-popover-foreground shadow-md ${
+                            className={`absolute whitespace-nowrap rounded-md bg-popover px-2 py-1 text-[0.7rem] font-medium tabular-nums text-popover-foreground shadow-md ${
                                 hoveredCoordinate.y > 20 ? "bottom-2.5" : "top-2.5"
                             } ${hoveredCoordinate.x < 15 ? "left-0" : hoveredCoordinate.x > 85 ? "right-0" : "left-1/2 -translate-x-1/2"}`}
                         >

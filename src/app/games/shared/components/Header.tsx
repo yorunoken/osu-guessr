@@ -41,7 +41,7 @@ export default function GameHeader({
                     <div className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
                         {gameVariant === "classic" ? t.game.preGame.modes.classic.title : t.game.preGame.modes.death.title}
                     </div>
-                    <h1 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">{t.game.preGame.title[mode as keyof typeof t.game.preGame.title]}</h1>
+                    <h1 className="font-display text-xl font-semibold tracking-tight sm:text-2xl lg:text-3xl">{t.game.preGame.title[mode as keyof typeof t.game.preGame.title]}</h1>
                 </div>
                 <div className="shrink-0 text-right">
                     <div className={`font-mono text-3xl font-semibold tabular-nums sm:text-4xl lg:text-5xl ${timeLeft < 10 ? "text-destructive" : "text-foreground"}`}>

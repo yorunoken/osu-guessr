@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { BASE_POINTS, GAME_MODES, GameVariant, MAX_ROUNDS, ROUND_TIME, SKIP_PENALTY, STREAK_BONUS, SURVIVAL_LIVES, TIME_BONUS_MULTIPLIER } from "../../config";
 import { useTranslationsContext } from "@/context/translations-provider";
+import { SectionLabel } from "@/components/page-heading";
 import { GameMode } from "@/actions/types";
 import { ChevronDown } from "lucide-react";
 
@@ -21,17 +22,13 @@ export default function PreGameMenu({ onStart, onCancel, gameMode }: PreGameMenu
     const descriptions = t.game.preGame.description as Record<string, string>;
     const gameDescription = descriptions[gameMode] || descriptions.background;
     const modeArtwork = GAME_MODES.find((mode) => mode.id === gameMode)?.image ?? "/ghostrule.webp";
-    const sectionTitleClass = "mb-3 flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground";
     const listClass = "space-y-2";
     const listItemClass = "flex items-start gap-2 text-xs leading-5 text-muted-foreground sm:text-sm";
     const markerClass = "mt-[0.45rem] size-1.5 shrink-0 rounded-full bg-primary/70";
 
     const ClassicModeContent = () => (
         <section>
-            <h2 className={sectionTitleClass}>
-                <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                {t.game.preGame.howToPlay.title}
-            </h2>
+            <SectionLabel className="mb-3">{t.game.preGame.howToPlay.title}</SectionLabel>
             <ul className={listClass}>
                 {gameMode === GameMode.ScorePp && (
                     <li className={listItemClass}>
@@ -53,10 +50,7 @@ export default function PreGameMenu({ onStart, onCancel, gameMode }: PreGameMenu
 
     const SurvivalModeContent = () => (
         <section>
-            <h2 className={sectionTitleClass}>
-                <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                {t.game.preGame.howToPlay.title}
-            </h2>
+            <SectionLabel className="mb-3">{t.game.preGame.howToPlay.title}</SectionLabel>
             <ul className={listClass}>
                 {gameMode === GameMode.ScorePp && (
                     <li className={listItemClass}>
@@ -81,13 +75,13 @@ export default function PreGameMenu({ onStart, onCancel, gameMode }: PreGameMenu
     );
 
     return (
-        <div className="overflow-hidden rounded-xl bg-card">
+        <div className="overflow-hidden rounded-lg bg-card">
             <div>
                 <div className="relative isolate overflow-hidden px-5 pb-4 pt-10 sm:px-6 sm:pb-5 sm:pt-12">
                     <Image src={modeArtwork} alt="" fill priority sizes="(min-width: 896px) 896px, 100vw" className="-z-20 object-cover object-center" />
                     <div aria-hidden="true" className="absolute -inset-px -z-10 bg-gradient-to-t from-card from-5% via-card/85 to-card/40" />
                     <div className="min-w-0 pr-6">
-                        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t.game.preGame.title[gameMode as keyof typeof t.game.preGame.title]}</h1>
+                        <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground">{t.game.preGame.title[gameMode as keyof typeof t.game.preGame.title]}</h1>
                         <p className="mt-1 max-w-xl text-sm leading-5 text-muted-foreground">{gameDescription}</p>
                     </div>
                 </div>
@@ -127,8 +121,7 @@ export default function PreGameMenu({ onStart, onCancel, gameMode }: PreGameMenu
                     <details className="group mt-6">
                         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-1 text-sm font-semibold text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
                             <span className="flex items-center gap-2">
-                                <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                                {t.game.preGame.scoring.title}
+                                <SectionLabel className="mb-0">{t.game.preGame.scoring.title}</SectionLabel>
                             </span>
                             <ChevronDown aria-hidden="true" className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180" />
                         </summary>

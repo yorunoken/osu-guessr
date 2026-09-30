@@ -12,7 +12,7 @@ export default function SignInPrompt() {
         <div className="page-container py-16">
             <div className="max-w-2xl mx-auto text-center">
                 <div className="py-8">
-                    <h1 className="text-3xl font-bold mb-6">{t.errors.auth.required.title}</h1>
+                    <h1 className="font-display text-3xl font-semibold tracking-tight mb-6">{t.errors.auth.required.title}</h1>
 
                     <div className="space-y-4 mb-8">
                         <p className="text-foreground/70">{t.errors.auth.required.description}</p>

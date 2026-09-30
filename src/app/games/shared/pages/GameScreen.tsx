@@ -348,7 +348,7 @@ export default function GameScreen({ onExit, gameVariant, gameMode, GameMedia, m
         );
 
     return (
-        <div className={`page-container py-4 md:py-6 ${multiplayerLobby ? "max-w-[88rem]" : ""}`}>
+        <div className={`${multiplayerLobby ? "page-container-wide" : "page-container"} py-4 md:py-6`}>
             <GameHeader
                 streak={publicStats?.streak ?? gameState.score.streak}
                 points={publicStats?.points ?? gameState.score.total}

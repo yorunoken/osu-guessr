@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Public_Sans } from "next/font/google";
+import { Public_Sans, Sora, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { SessionWrapper } from "@/context/session-wrapper";
-import { ThemeProvider } from "@/context/theme-provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
@@ -19,6 +18,16 @@ import { getTranslations, isLocale } from "@/lib/translations";
 const publicSans = Public_Sans({
     subsets: ["latin"],
     variable: "--public-sans",
+});
+
+const sora = Sora({
+    subsets: ["latin"],
+    variable: "--sora",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+    subsets: ["latin"],
+    variable: "--jetbrains-mono",
 });
 
 const publicOrigin = normalizePublicOrigin(env.NEXT_PUBLIC_APP_URL);
@@ -79,7 +88,7 @@ export default async function RootLayout({
     if (lock && session?.user?.banchoId !== OWNER_ID && session?.user?.banchoId !== lock.ownerId) {
         return (
             <html lang={initialLocale} suppressHydrationWarning>
-                <body className={`${publicSans.variable} antialiased`}>
+                <body className={`${publicSans.variable} ${sora.variable} ${jetbrainsMono.variable} antialiased`}>
                     <div className="flex items-center justify-center min-h-screen bg-background">
                         <div className="max-w-xl mx-auto px-4 py-8">
                             <h1 className="text-2xl font-bold mb-4">{t.lockdown.title}</h1>
@@ -108,17 +117,15 @@ export default async function RootLayout({
                     }}
                 />
             </head>
-            <body className={`${publicSans.variable} antialiased`}>
+            <body className={`${publicSans.variable} ${sora.variable} ${jetbrainsMono.variable} antialiased`}>
                 <TranslationsProvider initialLocale={initialLocale} migrateStoredLocale={!hasValidLocaleCookie}>
                     <SessionWrapper session={session}>
-                        <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
-                            <div className="flex min-h-screen flex-col bg-background text-foreground">
-                                <Header />
-                                <main className="flex-grow">{children}</main>
-                                <Footer />
-                            </div>
-                            <Toaster />
-                        </ThemeProvider>
+                        <div className="flex min-h-screen flex-col bg-background text-foreground">
+                            <Header />
+                            <main className="flex-grow">{children}</main>
+                            <Footer />
+                        </div>
+                        <Toaster />
                     </SessionWrapper>
                 </TranslationsProvider>
                 <AnalyticsScripts />

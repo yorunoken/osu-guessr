@@ -367,10 +367,10 @@ export default function LobbyClient({ code, userId, initialLobby }: { code: stri
 
     return (
         <div className="page-container pb-16 pt-7">
-            <div className="mx-auto max-w-6xl">
+            <div className="page-container">
                 <header className="flex flex-wrap items-center justify-between gap-5 pb-8">
                     <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2">
-                        <h1 className="truncate text-2xl font-semibold tracking-tight md:text-3xl">{lobby.name}</h1>
+                        <h1 className="font-display truncate text-2xl font-semibold tracking-tight md:text-3xl">{lobby.name}</h1>
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
                             <span className="inline-flex items-center gap-1.5">
                                 {lobby.private ? <Lock className="size-3.5" /> : <Globe className="size-3.5" />}
@@ -503,7 +503,7 @@ export default function LobbyClient({ code, userId, initialLobby }: { code: stri
                                                         >
                                                             {player.username}
                                                         </Link>
-                                                        {player.userId === userId && <span className="text-[11px] font-medium text-primary">You</span>}
+                                                        {player.userId === userId && <span className="text-xs font-medium text-primary">You</span>}
                                                     </div>
                                                 </div>
                                                 <div className="shrink-0 text-right">
@@ -668,7 +668,7 @@ export default function LobbyClient({ code, userId, initialLobby }: { code: stri
                                                         >
                                                             {item.username}
                                                         </Link>
-                                                        <span className="text-[11px] text-muted-foreground">{new Date(item.sentAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>
+                                                        <span className="text-xs text-muted-foreground">{new Date(item.sentAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>
                                                     </div>
                                                     <p className="mt-1 break-words text-sm text-foreground/85">{item.message}</p>
                                                 </div>

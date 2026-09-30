@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import { ResultMessage } from "../../shared/components/Result";
+import MediaReveal from "../../shared/components/MediaReveal";
 import type { GameMediaProps } from "@/lib/game/types";
 import { useTranslationsContext } from "@/context/translations-provider";
+import { Button } from "@/components/ui/button";
 
 export default function GameSkin({ mediaUrl, isRevealed, result, songInfo }: GameMediaProps) {
     const { t } = useTranslationsContext();
@@ -13,22 +15,19 @@ export default function GameSkin({ mediaUrl, isRevealed, result, songInfo }: Gam
             <Image src={mediaUrl || "/placeholder.svg"} alt={t.game.media.skinAlt} fill className="object-contain" priority />
 
             {isRevealed && result && songInfo && (
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/80 p-4 text-center backdrop-blur-sm">
+                <MediaReveal>
                     <ResultMessage result={result} />
                     <div className="space-y-2">
-                        <p className="text-xl font-semibold">{t.game.media.skinName.replace("{name}", songInfo.title || t.game.media.unknown)}</p>
+                        <p className="font-display text-xl font-semibold">{t.game.media.skinName.replace("{name}", songInfo.title || t.game.media.unknown)}</p>
                         {songInfo.mapsetId && (
-                            <a
-                                href={`https://skins.osuck.net/skins/${songInfo.mapsetId}`}
-                                className="inline-block mt-2 px-4 py-2 bg-primary-strong text-primary-foreground rounded-md hover:bg-primary-strong/90 transition-colors"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {t.game.media.viewSkin}
-                            </a>
+                            <Button asChild className="mt-2">
+                                <a href={`https://skins.osuck.net/skins/${songInfo.mapsetId}`} target="_blank" rel="noopener noreferrer">
+                                    {t.game.media.viewSkin}
+                                </a>
+                            </Button>
                         )}
                     </div>
-                </div>
+                </MediaReveal>
             )}
         </div>
     );

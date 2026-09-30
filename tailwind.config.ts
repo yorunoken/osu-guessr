@@ -6,6 +6,11 @@ export default {
     content: ["./src/pages/**/*.{js,ts,jsx,tsx,mdx}", "./src/components/**/*.{js,ts,jsx,tsx,mdx}", "./src/app/**/*.{js,ts,jsx,tsx,mdx}"],
     theme: {
         extend: {
+            fontFamily: {
+                sans: ["var(--public-sans)", "sans-serif"],
+                display: ["var(--sora)", "sans-serif"],
+                mono: ["var(--jetbrains-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+            },
             colors: {
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",

@@ -1,6 +1,8 @@
 "use client";
 
 import { useTranslationsContext } from "@/context/translations-provider";
+import Link from "next/link";
+import { SectionLabel } from "@/components/page-heading";
 import type { Changelog } from "../HomeContent";
 
 interface ChangelogsProps {
@@ -14,10 +16,12 @@ export function ChangelogsSection({ changelogs }: ChangelogsProps) {
     return (
         <section className="page-container py-6">
             <div className="border-t border-border pt-6">
-                <h2 className="flex items-center gap-2 text-sm font-semibold tracking-tight mb-3">
-                    <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-                    {t.home.updates.title}
-                </h2>
+                <div className="mb-3 flex items-center justify-between gap-4">
+                    <SectionLabel>{t.home.updates.title}</SectionLabel>
+                    <Link href="/announcements#changelog" className="subtle-link shrink-0 text-sm text-foreground/65 transition-colors hover:text-primary">
+                        {t.common.viewMore}
+                    </Link>
+                </div>
 
                 <div className="max-h-[420px] space-y-5 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
                     {sortedChangelogs.map((log, i) => (

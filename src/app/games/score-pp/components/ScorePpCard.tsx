@@ -100,11 +100,11 @@ export default function ScorePpCard({ score, side, pp, isHigher, selected, revea
             <dl className="grid grid-cols-[1fr_1.5fr_0.6fr] gap-2 border-t border-border/40 px-3 py-2 lg:gap-4 lg:px-4 lg:py-3">
                 <div className="min-w-0">
                     <dt className="text-xs text-muted-foreground">{t.game.scorePp.accuracy}</dt>
-                    <dd className="mt-1 text-xl font-semibold tracking-tight tabular-nums lg:text-2xl">{(score.accuracy * 100).toFixed(2)}%</dd>
+                    <dd className="mt-1 font-mono text-xl font-semibold tracking-tight tabular-nums lg:text-2xl">{(score.accuracy * 100).toFixed(2)}%</dd>
                 </div>
                 <div className="min-w-0">
                     <dt className="text-xs text-muted-foreground">{t.game.scorePp.combo}</dt>
-                    <dd className="mt-1 text-xl font-semibold tracking-tight tabular-nums lg:text-2xl">
+                    <dd className="mt-1 font-mono text-xl font-semibold tracking-tight tabular-nums lg:text-2xl">
                         {score.maxCombo.toLocaleString()}
                         <span className="text-sm font-medium">x</span>
                         <span className="text-sm font-medium tracking-normal text-muted-foreground">/{score.beatmap.maxCombo?.toLocaleString() ?? "?"}x</span>
@@ -112,7 +112,7 @@ export default function ScorePpCard({ score, side, pp, isHigher, selected, revea
                 </div>
                 <div className="min-w-0">
                     <dt className="text-xs text-muted-foreground">{t.game.scorePp.miss}</dt>
-                    <dd className={`mt-1 text-xl font-semibold tracking-tight tabular-nums lg:text-2xl ${score.statistics.miss > 0 ? "text-destructive" : "text-foreground"}`}>
+                    <dd className={`mt-1 font-mono text-xl font-semibold tracking-tight tabular-nums lg:text-2xl ${score.statistics.miss > 0 ? "text-destructive" : "text-foreground"}`}>
                         {score.statistics.miss.toLocaleString()}
                     </dd>
                 </div>

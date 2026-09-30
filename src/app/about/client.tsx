@@ -5,12 +5,7 @@ import { BASE_POINTS, MAX_ROUNDS, ROUND_TIME, SKIP_PENALTY, STREAK_BONUS, SURVIV
 import React from "react";
 import Link from "next/link";
 
-const SectionHeading = ({ children }: { children: React.ReactNode }) => (
-    <div className="mb-3 flex items-center gap-2">
-        <span aria-hidden="true" className="h-3.5 w-1 rounded-full bg-primary" />
-        <h2 className="text-sm font-semibold tracking-tight text-foreground">{children}</h2>
-    </div>
-);
+const SectionHeading = ({ children }: { children: React.ReactNode }) => <h2 className="mb-3 text-base font-semibold tracking-tight text-foreground">{children}</h2>;
 
 export default function AboutClient() {
     const { t } = useTranslationsContext();
@@ -19,16 +14,16 @@ export default function AboutClient() {
         <div className="page-container pb-6 pt-3 md:pb-8 md:pt-4">
             <div>
                 <header className="py-5 sm:py-6">
-                    <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{t.about.title}</h1>
+                    <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{t.about.title}</h1>
                 </header>
 
-                <div className="space-y-4">
-                    <section className="rounded-xl bg-card/60 px-4 py-5 sm:px-6 sm:py-6">
+                <div className="divide-y divide-border/35">
+                    <section className="py-5 sm:py-6">
                         <SectionHeading>{t.about.whatIs.title}</SectionHeading>
                         <p className="text-sm leading-6 text-muted-foreground">{t.about.whatIs.description1}</p>
                     </section>
 
-                    <section id="gameModes" className="scroll-mt-24 rounded-xl bg-card/60 px-4 py-5 sm:px-6 sm:py-6">
+                    <section id="gameModes" className="scroll-mt-24 py-5 sm:py-6">
                         <SectionHeading>{t.about.gameModes.title}</SectionHeading>
                         <div className="grid gap-x-8 gap-y-5 md:grid-cols-3">
                             <div className="min-w-0">
@@ -58,7 +53,7 @@ export default function AboutClient() {
                         </div>
                     </section>
 
-                    <section id="howToPlay" className="scroll-mt-24 rounded-xl bg-card/60 px-4 py-5 sm:px-6 sm:py-6">
+                    <section id="howToPlay" className="scroll-mt-24 py-5 sm:py-6">
                         <SectionHeading>{t.about.howToPlay.title}</SectionHeading>
                         <div className="space-y-3">
                             <div className="flex items-start gap-4">
@@ -85,7 +80,7 @@ export default function AboutClient() {
                         </div>
                     </section>
 
-                    <section id="scoringSystem" className="scroll-mt-24 rounded-xl bg-card/60 px-4 py-5 sm:px-6 sm:py-6">
+                    <section id="scoringSystem" className="scroll-mt-24 py-5 sm:py-6">
                         <SectionHeading>{t.about.scoringSystem.title}</SectionHeading>
                         <div className="space-y-2">
                             <p className="text-sm leading-6 text-muted-foreground">
@@ -111,7 +106,7 @@ export default function AboutClient() {
                         </div>
                     </section>
 
-                    <section className="rounded-xl bg-card/60 px-4 py-5 sm:px-6 sm:py-6">
+                    <section className="py-5 sm:py-6">
                         <SectionHeading>{t.about.features.title}</SectionHeading>
                         <div className="grid gap-x-8 gap-y-5 md:grid-cols-2">
                             <div className="min-w-0">
@@ -133,7 +128,7 @@ export default function AboutClient() {
                         </div>
                     </section>
 
-                    <section className="rounded-xl bg-card/60 px-4 py-5 sm:px-6 sm:py-6">
+                    <section className="py-5 sm:py-6">
                         <SectionHeading>{t.about.documentation.title}</SectionHeading>
                         <div className="grid gap-x-8 gap-y-5 md:grid-cols-2">
                             <div className="min-w-0">
@@ -158,7 +153,7 @@ export default function AboutClient() {
                         </div>
                     </section>
 
-                    <section id="credits" className="scroll-mt-24 rounded-xl bg-card/60 px-4 py-5 sm:px-6 sm:py-6">
+                    <section id="credits" className="scroll-mt-24 py-5 sm:py-6">
                         <SectionHeading>{t.about.credits.title}</SectionHeading>
                         <div className="grid gap-x-8 gap-y-5 md:grid-cols-2">
                             <div className="min-w-0">
@@ -229,7 +224,7 @@ export default function AboutClient() {
                         </div>
                     </section>
 
-                    <section id="contact" className="scroll-mt-24 rounded-xl bg-card/60 px-4 py-5 sm:px-6 sm:py-6">
+                    <section id="contact" className="scroll-mt-24 py-5 sm:py-6">
                         <SectionHeading>{t.about.contact.title}</SectionHeading>
                         <div className="grid gap-x-8 gap-y-5 md:grid-cols-2">
                             <div className="min-w-0">
